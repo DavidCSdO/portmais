@@ -1,0 +1,288 @@
+/* ===========================
+   Hero Section
+   =========================== */
+
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  background: linear-gradient(180deg, #A4E4FF 0%, #1D3F4D 100%);
+  z-index: 1;
+}
+
+/* Title "DAVID" — BEHIND the mountains, handwritten entry */
+.hero__title {
+  font-family: var(--font-display), serif;
+  font-size: clamp(6rem, 25vw, 490px);
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 0.85;
+  z-index: 1;
+  margin-top: clamp(-1.5rem, 8vh, -2.5rem);
+  text-align: center;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Individual character container */
+.hero__char {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Stroke outline layer — draws the letter outline with an angled calligraphy pen motion */
+.hero__char-stroke {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--color-accent);
+  opacity: 0;
+  clip-path: polygon(0% 0%, 0% 0%, -35% 100%, -35% 100%);
+  animation: heroCharStrokeWrite 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  animation-delay: calc(1.3s + var(--char-index) * 0.22s);
+  pointer-events: none;
+}
+
+/* Solid ink fill layer — floods the letter with color following the stroke */
+.hero__char-fill {
+  display: inline-block;
+  color: var(--color-accent);
+  opacity: 0;
+  clip-path: polygon(0% 0%, 0% 0%, -35% 100%, -35% 100%);
+  animation: heroCharFillWrite 0.65s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  animation-delay: calc(1.42s + var(--char-index) * 0.22s);
+}
+
+/* Mountain Background — covers title */
+.hero__mountain-wrapper {
+  position: absolute;
+  bottom: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 130%;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: heroMountainSlideUp 1.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.1s forwards;
+  opacity: 0;
+}
+
+.hero__mountain {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  object-position: bottom;
+}
+
+
+
+/* Opening transition curtain — black screen with elegant movement */
+.hero__curtain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  z-index: 5;
+  box-shadow: 0 50px 120px 20px rgba(0, 0, 0, 0.95);
+  border-bottom: 1px solid rgba(188, 255, 126, 0.25);
+  animation: heroCurtainSlideUp 2.8s forwards;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Logo (4-point star) — IN FRONT of everything, starts center and glides to final position */
+.hero__logo-wrapper {
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(180px, 24vw, 360px);
+  height: clamp(180px, 24vw, 360px);
+  animation: heroLogoOpening 2.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hero__logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 40px rgba(188, 255, 126, 0.3));
+  animation: heroLogoPulse 3.2s ease-in-out infinite;
+}
+
+/* ===========================
+   Animations
+   =========================== */
+
+/* Stroke writing animation — unrolls the calligraphy outline with pen pressure */
+@keyframes heroCharStrokeWrite {
+  0% {
+    opacity: 0;
+    clip-path: polygon(0% 0%, 0% 0%, -35% 100%, -35% 100%);
+    transform: translateY(14px) skewX(-10deg) scale(0.92);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 1;
+    clip-path: polygon(0% 0%, 135% 0%, 100% 100%, 0% 100%);
+    transform: translateY(0) skewX(0deg) scale(1);
+  }
+
+  100% {
+    opacity: 0.3;
+    clip-path: polygon(0% 0%, 135% 0%, 100% 100%, 0% 100%);
+    transform: translateY(0) skewX(0deg) scale(1);
+  }
+}
+
+/* Fill writing animation — rich ink flows into the letter from pen motion */
+@keyframes heroCharFillWrite {
+  0% {
+    opacity: 0;
+    clip-path: polygon(0% 0%, 0% 0%, -35% 100%, -35% 100%);
+    transform: translateY(10px) skewX(-8deg) scale(0.94);
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    clip-path: polygon(0% 0%, 135% 0%, 100% 100%, 0% 100%);
+    transform: translateY(0) skewX(0deg) scale(1);
+  }
+}
+
+/* Star logo: appears on black screen at center, holds, then glides down to current position */
+@keyframes heroLogoOpening {
+  0% {
+    top: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  28% {
+    top: 50%;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.12);
+    animation-timing-function: ease-in-out;
+  }
+
+  38% {
+    top: 50%;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+
+  100% {
+    top: 80%;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Continuous breathing glow for the star */
+@keyframes heroLogoPulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 35px rgba(188, 255, 126, 0.35));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 65px rgba(188, 255, 126, 0.65));
+  }
+}
+
+/* Black curtain slides up like an elegant moving screen */
+@keyframes heroCurtainSlideUp {
+  0%,
+  38% {
+    transform: translateY(0);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+
+  92% {
+    transform: translateY(-100%);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Mountain slides up into place */
+@keyframes heroMountainSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(70px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__curtain {
+    display: none;
+  }
+
+  .hero__char-stroke {
+    display: none;
+  }
+
+  .hero__char-fill {
+    animation: none;
+    opacity: 1;
+    clip-path: none;
+    transform: none;
+    filter: none;
+  }
+
+  .hero__mountain-wrapper,
+  .hero__logo-wrapper {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    top: 80%;
+  }
+
+  .hero__mountain-wrapper {
+    transform: translateX(-50%);
+  }
+
+  .hero__logo-wrapper {
+    transform: translate(-50%, -50%);
+  }
+}

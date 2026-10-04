@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+/* ===========================
+   Design Tokens & Theme
+   =========================== */
+
+:root {
+  --color-bg-primary: #A4E4FF;
+  --color-bg-secondary: #1D3F4D;
+  --color-accent: #BCFF7E;
+  --color-text-light: #FFFFFF;
+  --color-text-dark: #1D3F4D;
+
+  --font-display: var(--font-delamoore);
+  --font-body: var(--font-geist-sans);
+  --font-inter: var(--font-inter);
+
+  --background: #080d11;
+  --foreground: #f0f4f8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* ===========================
+   Base Styles
+   =========================== */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}

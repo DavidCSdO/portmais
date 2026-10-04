@@ -1,0 +1,243 @@
+/* ===========================
+   Projects Section & Parallax
+   =========================== */
+
+.projects-scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Background Track: BACK3.jpg with seamless parallax */
+.projects__bg-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.projects__bg-img {
+  object-fit: cover;
+  object-position: center top;
+}
+
+.projects__bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 20%,
+    rgba(8, 13, 17, 0.35) 0%,
+    rgba(8, 13, 17, 0.65) 100%
+  );
+  pointer-events: none;
+}
+
+/* Main Content Container */
+.projects__container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: clamp(4rem, 8vh, 8rem);
+  will-change: transform;
+}
+
+/* Top: FlexCarousel Section */
+.projects__carousel-section {
+  width: 100%;
+  padding-top: clamp(1.5rem, 3vh, 3rem);
+  padding-bottom: clamp(1.5rem, 3vh, 2.5rem);
+  display: flex;
+  justify-content: center;
+}
+
+.projects__carousel-wrapper {
+  width: 100%;
+  height: 560px;
+  position: relative;
+  max-width: 1440px;
+}
+
+/* Two-column Content Section */
+.projects__content-section {
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 clamp(1.5rem, 4vw, 3rem);
+  margin-top: clamp(1.5rem, 3vh, 3rem);
+}
+
+.projects__content-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: clamp(2rem, 4vw, 5rem);
+  align-items: flex-start;
+}
+
+/* Left Column: Frosted Glass Card */
+.projects__left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.projects__card {
+  width: 100%;
+  max-width: 660px;
+  background: rgba(14, 18, 22, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  padding: clamp(2rem, 3.5vw, 3.25rem);
+}
+
+.projects__card-header {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 1.25rem;
+}
+
+.projects__card-title {
+  font-family: var(--font-inter), sans-serif;
+  font-size: clamp(0.92rem, 1.1vw, 1.1rem);
+  font-weight: 600;
+  line-height: 1.45;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.projects__card p {
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.88rem, 1.05vw, 1.02rem);
+  line-height: 1.7;
+  color: rgba(240, 245, 248, 0.9);
+  margin-bottom: clamp(1.2rem, 2.2vh, 1.6rem);
+  letter-spacing: 0.01em;
+}
+
+.projects__card-highlight {
+  color: #ffffff !important;
+}
+
+.projects__card-highlight strong {
+  color: var(--color-accent, #bcff7e);
+  font-weight: 500;
+}
+
+.projects__card-signature {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: rgba(240, 245, 248, 0.7);
+  text-transform: uppercase;
+  margin-top: 1.8rem;
+  line-height: 1.6;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1.2rem;
+}
+
+/* Right Column: Title */
+.projects__right {
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 0.8rem;
+}
+
+.projects__label {
+  font-family: var(--font-inter), sans-serif;
+  font-size: clamp(0.75rem, 0.9vw, 0.88rem);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(240, 245, 248, 0.85);
+  line-height: 1.5;
+}
+
+/* Bottom: Circular Text & Center Portal Logo */
+.projects__badge-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: clamp(4.5rem, 8vh, 7.5rem);
+  margin-bottom: clamp(4rem, 7vh, 6rem);
+  position: relative;
+  z-index: 20;
+}
+
+.projects__circular-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  will-change: transform, opacity;
+}
+
+.projects__portal-logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(75px, 8.5vw, 96px);
+  height: clamp(75px, 8.5vw, 96px);
+  cursor: pointer;
+  transform-origin: center center;
+  will-change: transform, filter;
+  transition: transform 0.25s ease, filter 0.3s ease;
+  z-index: 50;
+  pointer-events: auto;
+}
+
+.projects__portal-logo-wrapper:hover {
+  filter: drop-shadow(0 0 28px rgba(188, 255, 126, 0.85)) !important;
+}
+
+.projects__portal-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: heroLogoPulse 3.5s ease-in-out infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .projects__carousel-wrapper {
+    height: 440px;
+  }
+
+  .projects__content-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .projects__right {
+    order: -1;
+    padding-top: 0;
+  }
+
+  .projects__card {
+    max-width: 100%;
+    padding: 1.6rem 1.5rem;
+  }
+
+  .projects__badge-section {
+    margin-top: 3.5rem;
+    margin-bottom: 3.5rem;
+  }
+}

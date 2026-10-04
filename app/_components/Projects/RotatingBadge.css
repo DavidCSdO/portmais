@@ -1,0 +1,123 @@
+/* ===========================
+   Rotating Badge (Spinning Word Circle)
+   =========================== */
+
+.rotating-badge {
+  position: relative;
+  width: var(--badge-size, 200px);
+  height: var(--badge-size, 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rotating-badge:hover {
+  transform: scale(1.06);
+}
+
+/* Outer subtle ring */
+.rotating-badge__outer-ring {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.rotating-badge:hover .rotating-badge__outer-ring {
+  border-color: rgba(188, 255, 126, 0.35);
+  box-shadow: 0 0 25px rgba(188, 255, 126, 0.15);
+}
+
+/* Spinner wrapper */
+.rotating-badge__spinner {
+  width: 100%;
+  height: 100%;
+  animation: spinWordCircle 18s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.rotating-badge:hover .rotating-badge__spinner {
+  animation-duration: 9s;
+}
+
+.rotating-badge__svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.rotating-badge__text {
+  fill: rgba(240, 245, 248, 0.88);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: fill 0.3s ease;
+}
+
+.rotating-badge:hover .rotating-badge__text {
+  fill: #ffffff;
+}
+
+/* Central Star Hub */
+.rotating-badge__center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(14, 18, 22, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.rotating-badge__core-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(188, 255, 126, 0.25) 0%, transparent 70%);
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.rotating-badge:hover .rotating-badge__core-glow {
+  opacity: 1;
+}
+
+.rotating-badge__star-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(188, 255, 126, 0.6));
+  animation: heroLogoPulse 3s ease-in-out infinite;
+}
+
+@keyframes spinWordCircle {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rotating-badge__spinner {
+    animation: none;
+  }
+}

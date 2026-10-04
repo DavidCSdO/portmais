@@ -1,0 +1,396 @@
+/* ===========================
+   Scene Controller & Star Zoom Portal
+   =========================== */
+
+.scene-wrapper {
+  position: relative;
+  width: 100%;
+  background: #080d11;
+}
+
+.scene-stage {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #080d11;
+}
+
+/* Layer 1: Hero */
+.scene-layer--hero {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  background: linear-gradient(180deg, #A4E4FF 0%, #1D3F4D 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  will-change: opacity;
+}
+
+/* Layer 2: About (Pinned to stage, zero black gap, full mountain reveal) */
+.scene-layer--about {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 clamp(1.5rem, 4vw, 3rem);
+  will-change: opacity;
+}
+
+/* About Background Track (Calculated dynamically to cover full viewport with zero cropping/voids) */
+.about__bg-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.about__bg-img {
+  object-fit: cover;
+  object-position: center top;
+}
+
+/* Star spacer: Generous clearance so star NEVER touches the card */
+.about__star-spacer {
+  width: 100%;
+  height: clamp(210px, 26vh, 290px);
+}
+
+/* Main Container */
+.about__container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  will-change: transform, opacity;
+}
+
+/* Two-column Content */
+.about__content {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: clamp(2rem, 4vw, 5rem);
+  align-items: flex-start;
+}
+
+/* Left column (content lives in AboutIntro) */
+.about__left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Right card */
+.about__right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.about__card {
+  width: 100%;
+  max-width: 640px;
+  background: rgba(14, 18, 22, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  padding: clamp(2rem, 3.5vw, 3.25rem);
+}
+
+.about__card p {
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.88rem, 1.05vw, 1.02rem);
+  line-height: 1.7;
+  color: rgba(240, 245, 248, 0.9);
+  margin-bottom: clamp(1.2rem, 2.2vh, 1.6rem);
+  letter-spacing: 0.01em;
+}
+
+.about__card p:last-child {
+  margin-bottom: 0;
+}
+
+/* Layer 3: Star Portal */
+.scene-star-portal {
+  position: absolute;
+  left: 50%;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(180px, 24vw, 360px);
+  height: clamp(180px, 24vw, 360px);
+  pointer-events: none;
+  will-change: transform, top, filter;
+}
+
+.scene-star-portal--intro {
+  top: 76vh;
+  transform: translate(-50%, -50%);
+  animation: heroLogoOpening 2.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  opacity: 0;
+}
+
+.scene-star-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: heroLogoPulse 3.2s ease-in-out infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .about__content {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .about__left {
+    padding-top: 0;
+    text-align: left;
+    position: static;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+
+  .about__right {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .about__card {
+    max-width: 100%;
+    padding: 1.6rem 1.5rem;
+  }
+}
+
+/* ===========================
+   Layer 3: Transition Wave Curtain (Modern Liquid Horizon)
+   =========================== */
+
+.scene-transition-liquid-wave {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 140vw;
+  height: 125vh;
+  z-index: 25;
+  pointer-events: none;
+  border-radius: 50% 50% 0 0 / 14% 14% 0 0;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(14, 20, 26, 0.98) 0%,
+    #080d11 75%
+  );
+  box-shadow: 0 -15px 60px rgba(188, 255, 126, 0.35),
+    0 -2px 14px rgba(188, 255, 126, 0.7);
+  will-change: transform, opacity;
+}
+
+.scene-transition-wave__edge-glow {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(188, 255, 126, 0.8) 25%,
+    #ffffff 50%,
+    rgba(188, 255, 126, 0.8) 75%,
+    transparent 100%
+  );
+  filter: drop-shadow(0 0 12px rgba(188, 255, 126, 0.9));
+}
+
+.scene-transition-wave__light-beam {
+  position: absolute;
+  top: -40px;
+  left: 25%;
+  right: 25%;
+  height: 80px;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(188, 255, 126, 0.25) 0%,
+    transparent 70%
+  );
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+/* ===========================
+   Layer 4: Projects Scene
+   =========================== */
+
+.scene-layer--projects {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 30;
+  will-change: opacity, transform, filter;
+}
+
+/* ========================================================
+   Projects -> Showcase Transition Wave Curtain (Modern Liquid Horizon)
+   ======================================================== */
+
+.scene-transition-showcase-wave {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 140vw;
+  height: 125vh;
+  z-index: 32;
+  pointer-events: none;
+  border-radius: 50% 50% 0 0 / 14% 14% 0 0;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(10, 18, 22, 0.98) 0%,
+    #050a0d 75%
+  );
+  box-shadow: 0 -15px 60px rgba(164, 228, 255, 0.35),
+    0 -2px 14px rgba(164, 228, 255, 0.7);
+  will-change: transform, opacity;
+}
+
+.scene-transition-showcase-wave__edge-glow {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(164, 228, 255, 0.8) 25%,
+    #ffffff 50%,
+    rgba(188, 255, 126, 0.8) 75%,
+    transparent 100%
+  );
+  filter: drop-shadow(0 0 12px rgba(164, 228, 255, 0.9));
+}
+
+.scene-transition-showcase-wave__light-beam {
+  position: absolute;
+  top: -40px;
+  left: 25%;
+  right: 25%;
+  height: 80px;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(164, 228, 255, 0.25) 0%,
+    transparent 70%
+  );
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+/* ===========================
+   Layer 5: Showcase Scene
+   =========================== */
+
+.scene-layer--showcase {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 35;
+  will-change: opacity, transform, filter;
+}
+
+/* ========================================================
+   Showcase -> IdeaSection Transition Wave Curtain (Modern Liquid Horizon)
+   ======================================================== */
+
+.scene-transition-idea-wave {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 140vw;
+  height: 125vh;
+  z-index: 37;
+  pointer-events: none;
+  border-radius: 50% 50% 0 0 / 14% 14% 0 0;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(8, 16, 22, 0.98) 0%,
+    #04080b 75%
+  );
+  box-shadow: 0 -15px 60px rgba(0, 153, 255, 0.35),
+    0 -2px 14px rgba(56, 189, 248, 0.7);
+  will-change: transform, opacity;
+}
+
+.scene-transition-idea-wave__edge-glow {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 153, 255, 0.8) 25%,
+    #ffffff 50%,
+    rgba(56, 189, 248, 0.8) 75%,
+    transparent 100%
+  );
+  filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.9));
+}
+
+.scene-transition-idea-wave__light-beam {
+  position: absolute;
+  top: -40px;
+  left: 25%;
+  right: 25%;
+  height: 80px;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(0, 153, 255, 0.25) 0%,
+    transparent 70%
+  );
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+/* ===========================
+   Layer 6: Idea / Back5 Scene
+   =========================== */
+
+.scene-layer--idea {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 40;
+  will-change: opacity, transform;
+}
+
+
