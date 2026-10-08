@@ -6,6 +6,7 @@ import AboutIntro from "../AboutIntro";
 import Projects from "../Projects";
 import Showcase from "../Showcase";
 import IdeaSection from "../IdeaSection";
+import DockNav from "../DockNav";
 import "../Hero/Hero.css";
 import "./SceneController.css";
 
@@ -82,8 +83,8 @@ export default function SceneController() {
   // 7. Idea (Back5) transition distance: modern liquid horizon wave curtain
   const ideaTransitionDistance = Math.max(viewportH * 0.9, 850);
 
-  // 8. Idea (Back5) scroll distance: scroll through Carta, MaskedHeading and FolderFloat
-  const ideaScrollDistance = Math.max(viewportH * 1.8, 1700);
+  // 8. Idea (Back5) scroll distance: scroll through Conceito, MaskedHeading, FolderFloat, ScrollExpand and Footer
+  const ideaScrollDistance = Math.max(viewportH * 4.2, 4200);
 
   // Total scrollable height for scene-wrapper so scrollbar matches perfectly
   const totalSceneHeight =
@@ -250,11 +251,38 @@ export default function SceneController() {
 
   const starScrollY = aboutScrollProgress * (maxContentScroll * 0.75);
 
+  let activeSceneId = "hero";
+  if (scrollY >= ideaScrollOffset + ideaScrollDistance * 0.78) {
+    activeSceneId = "contact";
+  } else if (scrollY >= ideaScrollOffset - 80) {
+    activeSceneId = "idea";
+  } else if (scrollY >= showcaseScrollOffset - 80) {
+    activeSceneId = "showcase";
+  } else if (scrollY >= projectsScrollOffset - 80) {
+    activeSceneId = "projects";
+  } else if (scrollY >= transitionDistance - 80) {
+    activeSceneId = "about";
+  }
+
   return (
     <div
       className="scene-wrapper"
       style={{ height: `${totalSceneHeight}px` }}
     >
+      {/* Minimalist Floating Island Dock (Desktop - 4: BranchedMenu + MorphSlider + SloshGauge) */}
+      <DockNav
+        scrollY={scrollY}
+        totalHeight={totalSceneHeight}
+        activeSceneId={activeSceneId}
+        chapterOffsets={{
+          about: transitionDistance + 60,
+          projects: projectsScrollOffset + 60,
+          showcase: showcaseScrollOffset + 60,
+          idea: ideaScrollOffset + 60,
+          contact: ideaScrollOffset + ideaScrollDistance * 0.94
+        }}
+      />
+
       {/* Sticky Fullscreen Stage */}
       <div className="scene-stage">
         {/* Layer 1: Hero Scene */}
@@ -443,11 +471,33 @@ export default function SceneController() {
           style={{
             opacity: showcaseLayerOpacity,
             transform: `translate3d(0, ${showcaseLayerTranslateY}vh, 0)`,
-            pointerEvents: showcaseTransitionProgress >= 0.4 ? "auto" : "none",
+            filter: showcaseLayerBlur > 0 ? `blur(${showcaseLayerBlur}px)` : undefined,
+            pointerEvents:
+              showcaseTransitionProgress >= 0.4 && ideaTransitionProgress < 0.4
+                ? "auto"
+                : "none",
           }}
         >
           <Showcase
             scrollProgress={showcaseScrollProgress}
+            viewportW={viewportW}
+            viewportH={viewportH}
+          />
+        </div>
+
+
+
+        {/* Layer 6: Idea / Back5 Scene (NeuralNexus + MaskedHeading + FolderFloat) */}
+        <div
+          className="scene-layer scene-layer--idea"
+          style={{
+            opacity: ideaLayerOpacity,
+            transform: `translate3d(0, ${ideaLayerTranslateY}vh, 0)`,
+            pointerEvents: ideaTransitionProgress >= 0.4 ? "auto" : "none",
+          }}
+        >
+          <IdeaSection
+            scrollProgress={ideaScrollProgress}
             viewportW={viewportW}
             viewportH={viewportH}
           />

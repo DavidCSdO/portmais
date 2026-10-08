@@ -1,0 +1,110 @@
+/* ====================================================
+   Custom Cursor — High-end Luxury Interactive Follower
+   ==================================================== */
+
+.custom-cursor-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 99999;
+  overflow: hidden;
+}
+
+/* Hide default cursor only when fine pointer is active and cursor is rendered */
+@media (pointer: fine) {
+  body {
+    cursor: default;
+  }
+}
+
+/* Inner Dot: exactly follows mouse position */
+.custom-cursor-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  margin-left: -3px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+  mix-blend-mode: difference;
+  transition: transform 0.05s ease-out, opacity 0.2s ease;
+}
+
+/* Outer Trailing Ring: lags behind with lerp physics */
+.custom-cursor-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 34px;
+  margin-top: -17px;
+  margin-left: -17px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(1px);
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              margin 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease,
+              background 0.25s ease,
+              border-radius 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hover state on interactive elements */
+.custom-cursor-root.is-hover .custom-cursor-ring {
+  width: 52px;
+  height: 52px;
+  margin-top: -26px;
+  margin-left: -26px;
+  border-color: rgba(212, 175, 55, 0.7); /* Subtle warm gold */
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.custom-cursor-root.is-hover .custom-cursor-dot {
+  opacity: 0.6;
+  transform: scale(0.6);
+}
+
+/* State when contextual label is present */
+.custom-cursor-root.has-text .custom-cursor-ring {
+  width: auto;
+  min-width: 72px;
+  height: 28px;
+  margin-top: -14px;
+  margin-left: -36px;
+  padding: 0 12px;
+  border-radius: 9999px;
+  background: rgba(9, 9, 11, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.custom-cursor-label {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-cursor-root {
+    display: none !important;
+  }
+}

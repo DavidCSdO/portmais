@@ -97,14 +97,17 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
 
     root.style.fontSize = `${clamp(root.clientWidth * s.textScale, 20, 200).toFixed(1)}px`;
 
+    const rootRect = root.getBoundingClientRect();
     const cs = window.getComputedStyle(measure);
     for (let i = 0; i < wordRefs.current.length; i += 1) {
       const box = wordRefs.current[i];
       const base = baseRefs.current[i];
       const glyph = glyphRefs.current[i];
       if (!box || !base || !glyph) continue;
-      glyph.setAttribute('x', `${box.offsetLeft}`);
-      glyph.setAttribute('y', `${base.offsetTop}`);
+      const boxRect = box.getBoundingClientRect();
+      const baseRect = base.getBoundingClientRect();
+      glyph.setAttribute('x', `${(boxRect.left - rootRect.left).toFixed(2)}`);
+      glyph.setAttribute('y', `${(baseRect.top - rootRect.top).toFixed(2)}`);
       glyph.style.fontFamily = cs.fontFamily;
       glyph.style.fontSize = cs.fontSize;
       glyph.style.fontWeight = cs.fontWeight;

@@ -1,8 +1,12 @@
-/* ===========================
-   IdeaSection (BACK5.jpg + PaperCrumple + MaskedHeading + FolderFloat)
-   =========================== */
+/* ====================================================
+   IdeaSection: Modern Minimalist Editorial Design (estilo Anexo 4)
+   ==================================================== */
 
 .idea-scene {
+  --idea-ink: rgba(244, 246, 248, 0.94);
+  --idea-muted: rgba(220, 228, 234, 0.52);
+  --idea-rule: rgba(255, 255, 255, 0.14);
+
   position: absolute;
   inset: 0;
   width: 100%;
@@ -12,9 +16,12 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  color: var(--idea-ink);
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 300;
 }
 
-/* Background Track: BACK5.jpg (Misty pine forest) with parallax */
+/* Background Track: BACK5.jpg (Misty pine forest) with smooth parallax */
 .idea__bg-track {
   position: absolute;
   top: 0;
@@ -33,277 +40,277 @@
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    circle at 50% 35%,
-    rgba(6, 12, 16, 0.4) 0%,
-    rgba(5, 9, 12, 0.82) 100%
+    circle at 50% 25%,
+    rgba(6, 12, 16, 0.35) 0%,
+    rgba(5, 9, 14, 0.68) 60%,
+    rgba(4, 7, 10, 0.88) 100%
   );
   pointer-events: none;
 }
 
-/* Main Content Container */
+/* Main Content Container: full-bleed to allow full-width footer */
 .idea__container {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 1200px;
-  padding: 0 clamp(1.5rem, 4vw, 3rem);
+  max-width: 100%;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding-top: clamp(2.5rem, 5vh, 4.5rem);
-  padding-bottom: clamp(6rem, 12vh, 12rem);
+  padding-top: clamp(3rem, 6vh, 5rem);
+  padding-bottom: 0;
   will-change: transform, opacity;
+  box-sizing: border-box;
+  gap: clamp(4rem, 8vh, 7rem);
 }
 
-/* Section Header Badge */
-.idea__header {
-  text-align: center;
-  margin-bottom: clamp(2rem, 3.5vh, 3rem);
+/* Base Editorial Blocks (constrained to 1100px) */
+.idea-block {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 4vw, 3.5rem);
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Section Index: 03 ——— Conceito */
+.idea-block__index {
+  display: flex;
   align-items: center;
-  gap: 0.75rem;
-}
-
-.idea__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(14, 22, 28, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 153, 255, 0.3);
-  border-radius: 9999px;
-  padding: 6px 18px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 0 15px rgba(0, 153, 255, 0.15);
-}
-
-.idea__badge-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #00b4d8;
-  box-shadow: 0 0 8px #00b4d8;
-}
-
-.idea__badge-text {
-  font-family: var(--font-inter), sans-serif;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
+  gap: 0.9rem;
+  margin-bottom: clamp(1.8rem, 3.5vh, 2.5rem);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(240, 245, 248, 0.95);
+  color: var(--idea-muted);
+}
+
+.idea-block__index-line {
+  width: 48px;
+  height: 1px;
+  background: var(--idea-rule);
+}
+
+/* Category Eyebrow */
+.idea-block__eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--idea-muted);
+}
+
+/* Large Statement */
+.idea-block__statement {
+  margin: 0 0 clamp(2.2rem, 4.5vh, 3rem);
+  font-size: clamp(1.8rem, 2.8vw, 2.5rem);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--idea-ink);
+  text-wrap: balance;
+  max-width: 720px;
+}
+
+.idea-block__statement em {
+  font-style: normal;
+  color: rgba(244, 246, 248, 0.45);
+}
+
+/* Minimalist Specs List (sem linhas divisórias horizontais) */
+.idea-block__specs {
+  margin: 0;
+  border: none !important;
+  max-width: 680px;
+}
+
+.idea-block__row {
+  display: grid;
+  grid-template-columns: 95px 1fr;
+  gap: 1.2rem;
+  padding: 0.75rem 0;
+  border: none !important;
+}
+
+.idea-block__row-label {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--idea-muted);
+  padding-top: 0.18rem;
+}
+
+.idea-block__row-value {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--idea-ink);
 }
 
 /* ====================================================
-   1. Part 1: Top - Paper Crumple in Neon-Blue Frame
+   2. MIDDLE ZONE: MaskedHeading "TUDO COMEÇA COM UMA IDEIA"
    ==================================================== */
-.idea__letter-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: clamp(3rem, 6vh, 5.5rem);
+.idea-block--heading {
   width: 100%;
-}
-
-.idea__letter-frame {
-  position: relative;
-  width: clamp(280px, 34vw, 420px);
-  height: clamp(340px, 42vw, 480px);
-  padding: 12px;
-  border-radius: 12px;
-  border: 3px solid #0099ff;
-  box-shadow: 
-    0 0 30px rgba(0, 153, 255, 0.35),
-    0 0 70px rgba(0, 153, 255, 0.15),
-    inset 0 0 24px rgba(0, 0, 0, 0.6);
-  background: rgba(8, 14, 20, 0.75);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  padding: clamp(1rem, 2vh, 2rem) 0;
 }
 
-.idea__letter-frame:hover {
-  border-color: #38bdf8;
-  box-shadow: 
-    0 0 40px rgba(56, 189, 248, 0.45),
-    0 0 90px rgba(56, 189, 248, 0.25),
-    inset 0 0 24px rgba(0, 0, 0, 0.6);
-}
-
-.idea__letter-corner {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border: 2px solid #38bdf8;
-  pointer-events: none;
-}
-
-.idea__letter-corner--tl {
-  top: -2px;
-  left: -2px;
-  border-right: none;
-  border-bottom: none;
-}
-
-.idea__letter-corner--tr {
-  top: -2px;
-  right: -2px;
-  border-left: none;
-  border-bottom: none;
-}
-
-.idea__letter-corner--bl {
-  bottom: -2px;
-  left: -2px;
-  border-right: none;
-  border-top: none;
-}
-
-.idea__letter-corner--br {
-  bottom: -2px;
-  right: -2px;
-  border-left: none;
-  border-top: none;
-}
-
-.idea__letter-hint {
-  margin-top: 14px;
-  display: inline-flex;
+.idea-block__heading-inner {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  font-family: var(--font-inter), sans-serif;
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  color: rgba(224, 242, 254, 0.85);
-  background: rgba(15, 23, 42, 0.6);
-  padding: 6px 16px;
-  border-radius: 9999px;
-  border: 1px solid rgba(56, 189, 248, 0.2);
+  justify-content: center;
+  text-align: center;
 }
 
 /* ====================================================
-   2. Part 2: Middle - MaskedHeading + "TUDO COMEÇA COM UMA IDEIA"
+   3. BOTTOM ZONE: Folder Section Editorial (estilo Anexo 4)
    ==================================================== */
-.idea__heading-section {
+.idea-folder-editorial {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 4vw, 5rem);
+  align-items: center;
+  width: 100%;
+}
+
+.idea-folder-editorial__left {
+  display: flex;
+  flex-direction: column;
+}
+
+.idea-folder-editorial__right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.idea-folder-float-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 280px;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .idea-folder-editorial {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .idea-folder-editorial__right {
+    justify-content: center;
+  }
+}
+
+/* ====================================================
+   4. EXPAND ZONE: ScrollExpand Stage (Full Screen Footer)
+   ==================================================== */
+.idea-block--expand {
   width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-  background: #0a0e14;
-  padding: clamp(3rem, 6vh, 5rem) 1.5rem;
-  margin-bottom: clamp(4rem, 8vh, 7rem);
-  box-shadow: 
-    0 -15px 40px rgba(0, 0, 0, 0.6),
-    0 15px 40px rgba(0, 0, 0, 0.6);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  max-width: 100vw;
+  margin: clamp(2rem, 4vh, 4rem) 0 0 0;
+  padding: 0;
+}
+
+.idea-block__header {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 4vw, 3.5rem);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
-.idea__heading-inner {
+.idea-expand-stage {
   position: relative;
-  width: 100%;
-  max-width: 1200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: clamp(140px, 22vh, 220px);
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  margin: clamp(1.5rem, 3vh, 3rem) 0 0 0;
+  overflow: hidden;
 }
 
-.idea__masked-wrapper {
-  width: 100%;
-  opacity: 0.65;
-  transition: opacity 0.4s ease;
-}
-
-.idea__masked-wrapper:hover {
-  opacity: 0.85;
-}
-
-.idea__center-title {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-  text-align: center;
-  pointer-events: none;
-  width: 100%;
-  padding: 0 1rem;
-}
-
-.idea__center-title-line {
-  display: block;
-  font-family: var(--font-inter), sans-serif;
-  font-size: clamp(1.4rem, 2.8vw, 2.6rem);
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #ffffff;
-  line-height: 1.25;
-  text-shadow: 
-    0 2px 14px rgba(0, 0, 0, 0.95),
-    0 0 35px rgba(0, 0, 0, 0.9),
-    0 0 10px rgba(255, 255, 255, 0.4);
-}
-
-/* ====================================================
-   3. Part 3: Bottom - FolderFloat with Floating Notes
-   ==================================================== */
-.idea__folder-section {
+.idea-expand-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  position: relative;
-  padding-bottom: 2rem;
-}
-
-.idea__folder-stage {
-  position: relative;
-  width: 100%;
-  display: flex;
   justify-content: center;
-  min-height: 260px;
-  align-items: flex-end;
+  text-align: center;
+  gap: 1.1rem;
+  max-width: 680px;
+  margin: 0 auto;
 }
 
-.idea__folder-hint {
-  margin-top: clamp(2rem, 4vh, 3.5rem);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+.idea-expand-tag {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: #38bdf8;
+  text-transform: uppercase;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  padding: 5px 14px;
+  border-radius: 9999px;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+}
+
+.idea-expand-title {
   font-family: var(--font-inter), sans-serif;
-  font-size: 0.78rem;
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.85);
+}
+
+.idea-expand-desc {
+  font-family: var(--font-inter), sans-serif;
+  font-size: clamp(0.85rem, 1.05vw, 0.98rem);
+  font-weight: 300;
+  line-height: 1.6;
+  color: rgba(240, 246, 252, 0.88);
+  margin: 0;
+  max-width: 580px;
+}
+
+.idea-expand-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 0.4rem;
+}
+
+.idea-expand-pills span {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.74rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
-  color: rgba(240, 245, 248, 0.8);
-  background: rgba(14, 22, 28, 0.65);
+  letter-spacing: 0.04em;
+  color: rgba(240, 246, 252, 0.9);
+  background: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: 6px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 14px;
 }
 
-@media (max-width: 768px) {
-  .idea__letter-frame {
-    width: 290px;
-    height: 350px;
-  }
-
-  .idea__center-title-line {
-    font-size: 1.25rem;
-    letter-spacing: 0.08em;
-  }
-}

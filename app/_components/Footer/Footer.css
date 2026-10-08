@@ -1,0 +1,363 @@
+/* ====================================================
+   FOOTER — Full Screen Width (#333333 do anexo)
+   ==================================================== */
+
+.footer-section {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  z-index: 20;
+  background: transparent;
+  border-top: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.footer-wrapper {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+/* ====================================================
+   1. TOP INFORMATION SECTION
+   ==================================================== */
+.footer-top {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: clamp(2rem, 4vh, 3.5rem) clamp(1.5rem, 4vw, 3.5rem) 0.5rem;
+  display: grid;
+  grid-template-columns: 1.4fr 1.2fr 0.9fr;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  align-items: start;
+  box-sizing: border-box;
+}
+
+.footer-top__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.footer-heading {
+  font-family: var(--font-inter), sans-serif;
+  font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.18;
+  color: #ffffff;
+  margin: 0;
+}
+
+.footer-heading em {
+  font-style: italic;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Col Contact */
+.footer-top__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.footer-label {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.footer-email-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.footer-email {
+  font-family: var(--font-inter), sans-serif;
+  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-email:hover {
+  color: #e2e8f0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.footer-copy-btn {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.footer-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.footer-copy-btn--copied {
+  background: rgba(34, 197, 94, 0.25);
+  border-color: rgba(34, 197, 94, 0.6);
+  color: #86efac;
+}
+
+.footer-socials {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.2rem;
+}
+
+.footer-social-link {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.footer-social-link:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Col Meta */
+.footer-top__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.footer-meta-text {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.footer-meta-line {
+  margin: 0;
+}
+
+.footer-fps-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  margin-top: 0.2rem;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  color: #d4af37;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.footer-fps-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #d4af37;
+  box-shadow: 0 0 6px #d4af37;
+}
+
+/* ====================================================
+   2. MONUMENTAL "DAVID" STAGE (Estilo Exato do Anexo)
+   ==================================================== */
+.footer-brand-stage {
+  position: relative;
+  width: 100%;
+  height: clamp(180px, 28vw, 420px);
+  max-height: 44vh;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto 0;
+  overflow: visible;
+  font-family: 'Delamoore', var(--font-delamoore), var(--font-display), serif;
+}
+
+.footer-brand-stage .tech-text {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.footer-brand-stage .tech-text-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ====================================================
+   3. BOTTOM COPYRIGHT & BACK TO TOP BAR
+   ==================================================== */
+.footer-bottom-bar {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem clamp(1.5rem, 4vw, 3.5rem) max(1.5rem, env(safe-area-inset-bottom, 24px));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  box-sizing: border-box;
+}
+
+.footer-cr {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.footer-back-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.footer-back-top:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.footer-back-top__arrow {
+  font-size: 0.8rem;
+  transition: transform 0.2s ease;
+}
+
+.footer-back-top:hover .footer-back-top__arrow {
+  transform: translateY(-2px);
+}
+
+.footer-bottom-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.footer-audio-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.footer-audio-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.footer-audio-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.footer-audio-btn--on {
+  color: #86efac;
+  border-color: rgba(34, 197, 94, 0.4);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.footer-audio-btn--on .footer-audio-dot {
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+}
+
+/* ====================================================
+   RESPONSIVENESS
+   ==================================================== */
+@media (max-width: 960px) {
+  .footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .footer-top__intro {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 1.8rem;
+    padding: 2rem 1.5rem 1rem;
+  }
+
+  .footer-bottom-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
