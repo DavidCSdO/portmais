@@ -607,7 +607,12 @@ const FlexCarousel = ({
     };
 
     const skipIntro = () => {
-      if (introState.running) introState.t = 1;
+      introState.running = false;
+      introState.done = true;
+      introState.t = 1;
+      setRevealed(true);
+      dirty = true;
+      start();
     };
 
     const introEffects = () => {
@@ -959,14 +964,17 @@ const FlexCarousel = ({
         else container.removeAttribute('data-hover');
       }
 
-      if (visible && (animating || waiting || dirty || pointer.down)) raf = requestAnimationFrame(frame);
+      if (!document.hidden && (animating || waiting || dirty || pointer.down)) {
+        raf = requestAnimationFrame(frame);
+      }
     };
 
-    const start = () => {
-      if (raf || !visible || !alive) return;
+    function start() {
+      if (raf || !alive) return;
+      visible = true;
       last = performance.now();
       raf = requestAnimationFrame(frame);
-    };
+    }
 
     const localPoint = e => {
       const rect = container.getBoundingClientRect();
@@ -1158,7 +1166,11 @@ const FlexCarousel = ({
       hasFocus = false;
     };
     const onVisibility = () => {
-      if (!document.hidden) start();
+      if (!document.hidden) {
+        visible = true;
+        dirty = true;
+        start();
+      }
     };
 
     container.addEventListener('pointerdown', onPointerDown);
@@ -1175,8 +1187,11 @@ const FlexCarousel = ({
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(container);
     const intersectionObserver = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      start();
+      if (entry?.isIntersecting) {
+        visible = true;
+        dirty = true;
+        start();
+      }
     });
     intersectionObserver.observe(container);
 

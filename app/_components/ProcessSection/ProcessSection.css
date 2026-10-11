@@ -1,0 +1,533 @@
+/* ====================================================
+   ProcessSection: Minimalist Methodology & Quick Booking
+   Seamless harmony with IdeaSection & Showcase design language
+   ==================================================== */
+
+.idea-block--process {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 4vw, 3.5rem);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* 1. Header Group */
+.process-heading-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: clamp(2.5rem, 5vh, 3.8rem);
+}
+
+/* Minimalist Editorial Link (matches .showcase__link from Section 04) */
+.process-editorial-action {
+  margin-top: 0.8rem;
+}
+
+.process-editorial-link {
+  appearance: none;
+  background: transparent;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0 0 0.4rem 0;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.92rem;
+  font-weight: 400;
+  color: rgba(244, 246, 248, 0.92);
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 100% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.45s cubic-bezier(0.65, 0, 0.35, 1), color 0.25s ease;
+  cursor: pointer;
+}
+
+.process-editorial-link__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #bcff7e;
+  box-shadow: 0 0 8px #bcff7e;
+  flex-shrink: 0;
+}
+
+.process-editorial-link__arrow {
+  color: #bcff7e;
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.process-editorial-link:hover {
+  background-size: 0% 1px;
+  background-position: 100% 100%;
+  color: #ffffff;
+}
+
+.process-editorial-link:hover .process-editorial-link__arrow {
+  transform: translateX(6px);
+}
+
+/* 2. Steps Grid */
+.process-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.5rem, 2.8vw, 2.5rem);
+  width: 100%;
+}
+
+.process-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.process-col__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 8px;
+}
+
+.process-col__num {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--idea-muted, rgba(220, 228, 234, 0.52));
+}
+
+.process-col__tag {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--idea-muted, rgba(220, 228, 234, 0.52));
+  text-transform: uppercase;
+}
+
+/* 3. PixelSwap Card */
+.process-card-box {
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(12, 16, 20, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45);
+  transition: border-color 0.3s ease;
+}
+
+.process-card-box:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.process-card-swap {
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+/* Card Front: Nature Photography */
+.process-card-front {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.25rem;
+  box-sizing: border-box;
+}
+
+.process-card-front__bg {
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.process-card-box:hover .process-card-front__bg {
+  transform: scale(1.05);
+}
+
+.process-card-front__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(6, 10, 14, 0.1) 0%,
+    rgba(6, 10, 14, 0.62) 55%,
+    rgba(6, 10, 14, 0.94) 100%
+  );
+  pointer-events: none;
+}
+
+.process-card-front__body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.process-card-front__title {
+  margin: 0;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.process-card-front__desc {
+  margin: 0;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: rgba(220, 230, 238, 0.75);
+  font-weight: 300;
+}
+
+.process-card-front__cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 4px;
+}
+
+.process-card-front__cue-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #bcff7e;
+}
+
+/* Card Back: Deep Tech View with Logo */
+.process-card-back {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #090e13;
+  padding: 1.25rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(188, 255, 126, 0.2);
+  border-radius: 16px;
+}
+
+.process-card-back__logo-wrap {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  opacity: 0.35;
+  filter: drop-shadow(0 0 12px rgba(188, 255, 126, 0.4));
+  pointer-events: none;
+}
+
+.process-card-back__logo {
+  object-fit: contain;
+}
+
+.process-card-back__body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.process-card-back__tag {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: #bcff7e;
+  text-transform: uppercase;
+}
+
+.process-card-back__title {
+  margin: 0;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.process-card-back__desc {
+  margin: 0;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: rgba(220, 230, 238, 0.75);
+  font-weight: 300;
+}
+
+.process-card-back__metric {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.process-card-back__metric-val {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #bcff7e;
+}
+
+.process-card-back__metric-lbl {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* 4. Deliverables Checklist */
+.process-deliverables {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.process-deliverables__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.74rem;
+  color: rgba(220, 230, 238, 0.65);
+  font-weight: 300;
+}
+
+.process-deliverables__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(188, 255, 126, 0.6);
+  flex-shrink: 0;
+}
+
+/* 5. Quick Booking Modal */
+.process-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(6, 10, 14, 0.82);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.process-modal-card {
+  width: min(460px, 92vw);
+  background: rgba(12, 16, 22, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: clamp(1.5rem, 3.5vw, 2rem);
+  box-shadow: 0 32px 70px rgba(0, 0, 0, 0.7);
+  animation: modalCardPop 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalCardPop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.process-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.process-modal-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.process-modal-logo {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 10px rgba(188, 255, 126, 0.6));
+}
+
+.process-modal-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.process-modal-title {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.process-modal-sub {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  color: #bcff7e;
+  letter-spacing: 0.08em;
+}
+
+.process-modal-close {
+  appearance: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.9rem;
+  padding: 6px;
+  border-radius: 50%;
+  transition: color 0.2s ease;
+}
+
+.process-modal-close:hover {
+  color: #ffffff;
+}
+
+.process-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.process-modal-desc {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: rgba(220, 230, 238, 0.75);
+  margin: 0;
+  font-weight: 300;
+}
+
+.process-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.process-modal-btn {
+  appearance: none;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.process-modal-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
+}
+
+.process-modal-btn--primary {
+  background: rgba(188, 255, 126, 0.08);
+  border-color: rgba(188, 255, 126, 0.3);
+}
+
+.process-modal-btn--primary:hover {
+  background: rgba(188, 255, 126, 0.16);
+  border-color: rgba(188, 255, 126, 0.6);
+}
+
+.process-modal-btn__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.process-modal-btn__tag {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: #bcff7e;
+  text-transform: uppercase;
+}
+
+.process-modal-btn__label {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.process-modal-btn__sub {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.process-modal-btn__arrow {
+  color: #bcff7e;
+  font-size: 1rem;
+}
+
+.process-modal-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 4px;
+}
+
+.process-modal-footer__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #bcff7e;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .process-steps-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}

@@ -14,6 +14,9 @@ export default function AboutIntro() {
         <span className="intro__index-num">01</span>
         <span className="intro__index-line" aria-hidden="true" />
         <span className="intro__index-label">Sobre</span>
+        <span className="intro__altitude-tag" aria-hidden="true">
+          ALPINE TAIGA · 2,480M
+        </span>
       </div>
 
       <h2 className="intro__greeting">Oi, eu sou o David.</h2>

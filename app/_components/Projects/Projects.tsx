@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import FlexCarousel from "../FlexCarousel";
 import CircularText from "../CircularText";
+import DriftingMist from "../DriftingMist";
+import NatureSpotlight from "../NatureSpotlight";
+import { useContemplation } from "../../_utils/contemplation";
 import "./Projects.css";
 
 export const PROJECT_ITEMS = [
@@ -98,6 +101,7 @@ export default function Projects({
 }: ProjectsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerH, setContainerH] = useState(1600);
+  const isContemplating = useContemplation();
 
   useEffect(() => {
     const updateHeight = () => {
@@ -117,9 +121,9 @@ export default function Projects({
     };
   }, [onContainerHeightChange]);
 
-  // BACK3.jpg is 736 x 1308 (aspect ratio 736/1308)
-  // Parallax calculations: cover full viewport with 0 black borders
-  const imgAspect = 736 / 1308;
+  // landscape_projects.jpg is 2560 x 1600 (aspect ratio 2560/1600 = 1.6)
+  // Quiraing & Isle of Skye in 4K resolution
+  const imgAspect = 2560 / 1600;
   let bgRenderedW = viewportW;
   let bgRenderedH = viewportW / imgAspect;
   if (bgRenderedH < viewportH) {
@@ -146,7 +150,7 @@ export default function Projects({
 
   return (
     <div className="projects-scene">
-      {/* Background Track: BACK3.jpg with seamless parallax */}
+      {/* Background Track: landscape_projects.jpg (O Quiraing e o Mar de Névoa 4K) */}
       <div
         className="projects__bg-track"
         style={{
@@ -156,22 +160,32 @@ export default function Projects({
         }}
       >
         <Image
-          src="/images/BACK3.jpg"
-          alt="Paisagem montanhosa com névoa - Projetos"
+          src="/images/landscape_projects.jpg"
+          alt="O Quiraing e o Mar de Névoa, Ilha de Skye em 4K"
           fill
           priority={false}
           className="projects__bg-img"
-          sizes="100vw"
+          sizes={`${Math.ceil(bgRenderedW)}px`}
+          quality={90}
         />
         <div className="projects__bg-overlay" aria-hidden="true" />
       </div>
+
+      {/* Atmospheric Alpine Mist */}
+      <DriftingMist opacity={0.24} speedMultiplier={0.9} />
+
+      {/* Contemporary Scenic Spotlight Discovery */}
+      <NatureSpotlight sceneId="projects" position="top-right" />
 
       {/* Main Content Container */}
       <div
         ref={containerRef}
         className="projects__container"
         style={{
-          transform: `translate3d(0, -${contentTranslateY}px, 0)`
+          opacity: isContemplating ? 0 : 1,
+          transform: `translate3d(0, -${contentTranslateY}px, 0)`,
+          transition: "opacity 0.5s ease",
+          pointerEvents: isContemplating ? "none" : undefined,
         }}
       >
         {/* Top Section: FlexCarousel with liquid wave preset */}
@@ -200,7 +214,7 @@ export default function Projects({
               followCursor={false}
               autoplay={false}
               interval={4}
-              captureWheel
+              captureWheel={false}
             />
           </div>
         </div>
@@ -299,6 +313,7 @@ export default function Projects({
                   width={96}
                   height={96}
                   className="projects__portal-logo-img"
+                  unoptimized
                   priority
                 />
               </div>

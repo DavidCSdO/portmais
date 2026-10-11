@@ -59,3 +59,15 @@
   align-items: center;
   justify-content: center;
 }
+
+@media (max-width: 600px) {
+  .circular-text {
+    width: clamp(260px, 78vw, 310px);
+    height: clamp(260px, 78vw, 310px);
+  }
+
+  .circular-text span {
+    font-size: clamp(10px, 3vw, 13px);
+    letter-spacing: 0.13em;
+  }
+}

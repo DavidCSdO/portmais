@@ -142,7 +142,8 @@
   width: clamp(180px, 24vw, 360px);
   height: clamp(180px, 24vw, 360px);
   pointer-events: none;
-  will-change: transform, top, filter;
+  /* No `will-change: transform` here: it freezes rasterization at base scale
+     and makes the star blurry while it zooms up to ~4x */
 }
 
 .scene-star-portal--intro {
@@ -157,6 +158,48 @@
   height: 100%;
   object-fit: contain;
   animation: heroLogoPulse 3.2s ease-in-out infinite;
+}
+
+/* Star logo: appears on black screen at center, holds, then glides down to final position */
+@keyframes heroLogoOpening {
+  0% {
+    top: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  28% {
+    top: 50%;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.12);
+    animation-timing-function: ease-in-out;
+  }
+
+  38% {
+    top: 50%;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+
+  100% {
+    top: 76vh;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Continuous breathing glow for the star */
+@keyframes heroLogoPulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 35px rgba(188, 255, 126, 0.35));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 65px rgba(188, 255, 126, 0.65));
+  }
 }
 
 /* Responsive adjustments */
@@ -174,7 +217,6 @@
     width: 100%;
   }
 
-
   .about__right {
     justify-content: center;
     width: 100%;
@@ -183,6 +225,60 @@
   .about__card {
     max-width: 100%;
     padding: 1.6rem 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .scene-star-portal {
+    width: clamp(96px, 24vw, 128px);
+    height: clamp(96px, 24vw, 128px);
+  }
+
+  .scene-star-portal--intro {
+    top: 66vh;
+    animation: heroLogoOpeningMobile 2.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  }
+
+  .about__star-spacer {
+    height: clamp(130px, 16vh, 180px);
+  }
+
+  .scene-layer--about {
+    padding: 0 clamp(1rem, 3.5vw, 1.5rem);
+  }
+
+  .about__card {
+    padding: 1.3rem 1.15rem;
+    border-radius: 14px;
+  }
+}
+
+@keyframes heroLogoOpeningMobile {
+  0% {
+    top: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  28% {
+    top: 50%;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.12);
+    animation-timing-function: ease-in-out;
+  }
+
+  38% {
+    top: 50%;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+
+  100% {
+    top: 66vh;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 

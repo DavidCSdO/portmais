@@ -633,22 +633,17 @@ const TechText: React.FC<TechTextProps> = ({
       last = now;
       const view = ensureLayout(s);
 
-      const sweeping = s.sweep && !reducedMotion && !pointer.inside && dragging < 0;
-      if (sweeping) clock += dt * s.speed;
+      const sweeping = false;
       pulse += dt;
       let targetX = pointer.x;
       let targetY = pointer.y;
-      if (sweeping) {
-        targetX = view.left + (view.right - view.left) * (0.5 - 0.5 * Math.cos(clock * 0.45));
-        targetY = view.top + (view.bottom - view.top) * (0.45 + 0.1 * Math.sin(clock * 0.8));
-      }
-      const active = pointer.inside || sweeping || dragging >= 0;
+      const active = pointer.inside || dragging >= 0;
       if (active && !placed) {
         lens.x = targetX;
         lens.y = targetY;
       }
       if (active) {
-        const lag = pointer.inside ? 0.05 : 0.22;
+        const lag = 0.05;
         lens.x = approach(lens.x, targetX, dt, lag);
         lens.y = approach(lens.y, targetY, dt, lag);
       }

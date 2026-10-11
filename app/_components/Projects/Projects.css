@@ -198,10 +198,8 @@
   height: clamp(75px, 8.5vw, 96px);
   cursor: pointer;
   transform-origin: center center;
-  will-change: transform, filter;
   transition: transform 0.25s ease, filter 0.3s ease;
   z-index: 50;
-  pointer-events: auto;
 }
 
 .projects__portal-logo-wrapper:hover {

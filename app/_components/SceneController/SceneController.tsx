@@ -7,6 +7,11 @@ import Projects from "../Projects";
 import Showcase from "../Showcase";
 import IdeaSection from "../IdeaSection";
 import DockNav from "../DockNav";
+import NatureSpotlight, { ContemplationExitPill } from "../NatureSpotlight";
+import { useContemplation } from "../../_utils/contemplation";
+import DriftingMist from "../DriftingMist";
+import { DriftingNeedles } from "../ForestAtmosphere";
+import Hero from "../Hero";
 import "../Hero/Hero.css";
 import "./SceneController.css";
 
@@ -16,6 +21,8 @@ export default function SceneController() {
   const [viewportH, setViewportH] = useState(1080);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [containerH, setContainerH] = useState(1200);
+  const [ideaContainerH, setIdeaContainerH] = useState(4200);
+  const isAboutContemplating = useContemplation();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -49,15 +56,26 @@ export default function SceneController() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
+    let ro: ResizeObserver | null = null;
+    if (containerRef.current && typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(() => {
+        if (containerRef.current) {
+          setContainerH(containerRef.current.offsetHeight);
+        }
+      });
+      ro.observe(containerRef.current);
+    }
+
     const timer = setTimeout(() => {
       if (containerRef.current) {
         setContainerH(containerRef.current.offsetHeight);
       }
-    }, 150);
+    }, 250);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResize);
+      ro?.disconnect();
       clearTimeout(timer);
     };
   }, [hasScrolled]);
@@ -68,8 +86,8 @@ export default function SceneController() {
   // 2. About scroll distance: generous scroll to comfortably read card & view full mountain
   const aboutScrollDistance = Math.max(viewportH * 1.5, 1400);
 
-  // 3. Projects transition distance: modern differentiated liquid horizon transition
-  const projectsTransitionDistance = Math.max(viewportH * 0.9, 850);
+  // 3. Projects transition distance: smooth fluid horizon wave transition
+  const projectsTransitionDistance = Math.max(viewportH * 0.65, 580);
 
   // 4. Projects scroll distance: equally large height as about
   const projectsScrollDistance = Math.max(viewportH * 1.6, 1500);
@@ -83,8 +101,8 @@ export default function SceneController() {
   // 7. Idea (Back5) transition distance: modern liquid horizon wave curtain
   const ideaTransitionDistance = Math.max(viewportH * 0.9, 850);
 
-  // 8. Idea (Back5) scroll distance: scroll through Conceito, MaskedHeading, FolderFloat, ScrollExpand and Footer
-  const ideaScrollDistance = Math.max(viewportH * 4.2, 4200);
+  // 8. Idea (Back5) scroll distance: scroll through Conceito, MaskedHeading, FolderFloat, ProcessSection, ScrollExpand and Footer
+  const ideaScrollDistance = Math.max(viewportH * 3.8, ideaContainerH - viewportH + 250, 4000);
 
   // Total scrollable height for scene-wrapper so scrollbar matches perfectly
   const totalSceneHeight =
@@ -153,14 +171,14 @@ export default function SceneController() {
     1
   );
 
-  // BACK2.jpg is 1200 x 2133 (aspect ratio 1200/2133)
+  // landscape_about.jpg is 2560 x 1707 (aspect ratio 2560/1707)
   // Calculate rendered dimensions so image NEVER stretches and ALWAYS covers viewport
-  const imgAspect = 1200 / 2133;
+  const imgAspect = 2560 / 1707;
   let bgRenderedW = viewportW;
   let bgRenderedH = viewportW / imgAspect;
-  if (bgRenderedH < viewportH) {
-    bgRenderedH = viewportH;
-    bgRenderedW = viewportH * imgAspect;
+  if (bgRenderedH < viewportH * 1.35) {
+    bgRenderedH = viewportH * 1.35;
+    bgRenderedW = bgRenderedH * imgAspect;
   }
   const maxBgScrollY = Math.max(0, bgRenderedH - viewportH);
   const bgTranslateX = -Math.max(0, (bgRenderedW - viewportW) / 2);
@@ -171,8 +189,10 @@ export default function SceneController() {
   const contentTranslateY = aboutScrollProgress * maxContentScroll;
 
   // Unified Star Zoom Transition states (active in Stage 1)
+  const isMobile = viewportW <= 600;
+  const baseStarTop = isMobile ? 66 : 76;
   let starScale = 1;
-  let starTopVh = 76; // in vh
+  let starTopVh = baseStarTop; // in vh
   let starGlow = 0.45;
   let heroOpacity = 1;
   let aboutOpacity = 0;
@@ -180,16 +200,22 @@ export default function SceneController() {
   let starOpacity = 1;
 
   if (
-    projectsTransitionProgress > 0 ||
     projectsScrollProgress > 0 ||
     showcaseTransitionProgress > 0 ||
     showcaseScrollProgress > 0 ||
     ideaTransitionProgress > 0 ||
     ideaScrollProgress > 0
   ) {
-    // Stages 2, 3, 4, 5
+    // Stages 3, 4, 5
     heroOpacity = 0;
     aboutOpacity = 0;
+    aboutContentOpacity = 0;
+    starOpacity = 0;
+  } else if (projectsTransitionProgress > 0) {
+    // Stage 2 -> 3 Transition: About content and mountain fade out harmoniously as Projects enters
+    heroOpacity = 0;
+    aboutOpacity = Math.max(0, 1 - Math.pow(projectsTransitionProgress, 1.2) * 1.5);
+    aboutContentOpacity = Math.max(0, 1 - Math.pow(projectsTransitionProgress, 1.1) * 1.5);
     starOpacity = 0;
   } else if (transitionProgress <= 0.5) {
     // Stage 1: Hero -> About zoom in
@@ -197,7 +223,7 @@ export default function SceneController() {
     heroOpacity = Math.max(0, 1 - Math.pow(p1, 1.3));
     aboutOpacity = Math.min(1, Math.pow(p1, 1.8));
     starScale = 1 + Math.sin(p1 * (Math.PI / 2)) * 3.2;
-    starTopVh = 76 - p1 * 48; // from 76vh to 28vh
+    starTopVh = baseStarTop - p1 * (baseStarTop - 28); // from baseStarTop to 28vh
     starGlow = 0.45 + p1 * 0.45;
     aboutContentOpacity = 0;
     starOpacity = 1;
@@ -216,13 +242,12 @@ export default function SceneController() {
         : 1;
   }
 
-  // When transition to Projects starts, About fades, gently lifts and blurs
+  // When transition to Projects starts, About gently lifts and blurs
   let aboutTranslateY = 0;
   let aboutBlur = 0;
   if (projectsTransitionProgress > 0) {
-    aboutOpacity = Math.max(0, 1 - Math.pow(projectsTransitionProgress, 1.2) * 1.5);
-    aboutTranslateY = projectsTransitionProgress * 12; // vh
-    aboutBlur = projectsTransitionProgress * 8; // px
+    aboutTranslateY = projectsTransitionProgress * 8; // vh
+    aboutBlur = projectsTransitionProgress * 6; // px
   }
 
   // Projects layer entrance and exit into Showcase
@@ -254,34 +279,45 @@ export default function SceneController() {
   let activeSceneId = "hero";
   if (scrollY >= ideaScrollOffset + ideaScrollDistance * 0.78) {
     activeSceneId = "contact";
-  } else if (scrollY >= ideaScrollOffset - 80) {
+  } else if (scrollY >= ideaTransOffset + ideaTransitionDistance * 0.4) {
     activeSceneId = "idea";
-  } else if (scrollY >= showcaseScrollOffset - 80) {
+  } else if (scrollY >= showcaseTransOffset + showcaseTransitionDistance * 0.4) {
     activeSceneId = "showcase";
-  } else if (scrollY >= projectsScrollOffset - 80) {
+  } else if (scrollY >= projectsTransOffset + projectsTransitionDistance * 0.4) {
     activeSceneId = "projects";
   } else if (scrollY >= transitionDistance - 80) {
     activeSceneId = "about";
   }
+
+  const handleExplore = () => {
+    window.scrollTo({
+      top: transitionDistance + 60,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <div
       className="scene-wrapper"
       style={{ height: `${totalSceneHeight}px` }}
     >
-      {/* Minimalist Floating Island Dock (Desktop - 4: BranchedMenu + MorphSlider + SloshGauge) */}
+      {/* Contemporary Floating Glass Island Dock */}
       <DockNav
         scrollY={scrollY}
         totalHeight={totalSceneHeight}
         activeSceneId={activeSceneId}
+        hidden={isAboutContemplating}
         chapterOffsets={{
           about: transitionDistance + 60,
           projects: projectsScrollOffset + 60,
           showcase: showcaseScrollOffset + 60,
           idea: ideaScrollOffset + 60,
-          contact: ideaScrollOffset + ideaScrollDistance * 0.94
+          contact: ideaScrollOffset + ideaScrollDistance * 0.94,
         }}
       />
+
+      {/* Global Contemplation exit pill (outside transformed layers, above the dock) */}
+      <ContemplationExitPill />
 
       {/* Sticky Fullscreen Stage */}
       <div className="scene-stage">
@@ -293,34 +329,7 @@ export default function SceneController() {
             pointerEvents: transitionProgress > 0.4 ? "none" : "auto",
           }}
         >
-          {/* Title — handwritten reveal behind mountains */}
-          <h1 className="hero__title" aria-label="DAVID">
-            {["D", "A", "V", "I", "D"].map((char, index) => (
-              <span
-                key={index}
-                className="hero__char"
-                style={{ "--char-index": index } as React.CSSProperties}
-              >
-                <span className="hero__char-stroke" aria-hidden="true">{char}</span>
-                <span className="hero__char-fill" aria-hidden="true">{char}</span>
-              </span>
-            ))}
-          </h1>
-
-          {/* Mountain landscape */}
-          <div className="hero__mountain-wrapper">
-            <Image
-              src="/images/BACK1.png"
-              alt="Paisagem montanhosa"
-              width={2560}
-              height={1080}
-              className="hero__mountain"
-              priority
-            />
-          </div>
-
-          {/* Opening transition curtain */}
-          <div className="hero__curtain" aria-hidden="true" />
+          <Hero onExplore={handleExplore} />
         </div>
 
         {/* Layer 2: About Scene */}
@@ -336,7 +345,7 @@ export default function SceneController() {
                 : "none",
           }}
         >
-          {/* Full vertical height mountain track (zero black gap, full mountain reveal from peak to clouds) */}
+          {/* Full vertical height mountain track */}
           <div
             className="about__bg-track"
             style={{
@@ -346,21 +355,33 @@ export default function SceneController() {
             }}
           >
             <Image
-              src="/images/BACK2.jpg"
+              src="/images/landscape_about.jpg"
               alt="Paisagem montanhosa com neve e nuvens"
               fill
               priority={false}
               className="about__bg-img"
-              sizes="100vw"
+              sizes={`${Math.ceil(bgRenderedW)}px`}
+              quality={90}
             />
           </div>
+
+          {/* Alpine mist drifting along the snow peaks */}
+          <DriftingMist opacity={0.28} speedMultiplier={1} />
+
+          {/* Subtle drifting needles */}
+          <DriftingNeedles opacity={0.35} />
+
+          {/* Contemporary Scenic Spotlight Discovery */}
+          <NatureSpotlight sceneId="about" position="top-right" />
 
           <div
             ref={containerRef}
             className="about__container"
             style={{
-              opacity: aboutContentOpacity,
+              opacity: isAboutContemplating ? 0 : aboutContentOpacity,
               transform: `translate3d(0, -${contentTranslateY}px, 0)`,
+              transition: "opacity 0.5s ease",
+              pointerEvents: isAboutContemplating ? "none" : undefined,
             }}
           >
             {/* Generous Star clearance spacer so star NEVER touches the card */}
@@ -500,6 +521,7 @@ export default function SceneController() {
             scrollProgress={ideaScrollProgress}
             viewportW={viewportW}
             viewportH={viewportH}
+            onContainerHeightChange={setIdeaContainerH}
           />
         </div>
 
@@ -511,7 +533,8 @@ export default function SceneController() {
             transform: hasScrolled
               ? `translate3d(-50%, calc(-50% - ${starScrollY}px), 0) scale(${starScale})`
               : undefined,
-            opacity: hasScrolled ? starOpacity : undefined,
+            opacity: isAboutContemplating ? 0 : (hasScrolled ? starOpacity : undefined),
+            transition: "opacity 0.5s ease",
             filter: `drop-shadow(0 0 ${35 * Math.min(starScale, 2.5)}px rgba(188, 255, 126, ${starGlow}))`,
           }}
         >
@@ -521,6 +544,7 @@ export default function SceneController() {
             width={500}
             height={500}
             className="scene-star-img"
+            unoptimized
             priority
           />
         </div>

@@ -16,10 +16,18 @@ export default function CustomCursor() {
   const rafId = useRef<number | null>(null);
 
   useEffect(() => {
-    // Only enable on devices with fine pointer (mouse / trackpad)
+    // Only enable on desktop devices with fine pointer (mouse / trackpad)
     if (typeof window === 'undefined') return;
+    const isTouchOrSmall =
+      window.innerWidth <= 900 ||
+      window.matchMedia('(pointer: coarse)').matches ||
+      window.matchMedia('(hover: none)').matches;
     const isFinePointer = window.matchMedia('(pointer: fine)').matches;
-    if (!isFinePointer) return;
+
+    if (isTouchOrSmall || !isFinePointer) {
+      setIsVisible(false);
+      return;
+    }
 
     setIsVisible(true);
 
@@ -60,7 +68,12 @@ export default function CustomCursor() {
       setIsVisible(true);
     };
 
+    const onTouchStart = () => {
+      setIsVisible(false);
+    };
+
     window.addEventListener('mousemove', onMouseMove, { passive: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
     document.addEventListener('mouseleave', onMouseLeave);
     document.addEventListener('mouseenter', onMouseEnter);
 
@@ -80,6 +93,7 @@ export default function CustomCursor() {
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('touchstart', onTouchStart);
       document.removeEventListener('mouseleave', onMouseLeave);
       document.removeEventListener('mouseenter', onMouseEnter);
       if (rafId.current) cancelAnimationFrame(rafId.current);

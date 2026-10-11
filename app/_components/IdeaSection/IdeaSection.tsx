@@ -5,7 +5,12 @@ import Image from "next/image";
 import MaskedHeading from "../MaskedHeading";
 import FolderFloat from "../FolderFloat";
 import ScrollExpand from "../ScrollExpand";
+import ProcessSection from "../ProcessSection";
 import Footer from "../Footer";
+import DriftingMist from "../DriftingMist";
+import ForestAtmosphere from "../ForestAtmosphere";
+import NatureSpotlight from "../NatureSpotlight";
+import { useContemplation } from "../../_utils/contemplation";
 import "./IdeaSection.css";
 
 interface IdeaSectionProps {
@@ -47,6 +52,7 @@ export default function IdeaSection({
 }: IdeaSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerH, setContainerH] = useState(1700);
+  const isContemplating = useContemplation();
 
   useEffect(() => {
     const updateHeight = () => {
@@ -76,9 +82,9 @@ export default function IdeaSection({
     };
   }, [onContainerHeightChange]);
 
-  // BACK5.jpg is 1080 x 1920 (aspect ratio 1080/1920 = 0.5625)
-  // Ensure background covers full screen with zero black bars and smooth vertical parallax
-  const imgAspect = 1080 / 1920;
+  // landscape_idea.jpg is 2560 x 1707 (aspect ratio 2560/1707 = 1.5)
+  // Weisshorn mountain summit above an ocean of clouds in 4K resolution
+  const imgAspect = 2560 / 1707;
   let bgRenderedW = viewportW;
   let bgRenderedH = viewportW / imgAspect;
   if (bgRenderedH < viewportH * 1.55) {
@@ -104,7 +110,7 @@ export default function IdeaSection({
 
   return (
     <div className="idea-scene">
-      {/* Background Track: BACK5.jpg (Misty pine forest) */}
+      {/* Background Track: landscape_idea.jpg (Weisshorn Acima das Nuvens 4K) */}
       <div
         className="idea__bg-track"
         style={{
@@ -114,23 +120,35 @@ export default function IdeaSection({
         }}
       >
         <Image
-          src="/images/BACK5.jpg"
-          alt="Floresta de pinheiros e névoa - BACK5"
+          src="/images/landscape_idea.jpg"
+          alt="Weisshorn Acima do Mar de Nuvens em 4K"
           fill
           priority={false}
           className="idea__bg-img"
-          sizes="100vw"
+          sizes={`${Math.ceil(bgRenderedW)}px`}
+          quality={90}
         />
         <div className="idea__bg-overlay" aria-hidden="true" />
       </div>
+
+      {/* Atmospheric Mist rolling across the sea of clouds */}
+      <DriftingMist opacity={0.28} speedMultiplier={0.9} />
+
+      {/* Living Forest Atmosphere: subtle slow drifting pine needles */}
+      <ForestAtmosphere needlesOpacity={0.35} />
+
+      {/* Contemporary Scenic Spotlight Discovery */}
+      <NatureSpotlight sceneId="idea" position="top-right" />
 
       {/* Main Content Container */}
       <div
         ref={containerRef}
         className="idea__container"
         style={{
-          opacity: contentOpacity,
-          transform: `translate3d(0, -${contentTranslateY}px, 0)`
+          opacity: isContemplating ? 0 : contentOpacity,
+          transform: `translate3d(0, -${contentTranslateY}px, 0)`,
+          transition: "opacity 0.5s ease",
+          pointerEvents: isContemplating ? "none" : undefined,
         }}
       >
         {/* ====================================================
@@ -222,7 +240,7 @@ export default function IdeaSection({
                   items={FOLDER_ITEMS}
                   label="Notas de Criação"
                   sublabel="6 diretrizes"
-                  trigger="hover"
+                  trigger={isMobile ? "click" : "hover"}
                   closeOnSelect={false}
                   physics={true}
                   drift={0.5}
@@ -250,7 +268,12 @@ export default function IdeaSection({
         </section>
 
         {/* ====================================================
-           4. EXPAND ZONE & FOOTER: ScrollExpand com Footer Completo
+           4. PROCESS & METHODOLOGY (3 Steps PixelSwap & Quick Booking)
+           ==================================================== */}
+        <ProcessSection />
+
+        {/* ====================================================
+           5. EXPAND ZONE & FOOTER: ScrollExpand com Footer Completo
            ==================================================== */}
         <section className="idea-block idea-block--expand" id="contato">
           <div className="idea-block__header">

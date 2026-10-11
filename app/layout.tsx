@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import localFont from "next/font/local";
 import CustomCursor from "./_components/CustomCursor";
+import AmbientSpotlight from "./_components/AmbientSpotlight";
 import "./_styles/globals.css";
 
 const geistSans = Geist({
@@ -90,6 +91,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <div className="film-grain-overlay" aria-hidden="true" />
         <CustomCursor />
+        <AmbientSpotlight />
         {children}
       </body>
     </html>

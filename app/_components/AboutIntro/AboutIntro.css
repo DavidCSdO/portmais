@@ -38,6 +38,17 @@
   background: var(--intro-rule);
 }
 
+.intro__altitude-tag {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: rgba(188, 255, 126, 0.75);
+  opacity: 0.85;
+}
+
 /* Greeting */
 .intro__greeting {
   margin: 0 0 1.1rem;

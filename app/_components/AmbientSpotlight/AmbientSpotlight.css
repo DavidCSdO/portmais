@@ -1,0 +1,29 @@
+.ambient-spotlight {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 45;
+  mix-blend-mode: screen;
+  background: radial-gradient(
+    circle 540px at var(--spot-x, -1000px) var(--spot-y, -1000px),
+    rgba(224, 242, 254, 0.055) 0%,
+    rgba(188, 255, 126, 0.022) 28%,
+    rgba(148, 163, 184, 0.01) 50%,
+    transparent 68%
+  );
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: background;
+}
+
+.ambient-spotlight--active {
+  opacity: 1;
+}
+
+@media (max-width: 900px), (pointer: coarse), (hover: none) {
+  .ambient-spotlight {
+    display: none !important;
+  }
+}

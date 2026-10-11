@@ -1,8 +1,13 @@
-/* ===========================
-   Showcase Section (BACK4.jpg + Accordion Gallery)
-   =========================== */
+/* ==========================================================================
+   Showcase Section — Editorial Capacidades (Awwwards Minimalist)
+   Matches the design system of About & AboutIntro
+   ========================================================================== */
 
 .showcase-scene {
+  --showcase-ink: rgba(244, 246, 248, 0.94);
+  --showcase-muted: rgba(220, 228, 234, 0.52);
+  --showcase-rule: rgba(255, 255, 255, 0.14);
+
   position: absolute;
   inset: 0;
   width: 100%;
@@ -12,6 +17,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 300;
 }
 
 /* Background Track: BACK4.jpg with seamless parallax */
@@ -35,7 +42,7 @@
   background: radial-gradient(
     circle at 50% 30%,
     rgba(6, 12, 16, 0.45) 0%,
-    rgba(6, 12, 16, 0.8) 100%
+    rgba(5, 10, 14, 0.82) 100%
   );
   pointer-events: none;
 }
@@ -54,115 +61,408 @@
   will-change: transform, opacity;
 }
 
-/* Star clearance spacer (Generous clearance matching About so star NEVER touches content) */
+/* Star clearance spacer (identical to About so star never touches card) */
 .showcase__star-spacer {
   width: 100%;
   height: clamp(210px, 26vh, 290px);
 }
 
-/* Header */
-.showcase__header {
-  text-align: center;
-  margin-bottom: clamp(2rem, 4vh, 3.5rem);
+/* Two-column Content Layout */
+.showcase__content {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: clamp(2.5rem, 4.5vw, 5rem);
+  align-items: flex-start;
+}
+
+/* ==========================================================================
+   Left Column: Editorial Intro & Spec Sheet
+   ========================================================================== */
+.showcase__left {
+  position: sticky;
+  top: clamp(2rem, 5vh, 4rem);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.85rem;
-}
-
-.showcase__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(14, 22, 28, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 9999px;
-  padding: 6px 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-.showcase__badge-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-accent, #bcff7e);
-  box-shadow: 0 0 8px var(--color-accent, #bcff7e);
-}
-
-.showcase__badge-text {
-  font-family: var(--font-inter), sans-serif;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(240, 245, 248, 0.9);
-}
-
-.showcase__title {
-  font-family: var(--font-inter), sans-serif;
-  font-size: clamp(1.8rem, 2.6vw, 2.5rem);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: #ffffff;
-  text-transform: uppercase;
-  margin: 0;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
-}
-
-.showcase__subtitle {
-  font-family: var(--font-inter), sans-serif;
-  font-size: clamp(0.9rem, 1.1vw, 1.05rem);
-  font-weight: 300;
-  color: rgba(240, 245, 248, 0.75);
-  max-width: 620px;
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* Gallery wrapper */
-.showcase__gallery-wrapper {
   width: 100%;
-  margin-bottom: clamp(2.5rem, 5vh, 4rem);
+  max-width: 460px;
+  padding-top: clamp(0.5rem, 1.5vh, 1.5rem);
+  color: var(--showcase-ink);
 }
 
-/* Footer note */
-.showcase__footer-note {
+/* Section Index: 04 ——— Capacidades */
+.showcase__index {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
-  width: 100%;
-  max-width: 680px;
-  opacity: 0.65;
-  margin-top: 1rem;
+  gap: 0.9rem;
+  margin-bottom: clamp(1.8rem, 3.8vh, 2.8rem);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--showcase-muted);
 }
 
-.showcase__footer-line {
-  flex: 1;
+.showcase__index-line {
+  width: 48px;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  background: var(--showcase-rule);
 }
 
-.showcase__footer-text {
-  font-family: var(--font-inter), sans-serif;
-  font-size: 0.72rem;
-  font-weight: 600;
+.showcase__biome-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  color: rgba(188, 255, 126, 0.7);
+  opacity: 0.85;
+}
+
+.showcase__biome-tag svg {
+  color: rgba(188, 255, 126, 0.85);
+}
+
+/* Kicker */
+.showcase__kicker {
+  margin: 0 0 1.1rem;
+  font-size: 0.82rem;
+  font-weight: 400;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(240, 245, 248, 0.85);
-  white-space: nowrap;
+  color: var(--showcase-muted);
 }
 
-@media (max-width: 768px) {
-  .showcase__footer-text {
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
+/* Large Statement */
+.showcase__statement {
+  margin: 0 0 clamp(2.2rem, 4.5vh, 3.2rem);
+  font-size: clamp(1.85rem, 2.9vw, 2.65rem);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--showcase-ink);
+  text-wrap: balance;
+}
+
+.showcase__statement em {
+  font-style: normal;
+  color: rgba(244, 246, 248, 0.45);
+}
+
+/* Spec Rows */
+.showcase__specs {
+  margin: 0 0 clamp(2rem, 4.2vh, 2.8rem);
+  border-top: 1px solid var(--showcase-rule);
+}
+
+.showcase__row {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 1rem;
+  padding: 0.95rem 0;
+  border-bottom: 1px solid var(--showcase-rule);
+}
+
+.showcase__row-label {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--showcase-muted);
+  padding-top: 0.18rem;
+}
+
+.showcase__row-value {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--showcase-ink);
+}
+
+/* Footer: Link + Signature */
+.showcase__footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.showcase__link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding-bottom: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--showcase-ink);
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 100% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  cursor: pointer;
+}
+
+.showcase__link-arrow {
+  display: inline-block;
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.showcase__link:hover {
+  background-size: 0% 1px;
+  background-position: 100% 100%;
+}
+
+.showcase__link:hover .showcase__link-arrow {
+  transform: translateX(6px);
+}
+
+.showcase__signature {
+  font-family: var(--font-delamoore), cursive;
+  font-size: clamp(2.2rem, 3.4vw, 2.9rem);
+  line-height: 1;
+  color: rgba(244, 246, 248, 0.55);
+  transform: rotate(-4deg);
+  user-select: none;
+}
+
+/* ==========================================================================
+   Right Column: Refined Capabilities Directory (Awwwards Spec Sheet)
+   ========================================================================== */
+.showcase__right {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.showcase__card {
+  width: 100%;
+  max-width: 660px;
+  background: rgba(14, 18, 22, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  padding: clamp(2rem, 3.5vw, 3.25rem);
+}
+
+.showcase__directory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1.2rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--showcase-rule);
+}
+
+.showcase__directory-title {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--showcase-muted);
+}
+
+.showcase__directory-sub {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(244, 246, 248, 0.38);
+}
+
+/* Directory Items List */
+.showcase__directory-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.showcase__item {
+  padding: 1.4rem 0;
+  border-bottom: 1px solid var(--showcase-rule);
+  cursor: pointer;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+  user-select: none;
+}
+
+.showcase__item:last-child {
+  border-bottom: 1px solid var(--showcase-rule);
+}
+
+.showcase__item-top {
+  display: grid;
+  grid-template-columns: 36px 1fr 24px;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 0.65rem;
+}
+
+.showcase__item-num {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.78rem;
+  color: var(--showcase-muted);
+  letter-spacing: 0.06em;
+  padding-top: 0.15rem;
+  transition: color 0.25s ease;
+}
+
+.showcase__item-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.showcase__item-title {
+  font-size: clamp(1.05rem, 1.25vw, 1.22rem);
+  font-weight: 400;
+  color: var(--showcase-ink);
+  letter-spacing: -0.01em;
+  margin: 0;
+  transition: color 0.25s ease;
+}
+
+.showcase__item-stack {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--showcase-muted);
+}
+
+.showcase__item-indicator {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.95rem;
+  color: var(--showcase-muted);
+  text-align: right;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.showcase__item-desc {
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 1.65;
+  color: rgba(220, 228, 234, 0.75);
+  margin: 0;
+  padding-left: calc(36px + 1rem);
+}
+
+.showcase__item-details {
+  margin-top: 0.9rem;
+  margin-left: calc(36px + 1rem);
+  padding: 0.85rem 1rem;
+  background: rgba(0, 0, 0, 0.25);
+  border-left: 2px solid var(--showcase-rule);
+  border-radius: 4px;
+  animation: showcaseDetailFade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.showcase__item-details p {
+  font-size: 0.82rem;
+  font-weight: 300;
+  line-height: 1.6;
+  color: rgba(244, 246, 248, 0.7);
+  margin: 0;
+}
+
+@keyframes showcaseDetailFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.showcase__item:hover .showcase__item-title {
+  color: #ffffff;
+}
+
+.showcase__item:hover .showcase__item-num,
+.showcase__item:hover .showcase__item-indicator {
+  color: var(--showcase-ink);
+}
+
+.showcase__item--expanded {
+  border-bottom-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Minimalist Tech Tags Ribbon at the base of the card */
+.showcase__tech-ribbon {
+  margin-top: 1.8rem;
+  padding-top: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.showcase__tech-ribbon-label {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--showcase-muted);
+}
+
+.showcase__tech-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.showcase__tech-pill {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  color: rgba(220, 228, 234, 0.72);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 4px;
+  padding: 3px 8px;
+  transition: all 0.2s ease;
+}
+
+.showcase__tech-pill:hover {
+  color: var(--showcase-ink);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+@media (max-width: 900px) {
+  .showcase__content {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .showcase__left {
+    position: static;
+    max-width: 100%;
+    padding-top: 0;
+  }
+
+  .showcase__right {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .showcase__card {
+    max-width: 100%;
+    padding: 1.6rem 1.5rem;
+  }
+
+  .showcase__item-desc {
+    padding-left: 0;
+    margin-top: 0.4rem;
+  }
+
+  .showcase__item-details {
+    margin-left: 0;
   }
 }

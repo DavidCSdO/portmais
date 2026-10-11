@@ -103,6 +103,15 @@
   pointer-events: none;
 }
 
+@media (max-width: 900px), (pointer: coarse), (hover: none) {
+  .custom-cursor-root {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .custom-cursor-root {
     display: none !important;
