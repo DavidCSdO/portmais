@@ -28,7 +28,7 @@ const PROCESS_STEPS: ProcessStep[] = [
     tag: "DIAGNÓSTICO & ARTE",
     title: "Imersão & Visão Autoral",
     summary: "Mapeamento das regras de negócio, arquitetura e prototipagem sensorial. Zero templates prontos.",
-    natureImage: "/images/landscape_about.jpg",
+    natureImage: "/images/landscape_about.webp",
     natureAlt: "Vale Glacial de Kluane",
     deliverables: ["Arquitetura de Informação", "Direção de Arte Exclusiva", "Protótipos em Alta Fidelidade"],
     deepDive: {
@@ -44,7 +44,7 @@ const PROCESS_STEPS: ProcessStep[] = [
     tag: "ENGENHARIA PURA",
     title: "Código Limpo & 60 FPS",
     summary: "Next.js 15, APIs resilientes, modelagem relacional estrita e interações táteis na GPU.",
-    natureImage: "/images/landscape_showcase.jpg",
+    natureImage: "/images/landscape_showcase.webp",
     natureAlt: "Taiga conífera de Oulanka",
     deliverables: ["Next.js 15 & React 19", "APIs Seguras & Bancos ACID", "Física Sensorial a 60 FPS"],
     deepDive: {
@@ -60,7 +60,7 @@ const PROCESS_STEPS: ProcessStep[] = [
     tag: "LANÇAMENTO & IMPACTO",
     title: "Produção & SEO Técnico",
     summary: "Deploy otimizado, SEO estruturado para indexação máxima e comunicação direta sem agência.",
-    natureImage: "/images/landscape_idea.jpg",
+    natureImage: "/images/landscape_idea.webp",
     natureAlt: "Weisshorn acima das nuvens",
     deliverables: ["SEO Estruturado & Core Vitals", "Deploy Contínuo Global", "Canal Direto com o Dev"],
     deepDive: {
@@ -200,7 +200,7 @@ export default function ProcessSection() {
                   <div className="process-card-back">
                     <div className="process-card-back__logo-wrap" aria-hidden="true">
                       <Image
-                        src="/images/LOGO.png"
+                        src="/images/LOGO.webp"
                         alt="David Cardoso Logo"
                         width={54}
                         height={54}
@@ -254,7 +254,7 @@ export default function ProcessSection() {
               <div className="process-modal-brand">
                 <div className="process-modal-logo">
                   <Image
-                    src="/images/LOGO.png"
+                    src="/images/LOGO.webp"
                     alt="Logo David Cardoso"
                     width={26}
                     height={26}

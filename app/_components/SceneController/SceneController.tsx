@@ -11,6 +11,7 @@ import NatureSpotlight, { ContemplationExitPill } from "../NatureSpotlight";
 import { useContemplation } from "../../_utils/contemplation";
 import DriftingMist from "../DriftingMist";
 import { DriftingNeedles } from "../ForestAtmosphere";
+import { Particles } from "../Backgrounds";
 import Hero from "../Hero";
 import "../Hero/Hero.css";
 import "./SceneController.css";
@@ -345,34 +346,38 @@ export default function SceneController() {
                 : "none",
           }}
         >
-          {/* Full vertical height mountain track */}
+          {/* Pure Code Light Atmosphere Background */}
+          <div className="about__light-bg" aria-hidden="true" />
+
+          {/* React Bits Particles Constellation Overlay */}
           <div
-            className="about__bg-track"
             style={{
-              width: `${bgRenderedW}px`,
-              height: `${bgRenderedH}px`,
-              transform: `translate3d(${bgTranslateX}px, -${bgTranslateY}px, 0)`,
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              pointerEvents: "none",
+              zIndex: 1,
             }}
           >
-            <Image
-              src="/images/landscape_about.jpg"
-              alt="Paisagem montanhosa com neve e nuvens"
-              fill
-              priority={false}
-              className="about__bg-img"
-              sizes={`${Math.ceil(bgRenderedW)}px`}
-              quality={90}
+            <Particles
+              particleCount={110}
+              particleSpread={10}
+              speed={0.14}
+              particleColors={["#0284c7", "#0d9488", "#16a34a", "#6366f1", "#475569"]}
+              moveParticlesOnHover={true}
+              shape="sparkle"
+              glow={0.5}
+              twinkle={0.5}
+              connections={true}
+              connectionDistance={135}
+              opacity={0.65}
+              lightMode={true}
             />
           </div>
 
-          {/* Alpine mist drifting along the snow peaks */}
-          <DriftingMist opacity={0.28} speedMultiplier={1} />
-
-          {/* Subtle drifting needles */}
-          <DriftingNeedles opacity={0.35} />
-
-          {/* Contemporary Scenic Spotlight Discovery */}
-          <NatureSpotlight sceneId="about" position="top-right" />
+          {/* Soft ambient drifting mist */}
+          <DriftingMist opacity={0.16} speedMultiplier={1} />
 
           <div
             ref={containerRef}
@@ -535,11 +540,11 @@ export default function SceneController() {
               : undefined,
             opacity: isAboutContemplating ? 0 : (hasScrolled ? starOpacity : undefined),
             transition: "opacity 0.5s ease",
-            filter: `drop-shadow(0 0 ${35 * Math.min(starScale, 2.5)}px rgba(188, 255, 126, ${starGlow}))`,
+            filter: `drop-shadow(0 0 ${35 * Math.min(starScale, 2.5)}px rgba(2, 132, 199, ${starGlow}))`,
           }}
         >
           <Image
-            src="/images/LOGO.png"
+            src="/images/LOGO.webp"
             alt="Logo estrela de quatro pontas"
             width={500}
             height={500}

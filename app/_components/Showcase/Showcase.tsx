@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import DriftingMist from "../DriftingMist";
-import ForestAtmosphere from "../ForestAtmosphere";
-import NatureSpotlight from "../NatureSpotlight";
+import { Waves } from "../Backgrounds";
 import { playClickSound } from "../../_utils/sound";
 import { useContemplation } from "../../_utils/contemplation";
 import "./Showcase.css";
@@ -151,35 +149,37 @@ export default function Showcase({
 
   return (
     <div className="showcase-scene">
-      {/* Background Track: landscape_showcase.jpg (Taiga Boreal de Oulanka 4K) */}
+      {/* Pure Code Light Atmosphere Background */}
+      <div className="showcase__light-bg" aria-hidden="true" />
+
+      {/* React Bits Waves Overlay (Topographic Liquid Ripple) */}
       <div
-        className="showcase__bg-track"
         style={{
-          width: `${bgRenderedW}px`,
-          height: `${bgRenderedH}px`,
-          transform: `translate3d(${bgTranslateX}px, -${bgTranslateY}px, 0)`,
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          pointerEvents: "none",
+          zIndex: 1,
         }}
       >
-        <Image
-          src="/images/landscape_showcase.jpg"
-          alt="Taiga Conífera de Oulanka - Floresta com névoa em 4K"
-          fill
-          priority={false}
-          className="showcase__bg-img"
-          sizes={`${Math.ceil(bgRenderedW)}px`}
-          quality={90}
+        <Waves
+          lineColor="#0284c7"
+          accentColor="#059669"
+          spacing={20}
+          lineWidth={1.2}
+          amplitude={24}
+          speed={0.6}
+          mouseInteraction={true}
+          mouseRadius={160}
+          clickRipple={true}
+          opacity={0.45}
+          lightMode={true}
         />
-        <div className="showcase__bg-overlay" aria-hidden="true" />
       </div>
 
-      {/* Atmospheric Forest Mist drifting through the trees */}
-      <DriftingMist opacity={0.32} speedMultiplier={1.05} />
-
-      {/* Living Forest Atmosphere: subtle slow drifting pine needles */}
-      <ForestAtmosphere needlesOpacity={0.4} />
-
-      {/* Contemporary Scenic Spotlight Discovery */}
-      <NatureSpotlight sceneId="showcase" position="top-right" />
+      {/* Soft Ambient Mist */}
+      <DriftingMist opacity={0.16} speedMultiplier={1.05} />
 
       {/* Main Content Container */}
       <div

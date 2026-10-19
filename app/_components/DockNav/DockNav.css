@@ -52,37 +52,37 @@
 
 .dock-nav-pill {
   appearance: none;
-  background: rgba(12, 16, 20, 0.72);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(15, 23, 42, 0.1);
   border-radius: 9999px;
   padding: 8px 18px;
   display: inline-flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  color: rgba(240, 246, 250, 0.85);
+  color: #0f172a;
   box-shadow:
-    0 16px 36px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 16px 36px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dock-nav-pill:hover {
-  background: rgba(16, 22, 28, 0.88);
-  border-color: rgba(255, 255, 255, 0.16);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(2, 132, 199, 0.3);
+  color: #0284c7;
   transform: translateY(-2px);
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 20px 44px rgba(15, 23, 42, 0.16);
 }
 
 .dock-nav-pill__dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #bcff7e;
-  box-shadow: 0 0 10px #bcff7e;
+  background: #0284c7;
+  box-shadow: 0 0 10px rgba(2, 132, 199, 0.6);
 }
 
 .dock-nav-pill__chapter {
@@ -99,8 +99,8 @@
 .dock-nav-pill__gauge {
   font-family: var(--font-inter), sans-serif;
   font-size: 0.78rem;
-  color: #bcff7e;
-  font-weight: 500;
+  color: #0284c7;
+  font-weight: 600;
 }
 
 .dock-nav-pill__action {
@@ -109,12 +109,12 @@
   gap: 4px;
   padding: 3px 8px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.05);
   font-family: var(--font-inter), sans-serif;
   font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.9);
+  color: #0f172a;
 }
 
 .dock-nav-pill__arrow {
@@ -127,15 +127,15 @@
 
 .dock-nav-card {
   width: min(680px, 92vw);
-  background: rgba(11, 15, 19, 0.88);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(15, 23, 42, 0.1);
   border-radius: 24px;
   padding: 22px 24px;
   box-shadow:
-    0 28px 64px rgba(0, 0, 0, 0.65),
-    0 0 0 1px rgba(255, 255, 255, 0.04);
+    0 28px 64px rgba(15, 23, 42, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.8);
   animation: dockExpandIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -156,7 +156,7 @@
   justify-content: space-between;
   margin-bottom: 18px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .dock-nav-card__meta {
@@ -168,15 +168,15 @@
 .dock-nav-card__tag {
   font-family: var(--font-inter), sans-serif;
   font-size: 0.78rem;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.03em;
-  color: rgba(255, 255, 255, 0.7);
+  color: #475569;
 }
 
 .dock-nav-card__close-btn {
   appearance: none;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.05);
+  border: 1px solid rgba(15, 23, 42, 0.09);
   border-radius: 9999px;
   cursor: pointer;
   padding: 5px 12px;
@@ -185,14 +185,14 @@
   gap: 6px;
   font-family: var(--font-inter), sans-serif;
   font-size: 0.74rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: #0f172a;
   transition: all 0.2s ease;
 }
 
 .dock-nav-card__close-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
+  background: rgba(15, 23, 42, 0.1);
+  border-color: rgba(2, 132, 199, 0.25);
+  color: #0284c7;
 }
 
 /* Two-Column Stage */
@@ -214,7 +214,7 @@
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.4);
+  color: #64748b;
   margin-bottom: 8px;
 }
 
@@ -244,26 +244,26 @@
   border-radius: 10px;
   font-family: var(--font-inter), sans-serif;
   font-size: 0.85rem;
-  color: rgba(235, 242, 248, 0.6);
+  color: #334155;
   text-align: left;
   transition: all 0.18s ease;
 }
 
 .dock-nav-list__btn:hover,
 .dock-nav-list__btn--hovered {
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
+  background: rgba(2, 132, 199, 0.06);
+  color: #0284c7;
 }
 
 .dock-nav-list__btn--current {
-  color: #ffffff;
-  font-weight: 500;
+  color: #0f172a;
+  font-weight: 600;
 }
 
 .dock-nav-list__num {
   font-size: 0.72rem;
-  color: rgba(188, 255, 126, 0.8);
-  font-weight: 500;
+  color: #0284c7;
+  font-weight: 600;
   width: 18px;
 }
 
@@ -275,8 +275,8 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #bcff7e;
-  box-shadow: 0 0 8px #bcff7e;
+  background: #0284c7;
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.6);
 }
 
 /* Social Connections */

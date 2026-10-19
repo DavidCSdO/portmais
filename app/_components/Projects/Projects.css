@@ -14,29 +14,18 @@
   justify-content: flex-start;
 }
 
-/* Background Track: BACK3.jpg with seamless parallax */
-.projects__bg-track {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
-  pointer-events: none;
-  will-change: transform;
-}
-
-.projects__bg-img {
-  object-fit: cover;
-  object-position: center top;
-}
-
-.projects__bg-overlay {
+/* Modern Mesh Atmosphere Background */
+.projects__light-bg {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at 50% 20%,
-    rgba(8, 13, 17, 0.35) 0%,
-    rgba(8, 13, 17, 0.65) 100%
-  );
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse 65% 50% at 80% 20%, rgba(2, 132, 199, 0.06) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 45% at 15% 75%, rgba(5, 150, 105, 0.04) 0%, transparent 60%),
+    radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.035) 1px, transparent 0) 0 0 / 32px 32px,
+    linear-gradient(180deg, #fcfcfd 0%, #f9fbfd 35%, #f4f6fa 75%, #eff2f7 100%);
+  z-index: 0;
   pointer-events: none;
 }
 
@@ -95,18 +84,18 @@
 .projects__card {
   width: 100%;
   max-width: 660px;
-  background: rgba(14, 18, 22, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.95);
   padding: clamp(2rem, 3.5vw, 3.25rem);
 }
 
 .projects__card-header {
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
   padding-bottom: 1.25rem;
 }
 
@@ -115,28 +104,28 @@
   font-size: clamp(0.92rem, 1.1vw, 1.1rem);
   font-weight: 600;
   line-height: 1.45;
-  color: #ffffff;
+  color: #09090b;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .projects__card p {
   font-family: var(--font-inter), sans-serif;
-  font-weight: 300;
+  font-weight: 400;
   font-size: clamp(0.88rem, 1.05vw, 1.02rem);
   line-height: 1.7;
-  color: rgba(240, 245, 248, 0.9);
+  color: #09090b;
   margin-bottom: clamp(1.2rem, 2.2vh, 1.6rem);
   letter-spacing: 0.01em;
 }
 
 .projects__card-highlight {
-  color: #ffffff !important;
+  color: #0f172a !important;
 }
 
 .projects__card-highlight strong {
-  color: var(--color-accent, #bcff7e);
-  font-weight: 500;
+  color: #0284c7;
+  font-weight: 600;
 }
 
 .projects__card-signature {
@@ -144,11 +133,11 @@
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.14em;
-  color: rgba(240, 245, 248, 0.7);
+  color: #475569;
   text-transform: uppercase;
   margin-top: 1.8rem;
   line-height: 1.6;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
   padding-top: 1.2rem;
 }
 
@@ -165,7 +154,7 @@
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(240, 245, 248, 0.85);
+  color: #0f172a;
   line-height: 1.5;
 }
 

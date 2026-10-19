@@ -1,15 +1,13 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import MaskedHeading from "../MaskedHeading";
 import FolderFloat from "../FolderFloat";
 import ScrollExpand from "../ScrollExpand";
 import ProcessSection from "../ProcessSection";
 import Footer from "../Footer";
 import DriftingMist from "../DriftingMist";
-import ForestAtmosphere from "../ForestAtmosphere";
-import NatureSpotlight from "../NatureSpotlight";
+import { LightRays } from "../Backgrounds";
 import { useContemplation } from "../../_utils/contemplation";
 import "./IdeaSection.css";
 
@@ -110,35 +108,35 @@ export default function IdeaSection({
 
   return (
     <div className="idea-scene">
-      {/* Background Track: landscape_idea.jpg (Weisshorn Acima das Nuvens 4K) */}
+      {/* Pure Code Light Atmosphere Background */}
+      <div className="idea__light-bg" aria-hidden="true" />
+
+      {/* React Bits LightRays Volumetric Overlay */}
       <div
-        className="idea__bg-track"
         style={{
-          width: `${bgRenderedW}px`,
-          height: `${bgRenderedH}px`,
-          transform: `translate3d(${bgTranslateX}px, -${bgTranslateY}px, 0)`
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          pointerEvents: "none",
+          zIndex: 1,
         }}
       >
-        <Image
-          src="/images/landscape_idea.jpg"
-          alt="Weisshorn Acima do Mar de Nuvens em 4K"
-          fill
-          priority={false}
-          className="idea__bg-img"
-          sizes={`${Math.ceil(bgRenderedW)}px`}
-          quality={90}
+        <LightRays
+          raysOrigin="top-center"
+          raysColor="#0284c7"
+          lightMode={true}
+          raysSpeed={0.5}
+          lightSpread={1.4}
+          rayLength={2.6}
+          pulsating={true}
+          saturation={1.2}
+          followMouse={true}
         />
-        <div className="idea__bg-overlay" aria-hidden="true" />
       </div>
 
-      {/* Atmospheric Mist rolling across the sea of clouds */}
-      <DriftingMist opacity={0.28} speedMultiplier={0.9} />
-
-      {/* Living Forest Atmosphere: subtle slow drifting pine needles */}
-      <ForestAtmosphere needlesOpacity={0.35} />
-
-      {/* Contemporary Scenic Spotlight Discovery */}
-      <NatureSpotlight sceneId="idea" position="top-right" />
+      {/* Soft Atmospheric Mist */}
+      <DriftingMist opacity={0.16} speedMultiplier={0.9} />
 
       {/* Main Content Container */}
       <div
@@ -185,7 +183,7 @@ export default function IdeaSection({
             <MaskedHeading
               text="TUDO COMEÇA COM UMA IDEIA"
               mediaType="image"
-              src="/images/texture_gold.jpg"
+              src="/images/texture_gold.webp"
               fillScale={1.25}
               parallax={26}
               reveal="rise"
@@ -244,12 +242,12 @@ export default function IdeaSection({
                   closeOnSelect={false}
                   physics={true}
                   drift={0.5}
-                  folderColor="#27272a"
-                  frontColor="#3f3f46"
-                  paperColor="#f8fafc"
+                  folderColor="#cbd5e1"
+                  frontColor="#e2e8f0"
+                  paperColor="#ffffff"
                   itemColor="#ffffff"
                   itemTextColor="#0f172a"
-                  labelColor="#f4f4f5"
+                  labelColor="#0f172a"
                   width={folderWidth}
                   height={folderHeight}
                   radius={14}
@@ -292,7 +290,7 @@ export default function IdeaSection({
 
           <div className="idea-expand-stage">
             <ScrollExpand
-              src="/images/scale_hero.jpg"
+              src="/images/scale_hero.webp"
               alt="Visão & Precisão"
               title="Visão & Precisão"
               scrollHint="Role para expandir"

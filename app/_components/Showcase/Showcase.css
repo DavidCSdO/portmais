@@ -4,9 +4,9 @@
    ========================================================================== */
 
 .showcase-scene {
-  --showcase-ink: rgba(244, 246, 248, 0.94);
-  --showcase-muted: rgba(220, 228, 234, 0.52);
-  --showcase-rule: rgba(255, 255, 255, 0.14);
+  --showcase-ink: #0f172a;
+  --showcase-muted: #64748b;
+  --showcase-rule: rgba(15, 23, 42, 0.1);
 
   position: absolute;
   inset: 0;
@@ -21,29 +21,18 @@
   font-weight: 300;
 }
 
-/* Background Track: BACK4.jpg with seamless parallax */
-.showcase__bg-track {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
-  pointer-events: none;
-  will-change: transform;
-}
-
-.showcase__bg-img {
-  object-fit: cover;
-  object-position: center top;
-}
-
-.showcase__bg-overlay {
+/* Modern Mesh Atmosphere Background */
+.showcase__light-bg {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at 50% 30%,
-    rgba(6, 12, 16, 0.45) 0%,
-    rgba(5, 10, 14, 0.82) 100%
-  );
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse 55% 50% at 25% 30%, rgba(224, 242, 254, 0.35) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 45% at 80% 60%, rgba(240, 253, 244, 0.3) 0%, transparent 65%),
+    radial-gradient(ellipse 85% 65% at 50% 45%, rgba(241, 245, 249, 0.45) 0%, transparent 80%),
+    linear-gradient(180deg, #eef3f8 0%, #f0f3f6 35%, #f4f2f0 70%, #f0eeec 100%);
+  z-index: 0;
   pointer-events: none;
 }
 
@@ -117,19 +106,19 @@
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.14em;
-  color: rgba(188, 255, 126, 0.7);
-  opacity: 0.85;
+  color: #0284c7;
+  opacity: 0.9;
 }
 
 .showcase__biome-tag svg {
-  color: rgba(188, 255, 126, 0.85);
+  color: #0284c7;
 }
 
 /* Kicker */
 .showcase__kicker {
   margin: 0 0 1.1rem;
   font-size: 0.82rem;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--showcase-muted);
@@ -139,7 +128,7 @@
 .showcase__statement {
   margin: 0 0 clamp(2.2rem, 4.5vh, 3.2rem);
   font-size: clamp(1.85rem, 2.9vw, 2.65rem);
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.15;
   letter-spacing: -0.025em;
   color: var(--showcase-ink);
@@ -148,7 +137,7 @@
 
 .showcase__statement em {
   font-style: normal;
-  color: rgba(244, 246, 248, 0.45);
+  color: #64748b;
 }
 
 /* Spec Rows */
@@ -224,7 +213,7 @@
   font-family: var(--font-delamoore), cursive;
   font-size: clamp(2.2rem, 3.4vw, 2.9rem);
   line-height: 1;
-  color: rgba(244, 246, 248, 0.55);
+  color: rgba(15, 23, 42, 0.45);
   transform: rotate(-4deg);
   user-select: none;
 }
@@ -241,12 +230,12 @@
 .showcase__card {
   width: 100%;
   max-width: 660px;
-  background: rgba(14, 18, 22, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(245, 247, 250, 0.82);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.6);
   padding: clamp(2rem, 3.5vw, 3.25rem);
 }
 
@@ -342,9 +331,9 @@
 
 .showcase__item-desc {
   font-size: 0.88rem;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.65;
-  color: rgba(220, 228, 234, 0.75);
+  color: #334155;
   margin: 0;
   padding-left: calc(36px + 1rem);
 }
@@ -353,17 +342,17 @@
   margin-top: 0.9rem;
   margin-left: calc(36px + 1rem);
   padding: 0.85rem 1rem;
-  background: rgba(0, 0, 0, 0.25);
-  border-left: 2px solid var(--showcase-rule);
+  background: rgba(2, 132, 199, 0.04);
+  border-left: 2px solid #0284c7;
   border-radius: 4px;
   animation: showcaseDetailFade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .showcase__item-details p {
   font-size: 0.82rem;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.6;
-  color: rgba(244, 246, 248, 0.7);
+  color: #1e293b;
   margin: 0;
 }
 
@@ -379,16 +368,16 @@
 }
 
 .showcase__item:hover .showcase__item-title {
-  color: #ffffff;
+  color: #0284c7;
 }
 
 .showcase__item:hover .showcase__item-num,
 .showcase__item:hover .showcase__item-indicator {
-  color: var(--showcase-ink);
+  color: #0f172a;
 }
 
 .showcase__item--expanded {
-  border-bottom-color: rgba(255, 255, 255, 0.25);
+  border-bottom-color: rgba(2, 132, 199, 0.35);
 }
 
 /* Minimalist Tech Tags Ribbon at the base of the card */
@@ -418,18 +407,18 @@
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 0.7rem;
   letter-spacing: 0.03em;
-  color: rgba(220, 228, 234, 0.72);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: #334155;
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 4px;
   padding: 3px 8px;
   transition: all 0.2s ease;
 }
 
 .showcase__tech-pill:hover {
-  color: var(--showcase-ink);
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.16);
+  color: #0f172a;
+  background: rgba(2, 132, 199, 0.1);
+  border-color: rgba(2, 132, 199, 0.25);
 }
 
 /* ==========================================================================

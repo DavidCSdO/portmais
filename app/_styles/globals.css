@@ -13,18 +13,19 @@
    =========================== */
 
 :root {
-  --color-bg-primary: #A4E4FF;
-  --color-bg-secondary: #1D3F4D;
-  --color-accent: #BCFF7E;
-  --color-text-light: #FFFFFF;
-  --color-text-dark: #1D3F4D;
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f4f6fa;
+  --color-accent: #0284c7;
+  --color-accent-emerald: #059669;
+  --color-text-light: #52525b;
+  --color-text-dark: #09090b;
 
   --font-display: var(--font-delamoore);
   --font-body: var(--font-geist-sans);
   --font-inter: var(--font-inter);
 
-  --background: #080d11;
-  --foreground: #f0f4f8;
+  --background: #fcfcfd;
+  --foreground: #09090b;
 }
 
 @theme inline {
@@ -48,6 +49,7 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: #fcfcfd;
 }
 
 body {
@@ -58,7 +60,7 @@ body {
 }
 
 /* ===========================
-   Subtle Analog Film Grain Overlay
+   Subtle Analog Tactile Grain Overlay
    =========================== */
 .film-grain-overlay {
   position: fixed;
@@ -67,8 +69,8 @@ body {
   height: 100vh;
   pointer-events: none;
   z-index: 99990;
-  opacity: 0.03;
+  opacity: 0.025;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   background-repeat: repeat;
-  mix-blend-mode: overlay;
+  mix-blend-mode: multiply;
 }

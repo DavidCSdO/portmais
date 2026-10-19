@@ -19,7 +19,7 @@
   height: clamp(360px, 36vw, 420px);
   position: relative;
   font-weight: 700;
-  color: #ffffff;
+  color: #0f172a;
   text-align: center;
   cursor: pointer;
   transform-origin: 50% 50%;
@@ -39,13 +39,13 @@
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.92);
+  color: #0f172a;
   transition: color 0.4s ease, text-shadow 0.4s ease;
 }
 
 .circular-text:hover span {
-  color: #ffffff;
-  text-shadow: 0 0 16px rgba(188, 255, 126, 0.45);
+  color: #0284c7;
+  text-shadow: 0 0 16px rgba(2, 132, 199, 0.35);
 }
 
 /* Center Slot for Logo / Next Page Portal */

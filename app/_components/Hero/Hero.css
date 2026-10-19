@@ -12,11 +12,15 @@
   align-items: center;
   justify-content: flex-start;
   overflow: hidden;
-  background: #080f14;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 12%, rgba(2, 132, 199, 0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 85% 70%, rgba(5, 150, 105, 0.04) 0%, transparent 60%),
+    radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.035) 1px, transparent 0) 0 0 / 32px 32px,
+    linear-gradient(180deg, #ffffff 0%, #fbfcfd 35%, #f6f8fb 70%, #f1f4f8 100%);
   z-index: 1;
 }
 
-/* 1. High-Resolution Editorial Sky Backdrop */
+/* 1. Pure Code ReactBits Aurora Light Horizon */
 .hero__sky-backdrop {
   position: absolute;
   inset: -5%;
@@ -27,27 +31,19 @@
   will-change: transform;
 }
 
-.hero__sky-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-}
-
 .hero__sky-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(6, 12, 16, 0.35) 0%,
-    rgba(6, 12, 16, 0) 30%,
-    rgba(6, 12, 16, 0.25) 60%,
-    rgba(8, 15, 20, 0.85) 100%
+    rgba(255, 255, 255, 0) 0%,
+    rgba(251, 252, 254, 0.35) 55%,
+    rgba(244, 246, 250, 0.7) 100%
   );
   pointer-events: none;
 }
 
-/* 2. Atmospheric Solar Aura behind the mountain notch */
+/* 2. Atmospheric Solar Aura */
 .hero__dawn-aura {
   position: absolute;
   bottom: 18%;
@@ -58,9 +54,9 @@
   height: 55vh;
   background: radial-gradient(
     ellipse 60% 45% at 50% 70%,
-    rgba(255, 224, 168, 0.3) 0%,
-    rgba(188, 255, 126, 0.12) 38%,
-    rgba(8, 15, 20, 0) 75%
+    rgba(56, 189, 248, 0.22) 0%,
+    rgba(16, 185, 129, 0.12) 40%,
+    rgba(255, 255, 255, 0) 75%
   );
   filter: blur(50px);
   pointer-events: none;
@@ -102,7 +98,7 @@
 
 .hero__emblem-ring {
   fill: none;
-  stroke: rgba(188, 255, 126, 0.18);
+  stroke: rgba(15, 23, 42, 0.12);
   stroke-dasharray: 4 6;
   stroke-width: 1;
   animation: heroEmblemRotate 140s linear infinite;
@@ -111,35 +107,35 @@
 
 .hero__emblem-ring--outer {
   stroke-dasharray: 6 10;
-  stroke: rgba(188, 255, 126, 0.16);
+  stroke: rgba(2, 132, 199, 0.2);
 }
 
 .hero__emblem-ring--mid {
   stroke-dasharray: 2 6;
-  stroke: rgba(164, 228, 255, 0.2);
+  stroke: rgba(5, 150, 105, 0.22);
   animation-direction: reverse;
   animation-duration: 90s;
 }
 
 .hero__emblem-ring--inner {
   stroke-dasharray: 3 5;
-  stroke: rgba(255, 255, 255, 0.12);
+  stroke: rgba(15, 23, 42, 0.14);
 }
 
 .hero__emblem-axis {
-  stroke: rgba(188, 255, 126, 0.12);
+  stroke: rgba(15, 23, 42, 0.1);
   stroke-width: 1;
   stroke-dasharray: 6 8;
 }
 
 .hero__emblem-tick {
-  stroke: rgba(188, 255, 126, 0.22);
+  stroke: rgba(2, 132, 199, 0.25);
   stroke-width: 1;
 }
 
 .hero__emblem-star {
-  fill: rgba(188, 255, 126, 0.02);
-  stroke: rgba(188, 255, 126, 0.22);
+  fill: rgba(2, 132, 199, 0.02);
+  stroke: rgba(2, 132, 199, 0.35);
   stroke-width: 1;
   animation: heroEmblemStarPulse 4s ease-in-out infinite alternate;
 }
@@ -187,8 +183,8 @@
 
 .hero__brand-star {
   font-size: 1.25rem;
-  color: #bcff7e;
-  text-shadow: 0 0 16px rgba(188, 255, 126, 0.85);
+  color: #0284c7;
+  text-shadow: 0 0 16px rgba(2, 132, 199, 0.45);
   animation: heroBrandStarGlow 2.8s ease-in-out infinite alternate;
 }
 
@@ -212,9 +208,9 @@
 .hero__brand-title {
   font-family: var(--font-inter), sans-serif;
   font-size: 0.82rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.14em;
-  color: #ffffff;
+  color: #0f172a;
   text-transform: uppercase;
 }
 
@@ -222,7 +218,7 @@
   font-family: var(--font-geist-mono), monospace;
   font-size: 0.6rem;
   letter-spacing: 0.18em;
-  color: rgba(188, 255, 126, 0.85);
+  color: #0284c7;
 }
 
 /* 5. Center Title "DAVID" — Luxury Masthead Treatment */
@@ -261,11 +257,11 @@
 .hero__eyebrow-line {
   width: clamp(20px, 3.5vw, 44px);
   height: 1px;
-  background: linear-gradient(90deg, rgba(188, 255, 126, 0), rgba(188, 255, 126, 0.6));
+  background: linear-gradient(90deg, rgba(2, 132, 199, 0), rgba(2, 132, 199, 0.6));
 }
 
 .hero__eyebrow-line:last-child {
-  background: linear-gradient(90deg, rgba(188, 255, 126, 0.6), rgba(188, 255, 126, 0));
+  background: linear-gradient(90deg, rgba(2, 132, 199, 0.6), rgba(2, 132, 199, 0));
 }
 
 .hero__eyebrow-text {
@@ -273,13 +269,13 @@
   font-size: clamp(0.58rem, 0.85vw, 0.7rem);
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: rgba(230, 245, 255, 0.9);
+  color: #475569;
 }
 
 .hero__title {
   font-family: var(--font-display), 'Delamoore', serif;
   font-size: min(25vw, 44vh, 490px);
-  color: var(--color-accent);
+  color: #0f172a;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   line-height: 0.82;
@@ -290,7 +286,7 @@
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-shadow: 0 0 25px rgba(188, 255, 126, 0.22);
+  text-shadow: 0 0 35px rgba(2, 132, 199, 0.12);
 }
 
 .hero__char {
@@ -306,14 +302,14 @@
 
 .hero__char:hover {
   transform: translateY(-4px) scale(1.02);
-  text-shadow: 0 0 35px rgba(188, 255, 126, 0.6);
+  text-shadow: 0 0 35px rgba(2, 132, 199, 0.35);
 }
 
 .hero__char-stroke {
   position: absolute;
   inset: 0;
   color: transparent;
-  -webkit-text-stroke: 1.5px var(--color-accent);
+  -webkit-text-stroke: 1.5px #0f172a;
   opacity: 0;
   clip-path: polygon(0% 0%, 0% 0%, -35% 100%, -35% 100%);
   animation: heroCharStrokeWrite 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
@@ -323,7 +319,7 @@
 
 .hero__char-fill {
   display: inline-block;
-  color: var(--color-accent);
+  color: #0f172a;
   opacity: 0;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
@@ -333,30 +329,21 @@
   animation-delay: calc(1.88s + var(--char-index) * 0.32s);
 }
 
-/* 6. Foreground Mountain landscape (Seceda Cliffs, Dolomites) */
-.hero__mountain-wrapper {
+/* 6. Luminous Horizon Mist and Depth */
+.hero__horizon-glow {
   position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 130%;
-  height: min(56vw, 70vh);
-  z-index: 4;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  animation: heroMountainSlideUp 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.4s forwards;
-  opacity: 0;
-  pointer-events: none;
-  will-change: transform;
-}
-
-.hero__mountain {
+  left: 0;
   width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  object-position: center top;
+  height: 38vh;
+  background: linear-gradient(
+    0deg,
+    #eef2f7 0%,
+    rgba(238, 242, 247, 0.75) 40%,
+    rgba(240, 244, 248, 0) 100%
+  );
+  pointer-events: none;
+  z-index: 4;
 }
 
 /* 7. Discreet, High-Fashion Scroll Cue at Bottom Right */
@@ -375,21 +362,21 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: rgba(240, 245, 248, 0.65);
+  color: #475569;
   padding: 0.4rem;
   transition: all 0.3s ease;
   user-select: none;
 }
 
 .hero__scroll-cue:hover {
-  color: #ffffff;
+  color: #0f172a;
   transform: translateY(2px);
 }
 
 .hero__scroll-cue-line {
   width: 1px;
   height: 30px;
-  background: linear-gradient(180deg, rgba(188, 255, 126, 0.85) 0%, rgba(255, 255, 255, 0.15) 100%);
+  background: linear-gradient(180deg, rgba(2, 132, 199, 0.85) 0%, rgba(15, 23, 42, 0.15) 100%);
   animation: heroScrollCuePulse 2.4s ease-in-out infinite;
 }
 
@@ -411,7 +398,7 @@
   font-size: 0.58rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  opacity: 0.75;
+  opacity: 0.85;
 }
 
 .hero__curtain {
@@ -420,10 +407,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: #000000;
+  background: linear-gradient(180deg, #e8eef6 0%, #eef3f8 100%);
   z-index: 25;
-  box-shadow: 0 50px 120px 20px rgba(0, 0, 0, 0.95);
-  border-bottom: 1px solid rgba(188, 255, 126, 0.25);
+  box-shadow: 0 30px 90px 20px rgba(15, 23, 42, 0.08);
+  border-bottom: 1px solid rgba(2, 132, 199, 0.15);
   animation: heroCurtainSlideUp 3.6s forwards;
   pointer-events: none;
   will-change: transform;

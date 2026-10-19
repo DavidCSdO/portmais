@@ -57,7 +57,7 @@ export default function RotatingBadge({
       <div className="rotating-badge__center">
         <div className="rotating-badge__core-glow" />
         <Image
-          src="/images/LOGO.png"
+          src="/images/LOGO.webp"
           alt="Porto Mais Star"
           width={32}
           height={32}

@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
 import DriftingMist from '../DriftingMist';
+import { Aurora } from '../Backgrounds';
 import { playClickSound } from '../../_utils/sound';
 import './Hero.css';
 
@@ -48,28 +48,29 @@ export default function Hero({ onExplore }: HeroProps) {
 
   return (
     <section className="hero" id="hero">
-      {/* 1. High-Resolution Editorial Sky Backdrop with Real Alpine Horizon & Crepuscular Dawn */}
+      {/* 1. Pure Code ReactBits Aurora Light Horizon */}
       <div
         className="hero__sky-backdrop"
         style={{
-          transform: `translate3d(${mousePos.x * -8}px, ${mousePos.y * -5}px, 0) scale(1.05)`,
+          transform: `translate3d(${mousePos.x * -8}px, ${mousePos.y * -5}px, 0) scale(1.02)`,
         }}
         aria-hidden="true"
       >
-        <Image
-          src="/images/hero_editorial_sky.jpg"
-          alt="Alvorada Alpina Editorial em 8K"
-          fill
-          priority
-          className="hero__sky-img"
-          sizes="120vw"
-          quality={90}
+        <Aurora
+          colorStops={['#38bdf8', '#0ea5e9', '#10b981', '#6366f1', '#a855f7']}
+          amplitude={1.15}
+          blend={0.55}
+          speed={0.55}
+          glow={0.65}
+          brightness={1.1}
+          opacity={0.65}
+          lightMode={true}
         />
-        {/* Subtle cinematic color-grade overlay */}
+        {/* Subtle luminous light grade */}
         <div className="hero__sky-overlay" />
       </div>
 
-      {/* 2. Atmospheric Solar Aura behind the mountain notch */}
+      {/* 2. Atmospheric Solar Aura */}
       <div
         className="hero__dawn-aura"
         style={{
@@ -161,24 +162,8 @@ export default function Hero({ onExplore }: HeroProps) {
         </h1>
       </div>
 
-      {/* 7. Foreground Mountain landscape (Seceda Cliffs, Dolomites) — covers title with 3D parallax */}
-      <div
-        className="hero__mountain-wrapper"
-        style={{
-          transform: `translate3d(calc(-50% + ${mousePos.x * -16}px), ${mousePos.y * -8}px, 0)`,
-        }}
-      >
-        <Image
-          src="/images/BACK1.png"
-          alt="Falésias de Seceda, Dolomitas em Primeiro Plano"
-          width={2560}
-          height={1080}
-          className="hero__mountain"
-          sizes="130vw"
-          quality={90}
-          priority
-        />
-      </div>
+      {/* 7. Luminous horizon mist and ambient light depth */}
+      <div className="hero__horizon-glow" aria-hidden="true" />
 
       {/* 8. Discreet, High-Fashion Scroll Cue at Bottom Right */}
       <footer className="hero__footer">

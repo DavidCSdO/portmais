@@ -5,7 +5,7 @@ import Image from "next/image";
 import FlexCarousel from "../FlexCarousel";
 import CircularText from "../CircularText";
 import DriftingMist from "../DriftingMist";
-import NatureSpotlight from "../NatureSpotlight";
+import { Threads } from "../Backgrounds";
 import { useContemplation } from "../../_utils/contemplation";
 import "./Projects.css";
 
@@ -150,32 +150,37 @@ export default function Projects({
 
   return (
     <div className="projects-scene">
-      {/* Background Track: landscape_projects.jpg (O Quiraing e o Mar de Névoa 4K) */}
+      {/* Pure Code Light Atmosphere Background */}
+      <div className="projects__light-bg" aria-hidden="true" />
+
+      {/* React Bits Threads Overlay in Rich Cyan & Accent Emerald */}
       <div
-        className="projects__bg-track"
         style={{
-          width: `${bgRenderedW}px`,
-          height: `${bgRenderedH}px`,
-          transform: `translate3d(${bgTranslateX}px, -${bgTranslateY}px, 0)`
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          pointerEvents: "none",
+          zIndex: 1,
         }}
       >
-        <Image
-          src="/images/landscape_projects.jpg"
-          alt="O Quiraing e o Mar de Névoa, Ilha de Skye em 4K"
-          fill
-          priority={false}
-          className="projects__bg-img"
-          sizes={`${Math.ceil(bgRenderedW)}px`}
-          quality={90}
+        <Threads
+          color={[0.08, 0.45, 0.65]}
+          accentColor={[0.1, 0.65, 0.38]}
+          lineCount={65}
+          amplitude={1.3}
+          distance={0.35}
+          enableMouseInteraction={true}
+          thickness={0.8}
+          softness={1.2}
+          speed={0.45}
+          waves={1.1}
+          opacity={0.55}
         />
-        <div className="projects__bg-overlay" aria-hidden="true" />
       </div>
 
-      {/* Atmospheric Alpine Mist */}
-      <DriftingMist opacity={0.24} speedMultiplier={0.9} />
-
-      {/* Contemporary Scenic Spotlight Discovery */}
-      <NatureSpotlight sceneId="projects" position="top-right" />
+      {/* Soft Alpine Mist */}
+      <DriftingMist opacity={0.16} speedMultiplier={0.9} />
 
       {/* Main Content Container */}
       <div
@@ -304,11 +309,11 @@ export default function Projects({
                 className="projects__portal-logo-wrapper"
                 style={{
                   transform: `scale(${starScale})`,
-                  filter: `drop-shadow(0 0 ${20 * starScale}px rgba(188, 255, 126, ${starGlow}))`
+                  filter: `drop-shadow(0 0 ${20 * starScale}px rgba(2, 132, 199, ${starGlow}))`
                 }}
               >
                 <Image
-                  src="/images/LOGO.png"
+                  src="/images/LOGO.webp"
                   alt="Porto Mais Star Logo"
                   width={96}
                   height={96}

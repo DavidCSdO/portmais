@@ -3,9 +3,9 @@
    =========================== */
 
 .intro {
-  --intro-ink: rgba(244, 246, 248, 0.94);
-  --intro-muted: rgba(220, 228, 234, 0.52);
-  --intro-rule: rgba(255, 255, 255, 0.14);
+  --intro-ink: #0f172a;
+  --intro-muted: #64748b;
+  --intro-rule: rgba(15, 23, 42, 0.1);
 
   position: sticky;
   top: clamp(2rem, 5vh, 4rem);
@@ -45,15 +45,15 @@
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.12em;
-  color: rgba(188, 255, 126, 0.75);
-  opacity: 0.85;
+  color: #0284c7;
+  opacity: 0.9;
 }
 
 /* Greeting */
 .intro__greeting {
   margin: 0 0 1.1rem;
   font-size: 0.82rem;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--intro-muted);
@@ -63,8 +63,8 @@
 .intro__statement {
   margin: 0 0 clamp(2.4rem, 5vh, 3.4rem);
   font-size: clamp(1.9rem, 3vw, 2.75rem);
-  font-weight: 300;
-  line-height: 1.12;
+  font-weight: 400;
+  line-height: 1.15;
   letter-spacing: -0.025em;
   color: var(--intro-ink);
   text-wrap: balance;
@@ -72,7 +72,7 @@
 
 .intro__statement em {
   font-style: normal;
-  color: rgba(244, 246, 248, 0.45);
+  color: #64748b;
 }
 
 /* Spec rows */
@@ -147,7 +147,7 @@
   font-family: var(--font-delamoore), cursive;
   font-size: clamp(2.2rem, 3.4vw, 2.9rem);
   line-height: 1;
-  color: rgba(244, 246, 248, 0.55);
+  color: rgba(15, 23, 42, 0.45);
   transform: rotate(-4deg);
   user-select: none;
 }
