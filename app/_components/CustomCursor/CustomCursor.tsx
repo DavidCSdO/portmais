@@ -14,6 +14,8 @@ export default function CustomCursor() {
   const mousePos = useRef({ x: -100, y: -100 });
   const ringPos = useRef({ x: -100, y: -100 });
   const rafId = useRef<number | null>(null);
+  const hoverTarget = useRef<Element | null>(null);
+  const hoverText = useRef<string | null>(null);
 
   useEffect(() => {
     // Only enable on desktop devices with fine pointer (mouse / trackpad)
@@ -25,11 +27,26 @@ export default function CustomCursor() {
     const isFinePointer = window.matchMedia('(pointer: fine)').matches;
 
     if (isTouchOrSmall || !isFinePointer) {
-      setIsVisible(false);
       return;
     }
 
-    setIsVisible(true);
+    const render = () => {
+      rafId.current = null;
+      const ease = 0.18;
+      ringPos.current.x += (mousePos.current.x - ringPos.current.x) * ease;
+      ringPos.current.y += (mousePos.current.y - ringPos.current.y) * ease;
+
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate3d(${ringPos.current.x}px, ${ringPos.current.y}px, 0)`;
+      }
+
+      if (
+        Math.abs(mousePos.current.x - ringPos.current.x) > 0.5 ||
+        Math.abs(mousePos.current.y - ringPos.current.y) > 0.5
+      ) {
+        rafId.current = requestAnimationFrame(render);
+      }
+    };
 
     const onMouseMove = (e: MouseEvent) => {
       mousePos.current.x = e.clientX;
@@ -45,23 +62,28 @@ export default function CustomCursor() {
         const interactive = target.closest(
           'a, button, [role="button"], input, textarea, [data-cursor], .folder-card, .canvas-interactive'
         );
-        const customTextAttr = target.closest('[data-cursor-text]')?.getAttribute('data-cursor-text');
+        const customTextAttr =
+          target.closest('[data-cursor-text]')?.getAttribute('data-cursor-text') ?? null;
 
-        if (customTextAttr) {
+        if (hoverTarget.current !== interactive || hoverText.current !== customTextAttr) {
+          hoverTarget.current = interactive;
+          hoverText.current = customTextAttr;
           setCursorText(customTextAttr);
-          setIsHovered(true);
-        } else if (interactive) {
-          setCursorText(null);
-          setIsHovered(true);
-        } else {
-          setCursorText(null);
-          setIsHovered(false);
+          setIsHovered(Boolean(customTextAttr || interactive));
         }
+      }
+
+      if (rafId.current === null) {
+        rafId.current = requestAnimationFrame(render);
       }
     };
 
     const onMouseLeave = () => {
       setIsVisible(false);
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current);
+        rafId.current = null;
+      }
     };
 
     const onMouseEnter = () => {
@@ -77,26 +99,12 @@ export default function CustomCursor() {
     document.addEventListener('mouseleave', onMouseLeave);
     document.addEventListener('mouseenter', onMouseEnter);
 
-    // Smooth trailing ring loop using lerp
-    const render = () => {
-      const ease = 0.18;
-      ringPos.current.x += (mousePos.current.x - ringPos.current.x) * ease;
-      ringPos.current.y += (mousePos.current.y - ringPos.current.y) * ease;
-
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate3d(${ringPos.current.x}px, ${ringPos.current.y}px, 0)`;
-      }
-      rafId.current = requestAnimationFrame(render);
-    };
-
-    rafId.current = requestAnimationFrame(render);
-
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('touchstart', onTouchStart);
       document.removeEventListener('mouseleave', onMouseLeave);
       document.removeEventListener('mouseenter', onMouseEnter);
-      if (rafId.current) cancelAnimationFrame(rafId.current);
+      if (rafId.current !== null) cancelAnimationFrame(rafId.current);
     };
   }, []);
 

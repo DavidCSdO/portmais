@@ -333,6 +333,7 @@
   overflow: hidden;
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #111827;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
   transition: transform 0.25s ease, border-color 0.25s ease;
 }
@@ -343,8 +344,11 @@
 }
 
 .dock-nav-preview-img {
+  position: absolute;
+  inset: 0;
   object-fit: cover;
   transition: transform 0.4s ease;
+  pointer-events: none;
 }
 
 .dock-nav-preview-box:hover .dock-nav-preview-img {

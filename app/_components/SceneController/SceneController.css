@@ -42,7 +42,7 @@
   height: 100%;
   overflow: hidden;
   z-index: 1;
-  background: radial-gradient(ellipse 100% 80% at 30% 20%, #ffffff 0%, #f9fbfd 40%, #f3f6fa 80%, #edf1f6 100%);
+  background: #f5f8fa;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -58,12 +58,56 @@
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(ellipse 65% 50% at 20% 20%, rgba(2, 132, 199, 0.06) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 45% at 85% 65%, rgba(5, 150, 105, 0.04) 0%, transparent 60%),
-    radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.035) 1px, transparent 0) 0 0 / 32px 32px,
-    linear-gradient(180deg, #fcfcfd 0%, #f9fbfd 35%, #f4f6fa 75%, #eff2f7 100%);
+    radial-gradient(ellipse 70% 62% at 14% 16%, rgba(90, 197, 226, 0.4) 0%, transparent 72%),
+    radial-gradient(ellipse 60% 52% at 92% 78%, rgba(188, 255, 126, 0.32) 0%, transparent 70%),
+    linear-gradient(145deg, #edf8fb 0%, #f5f9f7 52%, #eff8e9 100%),
+    radial-gradient(circle, rgba(14, 116, 144, 0.3) 1.3px, transparent 1.8px);
+  background-size: auto, auto, auto, 36px 36px;
   z-index: 0;
   pointer-events: none;
+}
+
+.about__light-bg::before,
+.about__light-bg::after {
+  position: absolute;
+  content: "";
+  width: min(48vw, 620px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.58;
+  animation: sceneAmbientDrift 18s ease-in-out infinite alternate;
+}
+
+.about__light-bg::before {
+  top: 20%;
+  right: -12%;
+  background: rgba(74, 190, 231, 0.5);
+}
+
+.about__light-bg::after {
+  bottom: -26%;
+  left: -12%;
+  background: rgba(188, 255, 126, 0.42);
+  animation-delay: -8s;
+}
+
+@keyframes sceneAmbientDrift {
+  from {
+    transform: translate3d(-3%, 2%, 0) scale(0.94);
+  }
+  to {
+    transform: translate3d(4%, -3%, 0) scale(1.06);
+  }
+}
+
+.about__scanner-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Star spacer: Generous clearance so star NEVER touches the card */
@@ -109,12 +153,10 @@
 .about__card {
   width: 100%;
   max-width: 640px;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  border-radius: 16px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  box-shadow: 0 24px 60px -34px rgba(15, 23, 42, 0.24), 0 3px 12px rgba(15, 23, 42, 0.04);
   padding: clamp(2rem, 3.5vw, 3.25rem);
 }
 
@@ -123,9 +165,17 @@
   font-weight: 400;
   font-size: clamp(0.88rem, 1.05vw, 1.02rem);
   line-height: 1.7;
-  color: #09090b;
+  color: #1e293b;
   margin-bottom: clamp(1.2rem, 2.2vh, 1.6rem);
   letter-spacing: 0.01em;
+}
+
+.about__card-heading {
+  margin: 0 0 1.25rem;
+  color: #0f172a;
+  font-size: clamp(1.15rem, 1.45vw, 1.4rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
 }
 
 .about__card p:last-child {
@@ -231,8 +281,8 @@
 
 @media (max-width: 600px) {
   .scene-star-portal {
-    width: clamp(96px, 24vw, 128px);
-    height: clamp(96px, 24vw, 128px);
+    width: clamp(132px, 35vw, 180px);
+    height: clamp(132px, 35vw, 180px);
   }
 
   .scene-star-portal--intro {
@@ -252,6 +302,36 @@
     padding: 1.3rem 1.15rem;
     border-radius: 14px;
   }
+}
+
+@media (max-width: 900px), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .about__light-bg::before,
+  .about__light-bg::after {
+    filter: blur(48px);
+    opacity: 0.32;
+    animation: none;
+  }
+
+  .about__card {
+    background: #ffffff;
+  }
+
+  .scene-star-img {
+    animation: none;
+  }
+}
+
+html[data-performance="reduced"] .about__card {
+  background: #ffffff;
+}
+
+html[data-performance="reduced"] .about__light-bg::before,
+html[data-performance="reduced"] .about__light-bg::after {
+  animation: none;
+}
+
+html[data-performance="reduced"] .scene-star-img {
+  animation: none;
 }
 
 @keyframes heroLogoOpeningMobile {
@@ -495,5 +575,3 @@
   z-index: 40;
   will-change: opacity, transform;
 }
-
-

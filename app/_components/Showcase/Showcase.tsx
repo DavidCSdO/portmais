@@ -1,26 +1,27 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import DriftingMist from "../DriftingMist";
-import { Waves } from "../Backgrounds";
+import { LineWaves } from "../Backgrounds";
 import { playClickSound } from "../../_utils/sound";
 import { useContemplation } from "../../_utils/contemplation";
 import "./Showcase.css";
 
 interface ShowcaseProps {
   scrollProgress: number; // 0 to 1
-  viewportW: number;
   viewportH: number;
+  viewportW: number;
+  lowPerformance: boolean;
+  effectsActive: boolean;
   onContainerHeightChange?: (height: number) => void;
   contentOpacity?: number;
 }
 
 const SPECS: { label: string; value: string }[] = [
-  { label: "Escopo", value: "Sistemas web, SaaS, APIs de alta escala e automações com IA" },
-  { label: "Stack", value: "Next.js, React, Java, Spring Boot, SQL, Python, Docker" },
-  { label: "Método", value: "Código limpo, arquitetura modular e zero templates genéricos" },
-  { label: "Entrega", value: "Performance máxima, SEO estruturado e comunicação direta" },
-  { label: "Agora", value: "Disponível para novos projetos e parcerias — 2026" },
+  { label: "Entrega", value: "Sites, aplicações e sistemas web" },
+  { label: "Tecnologias", value: "Next.js, React, TypeScript, Java e SQL" },
+  { label: "Etapas", value: "Definição de escopo, desenvolvimento e publicação" },
+  { label: "Atendimento", value: "Alinhamento e acompanhamento direto" },
+  { label: "Disponibilidade", value: "Novos projetos em 2026" },
 ];
 
 interface CapabilityItem {
@@ -34,39 +35,39 @@ interface CapabilityItem {
 const CAPABILITIES: CapabilityItem[] = [
   {
     number: "01",
-    title: "Aplicações Web & Plataformas SaaS",
-    stack: "Next.js 15 · React 19 · TypeScript · Tailwind CSS",
+    title: "Sites e sistemas web sob medida",
+    stack: "Next.js · React · TypeScript",
     description:
-      "Dashboards administrativos, portais corporativos e plataformas SaaS concebidos para carregamento instantâneo, SEO técnico e usabilidade fluida.",
+      "Sites e aplicações web para apresentar serviços e facilitar as tarefas dos usuários.",
     details:
-      "Arquitetura com Server Components, renderização híbrida (SSR / SSG) e minimização extrema de bundles para tempos de resposta sub-segundo.",
+      "Estrutura e recursos são definidos pelo objetivo do projeto, com atenção a responsividade, acessibilidade e manutenção.",
   },
   {
     number: "02",
-    title: "Engenharia Back-End & Bancos de Dados",
-    stack: "Java · Spring Boot · PostgreSQL · MySQL · Docker · REST APIs",
+    title: "Back-end, APIs e bancos de dados",
+    stack: "Java · Spring Boot · SQL · REST APIs",
     description:
-      "Microsserviços resilientes, arquitetura limpa e modelagem relacional estrita (ACID). Regras de negócio seguras com autenticação JWT e OpenAPI.",
+      "APIs e bancos de dados conectam interfaces, informações e regras de negócio.",
     details:
-      "Clean Architecture, desacoplamento de camadas, pool de conexões HikariCP otimizado e orquestração de contêineres para paridade de ambientes.",
+      "Autenticação, modelagem de dados e arquitetura são definidas conforme os requisitos do sistema.",
   },
   {
     number: "03",
-    title: "Automação Inteligente & Soluções com IA",
-    stack: "Python · APIs de LLM (OpenAI / Claude) · Webhooks · Pipelines",
+    title: "Automações e integrações",
+    stack: "Python · APIs · Webhooks",
     description:
-      "Integração de modelos de linguagem e automações sob medida aos processos internos da empresa, reduzindo tarefas manuais repetitivas e acelerando decisões.",
+      "Integra ferramentas para reduzir tarefas manuais e sincronizar informações.",
     details:
-      "Pipelines assíncronos orientados a eventos, tratamento robusto de erros e orquestração de chamadas de IA com controle de custo e latência.",
+      "Conexão com serviços existentes e uso de IA quando ela trouxer benefício concreto ao processo.",
   },
   {
     number: "04",
-    title: "Experiências Visuais & Design Sensorial",
-    stack: "GSAP · Matter.js · Design Systems · 60 FPS · Motion",
+    title: "Interações e movimento na interface",
+    stack: "GSAP · Matter.js · Motion",
     description:
-      "Interfaces autorais com microinterações táteis e físicas em tempo real que diferenciam a sua marca no mercado e transmitem credibilidade imediata.",
+      "Interações e animações orientam a navegação e dão retorno às ações.",
     details:
-      "Animações aceleradas por hardware (GPU), layout containment para prevenção de reflows e transição fiel de protótipos do Figma para código limpo.",
+      "O movimento tem propósito; conteúdo e navegação continuam funcionais sem depender de animações.",
   },
 ];
 
@@ -75,20 +76,18 @@ const CORE_TECH_TAGS = [
   "React",
   "TypeScript",
   "Java",
-  "Spring Boot",
-  "PostgreSQL",
   "SQL",
   "Python",
-  "Docker",
   "GSAP",
-  "Tailwind",
-  "REST APIs",
+  "Matter.js",
 ];
 
 export default function Showcase({
   scrollProgress,
-  viewportW,
   viewportH,
+  viewportW,
+  lowPerformance,
+  effectsActive,
   onContainerHeightChange,
   contentOpacity = 1,
 }: ShowcaseProps) {
@@ -125,19 +124,6 @@ export default function Showcase({
     };
   }, [onContainerHeightChange, expandedIndex]);
 
-  // landscape_showcase.jpg is 2560 x 1707 (aspect ratio 2560/1707 = 1.5)
-  // Ultra-high definition 4K pine forest with atmospheric parallax
-  const imgAspect = 2560 / 1707;
-  let bgRenderedW = viewportW;
-  let bgRenderedH = viewportW / imgAspect;
-  if (bgRenderedH < viewportH * 1.35) {
-    bgRenderedH = viewportH * 1.35;
-    bgRenderedW = bgRenderedH * imgAspect;
-  }
-  const maxBgScrollY = Math.max(0, bgRenderedH - viewportH);
-  const bgTranslateX = -Math.max(0, (bgRenderedW - viewportW) / 2);
-  const bgTranslateY = scrollProgress * maxBgScrollY;
-
   // Content scroll translation
   const maxContentScroll = Math.max(0, containerH - viewportH + 90);
   const contentTranslateY = scrollProgress * maxContentScroll;
@@ -152,34 +138,33 @@ export default function Showcase({
       {/* Pure Code Light Atmosphere Background */}
       <div className="showcase__light-bg" aria-hidden="true" />
 
-      {/* React Bits Waves Overlay (Topographic Liquid Ripple) */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          pointerEvents: "none",
-          zIndex: 1,
-        }}
-      >
-        <Waves
-          lineColor="#0284c7"
-          accentColor="#059669"
-          spacing={20}
-          lineWidth={1.2}
-          amplitude={24}
-          speed={0.6}
-          mouseInteraction={true}
-          mouseRadius={160}
-          clickRipple={true}
-          opacity={0.45}
-          lightMode={true}
+      <div className="showcase__line-waves" aria-hidden="true">
+        <LineWaves
+          color1="#0284C7"
+          color2="#059669"
+          color3="#BCFF7E"
+          speed={lowPerformance ? 0.16 : 0.3}
+          lineCount={lowPerformance ? 36 : 72}
+          lineWidth={1.3}
+          highlight={1}
+          warpIntensity={1}
+          rotation={-33}
+          enableMouseInteraction={!lowPerformance && viewportW > 900}
+          colorCycleSpeed={1}
+          glow={0.6}
+          brightness={1}
+          highlightWidth={1}
+          warpScale={1}
+          edgeFade={0}
+          mouseInfluence={2}
+          clickRipple={!lowPerformance}
+          intro
+          lightMode={false}
+          opacity={lowPerformance ? 0.55 : 0.8}
+          maxDevicePixelRatio={lowPerformance ? 1 : 1.5}
+          paused={!effectsActive}
         />
       </div>
-
-      {/* Soft Ambient Mist */}
-      <DriftingMist opacity={0.16} speedMultiplier={1.05} />
 
       {/* Main Content Container */}
       <div
@@ -195,26 +180,20 @@ export default function Showcase({
         {/* Star Clearance Spacer so the floating star portal NEVER touches this content */}
         <div className="showcase__star-spacer" />
 
-        {/* Two-Column Editorial Layout (Harmonious with Section 02) */}
+        {/* Two-column layout for service summary and details */}
         <div className="showcase__content">
           {/* Left Column: Editorial Manifesto & Specs */}
           <div className="showcase__left">
             <div className="showcase__index">
-              <span className="showcase__index-num">04</span>
+              <span className="showcase__index-num">03</span>
               <span className="showcase__index-line" aria-hidden="true" />
               <span className="showcase__index-label">Capacidades</span>
-              <span className="showcase__biome-tag" aria-hidden="true">
-                <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M8 1L3 6h3L2 11h4L1 15h14l-5-4h4l-4-5h3L8 1z" />
-                </svg>
-                TAIGA BOREAL · 45°50&apos;N
-              </span>
             </div>
 
-            <h2 className="showcase__kicker">Engenharia, design e sistemas.</h2>
+            <h2 className="showcase__kicker">Sites e sistemas web.</h2>
 
             <p className="showcase__statement">
-              Eu construo sistemas e produtos digitais que geram <em>resultado real</em>.
+              Soluções digitais planejadas para atender a necessidades <em>reais de negócio</em>.
             </p>
 
             <dl className="showcase__specs">
@@ -228,7 +207,7 @@ export default function Showcase({
 
             <div className="showcase__footer">
               <a href="#contato" className="showcase__link" onClick={() => playClickSound("tick")}>
-                <span className="showcase__link-text">Iniciar um projeto</span>
+                <span className="showcase__link-text">Solicitar uma proposta</span>
                 <span className="showcase__link-arrow" aria-hidden="true">→</span>
               </a>
 
@@ -241,7 +220,7 @@ export default function Showcase({
             <div className="showcase__card">
               <div className="showcase__directory-header">
                 <span className="showcase__directory-title">Diretório de Soluções</span>
-                <span className="showcase__directory-sub">2026 // Produção</span>
+                <span className="showcase__directory-sub">Serviços</span>
               </div>
 
               <div className="showcase__directory-list">
@@ -287,7 +266,7 @@ export default function Showcase({
 
               {/* Minimalist Tech Tags Ribbon */}
               <div className="showcase__tech-ribbon">
-                <span className="showcase__tech-ribbon-label">Ecosistema técnico:</span>
+                <span className="showcase__tech-ribbon-label">Ecossistema técnico:</span>
                 <div className="showcase__tech-pills">
                   {CORE_TECH_TAGS.map((tech) => (
                     <span key={tech} className="showcase__tech-pill">

@@ -74,3 +74,17 @@ body {
   background-repeat: repeat;
   mix-blend-mode: multiply;
 }
+
+@media (max-width: 900px), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .film-grain-overlay {
+    display: none;
+  }
+}
+
+html[data-performance="reduced"] {
+  scroll-behavior: auto;
+}
+
+html[data-performance="reduced"] .film-grain-overlay {
+  display: none;
+}

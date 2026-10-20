@@ -10,83 +10,20 @@ import { useContemplation } from "../../_utils/contemplation";
 import "./Projects.css";
 
 export const PROJECT_ITEMS = [
-  {
-    src: "/images/car11.png",
-    alt: "Sanchez No. 1 - Astrolábio e Alta Relojoaria",
-    title: "Sanchez No. 1",
-    subtitle: "Astrolábio & Craft"
-  },
-  {
-    src: "/images/car12.png",
-    alt: "Sanchez No. 1 - Mostrador Vinho e Mecanismo ETA",
-    title: "Aurélien Automatic",
-    subtitle: "Luxury E-Commerce"
-  },
-  {
-    src: "/images/car13.png",
-    alt: "Perfeição Mecânica - Editorial e Narrativa",
-    title: "Perfeição Mecânica",
-    subtitle: "Storytelling & Motion"
-  },
-  {
-    src: "/images/car14.png",
-    alt: "Identidade Visual e Sistema de Design",
-    title: "Brand Identity",
-    subtitle: "Design System"
-  },
-  {
-    src: "/images/car15.png",
-    alt: "Plataforma Web e Aplicação Interativa",
-    title: "Digital Platform",
-    subtitle: "Full-Stack Experience"
-  },
-  {
-    src: "/images/car16.png",
-    alt: "Design de Experiência e Interface Moderna",
-    title: "Creative Studio",
-    subtitle: "Web Experience"
-  },
-  {
-    src: "/images/car17.png",
-    alt: "Dashboard Fintech e Métricas em Tempo Real",
-    title: "Fintech Dashboard",
-    subtitle: "Data Analytics"
-  },
-  {
-    src: "/images/car18.png",
-    alt: "Aplicativo Mobile e Interface Touch",
-    title: "Mobile Interface",
-    subtitle: "App Suite"
-  },
-  {
-    src: "/images/car19.png",
-    alt: "Espaço e Arquitetura Digital",
-    title: "Spatial Tech",
-    subtitle: "Editorial Architecture"
-  },
-  {
-    src: "/images/car110.png",
-    alt: "Laboratório Criativo e Código Generativo",
-    title: "Creative Lab",
-    subtitle: "WebGL & AI"
-  },
-  {
-    src: "/images/car111.png",
-    alt: "Publicação Digital e Tipografia Editorial",
-    title: "Digital Edition",
-    subtitle: "High Performance"
-  },
-  {
-    src: "/images/car112.png",
-    alt: "Porto Mais - Interface e Presença Digital",
-    title: "Porto Mais",
-    subtitle: "Modern Web System"
-  }
-];
+  "car13.png",
+  "car15.png",
+  "car16.png",
+  "car17.png",
+  "car18.png",
+].map((image, index) => ({
+  src: `/images/${image}`,
+  alt: `Estudo visual de interface ${index + 1}`,
+  title: `Estudo visual ${String(index + 1).padStart(2, "0")}`,
+  subtitle: "Exploração de interface",
+}));
 
 interface ProjectsProps {
   scrollProgress: number; // 0 to 1 (when inside projects scroll phase)
-  viewportW: number;
   viewportH: number;
   onContainerHeightChange?: (height: number) => void;
   nextPortalProgress?: number;
@@ -94,7 +31,6 @@ interface ProjectsProps {
 
 export default function Projects({
   scrollProgress,
-  viewportW,
   viewportH,
   onContainerHeightChange,
   nextPortalProgress
@@ -120,19 +56,6 @@ export default function Projects({
       window.removeEventListener("resize", updateHeight);
     };
   }, [onContainerHeightChange]);
-
-  // landscape_projects.jpg is 2560 x 1600 (aspect ratio 2560/1600 = 1.6)
-  // Quiraing & Isle of Skye in 4K resolution
-  const imgAspect = 2560 / 1600;
-  let bgRenderedW = viewportW;
-  let bgRenderedH = viewportW / imgAspect;
-  if (bgRenderedH < viewportH) {
-    bgRenderedH = viewportH;
-    bgRenderedW = viewportH * imgAspect;
-  }
-  const maxBgScrollY = Math.max(0, bgRenderedH - viewportH);
-  const bgTranslateX = -Math.max(0, (bgRenderedW - viewportW) / 2);
-  const bgTranslateY = scrollProgress * maxBgScrollY;
 
   // Content scroll translation
   const maxContentScroll = Math.max(0, containerH - viewportH + 120);
@@ -179,7 +102,7 @@ export default function Projects({
         />
       </div>
 
-      {/* Soft Alpine Mist */}
+      {/* Soft ambient mist */}
       <DriftingMist opacity={0.16} speedMultiplier={0.9} />
 
       {/* Main Content Container */}
@@ -193,8 +116,15 @@ export default function Projects({
           pointerEvents: isContemplating ? "none" : undefined,
         }}
       >
-        {/* Top Section: FlexCarousel with liquid wave preset */}
-        <div className="projects__carousel-section">
+        <section className="projects__featured-section" aria-label="Projetos e estudos">
+          <div className="projects__section-index">
+            <span className="projects__section-index-num">02</span>
+            <span className="projects__section-index-line" aria-hidden="true" />
+            <span>Projetos</span>
+          </div>
+        </section>
+
+        <section className="projects__carousel-section" aria-label="Galeria de estudos visuais">
           <div className="projects__carousel-wrapper">
             <FlexCarousel
               items={PROJECT_ITEMS}
@@ -222,73 +152,55 @@ export default function Projects({
               captureWheel={false}
             />
           </div>
-        </div>
+        </section>
 
-        {/* Content Section: 2-Column layout matching Attachment 2 */}
-        <div className="projects__content-section">
+        <section className="projects__content-section">
           <div className="projects__content-grid">
-            {/* Left Column: Frosted Glass Card with exact text */}
             <div className="projects__left">
-              <div className="projects__card">
+              <article className="projects__case-card">
                 <div className="projects__card-header">
-                  <h3 className="projects__card-title">
-                    CADA PROJETO TEM UMA HISTÓRIA.<br />
-                    OUTRO COMEÇO, OU APENAS ALGO QUE EU QUIS CRIAR.
-                  </h3>
+                  <span className="projects__case-kicker">Case em destaque</span>
+                  <h2 className="projects__case-title">Portfólio David Cardoso</h2>
                 </div>
 
-                <p>
-                  Alguns foram comerciais, outros testes, outros apenas para ver se funcionava.<br />
-                  Alguns só existem na internet,<br />
-                  outros transformaram a forma como pessoas reais trabalham ou compram coisas.
+                <p className="projects__case-summary">
+                  Um espaço para apresentar meu trabalho, mostrar como construo experiências
+                  web e facilitar o contato com quem precisa de um site ou sistema sob medida.
                 </p>
 
-                <p>
-                  Aqui tem de tudo: ecommerce, apps, landing pages, identidades visuais...<br />
-                  Do zero até o final.<br />
-                  Sem templates prontos, sem atalhos fáceis.<br />
-                  Construídos do jeito certo.
-                </p>
+                <dl className="projects__case-details">
+                  <div>
+                    <dt>O que fiz</dt>
+                    <dd>Design e desenvolvimento do portfólio, das seções às interações.</dd>
+                  </div>
+                  <div>
+                    <dt>Stack</dt>
+                    <dd>Next.js, React, TypeScript, GSAP e Matter.js.</dd>
+                  </div>
+                  <div>
+                    <dt>Resultado</dt>
+                    <dd>Projeto publicado e acessível online.</dd>
+                  </div>
+                </dl>
 
-                <p>
-                  Tem projeto que virou empresa.<br />
-                  Tem projeto que virou portfólio.<br />
-                  Tem projeto que me fez passar madrugadas em claro tentando entender por que não compilava.
-                </p>
-
-                <p className="projects__card-highlight">
-                  <strong>Aqui estão alguns deles:</strong><br />
-                  Explore eles.
-                </p>
-
-                <p>
-                  Se você quiser saber como algum deles foi feito,<br />
-                  ou quiser conversar sobre como podemos fazer algo parecido para você,<br />
-                  me manda uma mensagem no Instagram, pelo LinkedIn ou por email.<br />
-                  Vou adorar trocar uma ideia.
-                </p>
-
-                <p>
-                  Muito obrigado pela visita até aqui.<br />
-                  Foi muito bom ter você por perto.<br />
-                  Não se sinta tímido: me mande uma mensagem.
-                </p>
-
-                <div className="projects__card-signature">
-                  DAVID. CARDOSO. DEV. DESIGN.<br />
-                  PORTO MAIS.
-                </div>
-              </div>
+                <a
+                  className="projects__case-link"
+                  href="https://portmais.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Acessar o projeto <span aria-hidden="true">↗</span>
+                </a>
+              </article>
             </div>
 
-            {/* Right Column: Spaced title matching Attachment 2 */}
             <div className="projects__right">
               <span className="projects__label">
-                CADA PROJETO COMEÇA COM UMA IDEIA.
+                Cada projeto começa com uma ideia.
               </span>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Bottom Section: Circular Text with Center Logo & Next Page Portal Transition */}
         <div className="projects__badge-section">
@@ -314,7 +226,7 @@ export default function Projects({
               >
                 <Image
                   src="/images/LOGO.webp"
-                  alt="Porto Mais Star Logo"
+                  alt="Símbolo do portfólio de David Cardoso"
                   width={96}
                   height={96}
                   className="projects__portal-logo-img"

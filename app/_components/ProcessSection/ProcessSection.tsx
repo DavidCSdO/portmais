@@ -11,8 +11,6 @@ interface ProcessStep {
   tag: string;
   title: string;
   summary: string;
-  natureImage: string;
-  natureAlt: string;
   deliverables: string[];
   deepDive: {
     headline: string;
@@ -25,50 +23,44 @@ interface ProcessStep {
 const PROCESS_STEPS: ProcessStep[] = [
   {
     number: "01",
-    tag: "DIAGNÓSTICO & ARTE",
-    title: "Imersão & Visão Autoral",
-    summary: "Mapeamento das regras de negócio, arquitetura e prototipagem sensorial. Zero templates prontos.",
-    natureImage: "/images/landscape_about.webp",
-    natureAlt: "Vale Glacial de Kluane",
-    deliverables: ["Arquitetura de Informação", "Direção de Arte Exclusiva", "Protótipos em Alta Fidelidade"],
+    tag: "PLANEJAMENTO",
+    title: "Entender o projeto",
+    summary: "Objetivo, público, conteúdo e escopo são definidos antes da escolha técnica.",
+    deliverables: ["Objetivo e requisitos", "Conteúdo e estrutura", "Escopo combinado"],
     deepDive: {
-      headline: "Concepção Autoral & Rigor",
+      headline: "Escopo definido",
       description:
-        "Antes de qualquer código, definimos a hierarquia e o impacto visual da marca para transmitir autoridade imediata.",
-      metric: "100%",
-      metricLabel: "Design sob medida"
+        "Prioridades e requisitos são organizados para definir o que entra na primeira versão.",
+      metric: "Etapa 1",
+      metricLabel: "planejamento"
     }
   },
   {
     number: "02",
-    tag: "ENGENHARIA PURA",
-    title: "Código Limpo & 60 FPS",
-    summary: "Next.js 15, APIs resilientes, modelagem relacional estrita e interações táteis na GPU.",
-    natureImage: "/images/landscape_showcase.webp",
-    natureAlt: "Taiga conífera de Oulanka",
-    deliverables: ["Next.js 15 & React 19", "APIs Seguras & Bancos ACID", "Física Sensorial a 60 FPS"],
+    tag: "DESENVOLVIMENTO",
+    title: "Construir e testar",
+    summary: "A interface e os recursos definidos são implementados e validados nas principais tarefas.",
+    deliverables: ["Interface responsiva", "Integrações necessárias", "Testes das principais tarefas"],
     deepDive: {
-      headline: "Construção Robusta & Escala",
+      headline: "Versão funcional",
       description:
-        "Microsserviços desacoplados, Server Components e animações aceleradas por hardware para tempos sub-segundo.",
-      metric: "< 0.8s",
-      metricLabel: "Tempo de resposta"
+        "A implementação é revisada conforme o escopo antes da publicação.",
+      metric: "Etapa 2",
+      metricLabel: "implementação"
     }
   },
   {
     number: "03",
-    tag: "LANÇAMENTO & IMPACTO",
-    title: "Produção & SEO Técnico",
-    summary: "Deploy otimizado, SEO estruturado para indexação máxima e comunicação direta sem agência.",
-    natureImage: "/images/landscape_idea.webp",
-    natureAlt: "Weisshorn acima das nuvens",
-    deliverables: ["SEO Estruturado & Core Vitals", "Deploy Contínuo Global", "Canal Direto com o Dev"],
+    tag: "PUBLICAÇÃO",
+    title: "Publicar e acompanhar",
+    summary: "Preparo a publicação e confiro os detalhes essenciais para o lançamento.",
+    deliverables: ["Configuração de publicação", "Metadados e SEO básico", "Contato direto"],
     deepDive: {
-      headline: "Resultado & Parceria",
+      headline: "Projeto publicado",
       description:
-        "Seu produto no ar com métricas de excelência e acompanhamento direto. Do primeiro conceito à escala comercial.",
-      metric: "95+",
-      metricLabel: "Core Web Vitals"
+        "Depois da publicação, você sabe o que foi entregue e como seguir com o projeto.",
+      metric: "Etapa 3",
+      metricLabel: "publicação"
     }
   }
 ];
@@ -96,7 +88,7 @@ export default function ProcessSection() {
     try {
       playClickSound("tick");
       if (navigator.clipboard) {
-        navigator.clipboard.writeText("davidcsdo@gmail.com");
+        navigator.clipboard.writeText("cardosodavid92@gmail.com");
       }
       setCopiedEmail(true);
       setTimeout(() => setCopiedEmail(false), 2400);
@@ -108,9 +100,9 @@ export default function ProcessSection() {
       playClickSound("tick");
     } catch {}
     const text = encodeURIComponent(
-      "Olá David, vi seu portfólio e gostaria de agendar uma conversa sobre o desenvolvimento de um projeto."
+      "Olá, gostaria de conversar sobre um projeto de desenvolvimento web."
     );
-    window.open(`https://wa.me/?text=${text}`, "_blank");
+    window.open(`https://wa.me/5524992622909?text=${text}`, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -118,16 +110,16 @@ export default function ProcessSection() {
       {/* 1. Header: Identical layout and typography hierarchy as other IdeaSection blocks */}
       <div className="process-heading-group">
         <div className="idea-block__index">
-          <span className="idea-block__index-num">04</span>
+          <span className="idea-block__index-num">06</span>
           <span className="idea-block__index-line" aria-hidden="true" />
           <span className="idea-block__index-label">Metodologia</span>
         </div>
 
-        <h2 className="idea-block__eyebrow">ENGENHARIA, RIGOR & ENTREGA</h2>
+        <h2 className="idea-block__eyebrow">ETAPAS DO PROJETO</h2>
 
         <p className="idea-block__statement">
-          Da Concepção ao Impacto Real.{" "}
-          <em>Três etapas claras sem atalhos.</em>
+            Do alinhamento à publicação, com escopo definido e{" "}
+            <em>acompanhamento em cada etapa.</em>
         </p>
 
         {/* Minimalist Editorial Quick Booking Action (Seamlessly integrated, no boxy widget) */}
@@ -139,7 +131,7 @@ export default function ProcessSection() {
             aria-label="Agendar conversa com David Cardoso"
           >
             <span className="process-editorial-link__dot" aria-hidden="true" />
-            <span className="process-editorial-link__text">Agendar uma conversa sobre o seu projeto</span>
+            <span className="process-editorial-link__text">Solicitar uma conversa sobre o projeto</span>
             <span className="process-editorial-link__arrow" aria-hidden="true">→</span>
           </button>
         </div>
@@ -172,15 +164,15 @@ export default function ProcessSection() {
                 aspectRatio="16 / 11"
                 className="process-card-swap"
                 firstContent={
-                  /* Front: Authentic Landscape with Frosted Vignette */
+                  /* Front: the purpose of each project stage */
                   <div className="process-card-front">
                     <Image
-                      src={step.natureImage}
-                      alt={step.natureAlt}
+                      src="/images/BACK4.jpg"
+                      alt=""
                       fill
-                      sizes="(max-width: 900px) 100vw, 360px"
-                      className="process-card-front__bg"
-                      quality={90}
+                      sizes="(max-width: 900px) 100vw, 33vw"
+                      quality={75}
+                      className="process-card-front__image"
                     />
                     <div className="process-card-front__overlay" />
 
@@ -190,7 +182,7 @@ export default function ProcessSection() {
 
                       <span className="process-card-front__cue" aria-hidden="true">
                         <span className="process-card-front__cue-dot" />
-                        <span>Passe o cursor para detalhar</span>
+                        <span>Etapa do projeto</span>
                       </span>
                     </div>
                   </div>
@@ -279,8 +271,7 @@ export default function ProcessSection() {
 
             <div className="process-modal-body">
               <p className="process-modal-desc">
-                Seja para uma nova plataforma web, sistemas escaláveis ou design sensorial,
-                escolha o canal mais rápido para conversarmos:
+                Apresente os objetivos e requisitos do projeto para alinhar escopo e próximos passos:
               </p>
 
               <div className="process-modal-actions">
@@ -290,9 +281,9 @@ export default function ProcessSection() {
                   onClick={handleWhatsApp}
                 >
                   <div className="process-modal-btn__info">
-                    <span className="process-modal-btn__tag">Mais Rápido</span>
-                    <span className="process-modal-btn__label">WhatsApp Direto</span>
-                    <span className="process-modal-btn__sub">Resposta em poucas horas</span>
+                    <span className="process-modal-btn__tag">Contato</span>
+                    <span className="process-modal-btn__label">WhatsApp</span>
+                    <span className="process-modal-btn__sub">Conversa direta com o desenvolvedor</span>
                   </div>
                   <span className="process-modal-btn__arrow" aria-hidden="true">↗</span>
                 </button>
@@ -307,7 +298,7 @@ export default function ProcessSection() {
                     <span className="process-modal-btn__label">
                       {copiedEmail ? "E-mail Copiado! ✓" : "Copiar E-mail"}
                     </span>
-                    <span className="process-modal-btn__sub">davidcsdo@gmail.com</span>
+                    <span className="process-modal-btn__sub">cardosodavid92@gmail.com</span>
                   </div>
                   <span className="process-modal-btn__arrow" aria-hidden="true">
                     {copiedEmail ? "✓" : "📋"}
@@ -317,7 +308,7 @@ export default function ProcessSection() {
 
               <div className="process-modal-footer">
                 <span className="process-modal-footer__dot" />
-                <span>Sem intermediários. Conversa direta com o desenvolvedor.</span>
+                <span>Atendimento direto durante as etapas do projeto.</span>
               </div>
             </div>
           </div>

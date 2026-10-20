@@ -58,7 +58,7 @@ export default function RotatingBadge({
         <div className="rotating-badge__core-glow" />
         <Image
           src="/images/LOGO.webp"
-          alt="Porto Mais Star"
+          alt="Símbolo de David Cardoso"
           width={32}
           height={32}
           className="rotating-badge__star-icon"

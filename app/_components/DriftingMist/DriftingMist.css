@@ -84,3 +84,15 @@
     animation: none !important;
   }
 }
+
+@media (max-width: 900px), (pointer: coarse) {
+  .drifting-mist-layer {
+    animation: none;
+    filter: blur(24px);
+  }
+}
+
+html[data-performance="reduced"] .drifting-mist-layer {
+  animation: none;
+  filter: blur(24px);
+}

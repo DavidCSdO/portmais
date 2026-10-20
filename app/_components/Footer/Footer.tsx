@@ -1,10 +1,26 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useSyncExternalStore } from 'react';
 import TechText from '../TechText';
 import SplitFlapText from '../SplitFlapText';
-import { toggleAudio, playClickSound, getAudioState } from '../../_utils/sound';
+import { toggleAudio, playClickSound } from '../../_utils/sound';
 import './Footer.css';
+
+const subscribeToTouchPreferences = (onChange: () => void) => {
+  const coarsePointer = window.matchMedia('(pointer: coarse)');
+  coarsePointer.addEventListener('change', onChange);
+  window.addEventListener('resize', onChange, { passive: true });
+
+  return () => {
+    coarsePointer.removeEventListener('change', onChange);
+    window.removeEventListener('resize', onChange);
+  };
+};
+
+const getTouchPreference = () =>
+  window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768;
+
+const getServerTouchPreference = () => false;
 
 interface FooterProps {
   onScrollToTop?: () => void;
@@ -12,17 +28,13 @@ interface FooterProps {
 
 export default function Footer({ onScrollToTop }: FooterProps) {
   const [copied, setCopied] = useState(false);
-  const [isTouch, setIsTouch] = useState(false);
   const [soundActive, setSoundActive] = useState(false);
+  const isTouch = useSyncExternalStore(
+    subscribeToTouchPreferences,
+    getTouchPreference,
+    getServerTouchPreference
+  );
   const email = 'cardosodavid92@gmail.com';
-
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const isCoarse = window.matchMedia('(pointer: coarse)').matches;
-      setIsTouch(isCoarse || window.innerWidth < 768);
-      setSoundActive(getAudioState());
-    }
-  }, []);
 
   const handleToggleAudio = () => {
     const nextState = toggleAudio();
@@ -111,7 +123,7 @@ export default function Footer({ onScrollToTop }: FooterProps) {
                 GitHub ↗
               </a>
               <a
-                href="https://www.linkedin.com/in/david-cardoso-659239215/?isSelfProfile=true"
+                href="https://www.linkedin.com/in/david-cardoso-659239215/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="footer-social-link"

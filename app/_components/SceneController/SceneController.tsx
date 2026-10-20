@@ -7,28 +7,56 @@ import Projects from "../Projects";
 import Showcase from "../Showcase";
 import IdeaSection from "../IdeaSection";
 import DockNav from "../DockNav";
-import NatureSpotlight, { ContemplationExitPill } from "../NatureSpotlight";
+import { ContemplationExitPill } from "../NatureSpotlight";
 import { useContemplation } from "../../_utils/contemplation";
 import DriftingMist from "../DriftingMist";
-import { DriftingNeedles } from "../ForestAtmosphere";
-import { Particles } from "../Backgrounds";
+import { Scanner } from "../Backgrounds";
 import Hero from "../Hero";
 import "../Hero/Hero.css";
 import "./SceneController.css";
+
+function detectLowPerformanceDevice() {
+  if (typeof window === "undefined") return false;
+
+  const device = navigator as Navigator & {
+    deviceMemory?: number;
+    connection?: { saveData?: boolean };
+  };
+  return (
+    window.matchMedia("(pointer: coarse)").matches ||
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    device.connection?.saveData === true ||
+    (device.deviceMemory !== undefined && device.deviceMemory <= 4) ||
+    (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4)
+  );
+}
 
 export default function SceneController() {
   const [scrollY, setScrollY] = useState(0);
   const [viewportW, setViewportW] = useState(1920);
   const [viewportH, setViewportH] = useState(1080);
+  const [lowPerformance] = useState(detectLowPerformanceDevice);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [containerH, setContainerH] = useState(1200);
+  const [showcaseContainerH, setShowcaseContainerH] = useState(1100);
   const [ideaContainerH, setIdeaContainerH] = useState(4200);
   const isAboutContemplating = useContemplation();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (lowPerformance) document.documentElement.dataset.performance = "reduced";
+
+    return () => {
+      if (document.documentElement.dataset.performance === "reduced") {
+        delete document.documentElement.dataset.performance;
+      }
+    };
+  }, [lowPerformance]);
+
+  useEffect(() => {
     let ticking = false;
+    let scrollFrame = 0;
 
     const handleResize = () => {
       setViewportW(window.innerWidth);
@@ -42,12 +70,10 @@ export default function SceneController() {
 
     const handleScroll = () => {
       if (!ticking) {
-        window.requestAnimationFrame(() => {
+        scrollFrame = window.requestAnimationFrame(() => {
           const sy = window.scrollY;
           setScrollY(sy);
-          if (sy > 8 && !hasScrolled) {
-            setHasScrolled(true);
-          }
+          if (sy > 8) setHasScrolled(true);
           ticking = false;
         });
         ticking = true;
@@ -76,16 +102,22 @@ export default function SceneController() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResize);
+      window.cancelAnimationFrame(scrollFrame);
       ro?.disconnect();
       clearTimeout(timer);
     };
-  }, [hasScrolled]);
+  }, []);
 
   // 1. Hero -> About Transition distance: star zoom from Hero to About
   const transitionDistance = Math.max(viewportH * 0.85, 650);
 
-  // 2. About scroll distance: generous scroll to comfortably read card & view full mountain
-  const aboutScrollDistance = Math.max(viewportH * 1.5, 1400);
+  // 2. About scroll distance: enough room to read the introduction comfortably
+  const aboutContentScroll = Math.max(0, containerH - viewportH + 90);
+  const aboutScrollDistance = Math.max(
+    viewportH * 0.65,
+    aboutContentScroll + viewportH * 0.35,
+    650
+  );
 
   // 3. Projects transition distance: smooth fluid horizon wave transition
   const projectsTransitionDistance = Math.max(viewportH * 0.65, 580);
@@ -96,13 +128,18 @@ export default function SceneController() {
   // 5. Showcase transition distance: modern liquid horizon wave curtain
   const showcaseTransitionDistance = Math.max(viewportH * 0.9, 850);
 
-  // 6. Showcase scroll distance: scroll through BACK4.jpg pine forest and AccordionGallery
-  const showcaseScrollDistance = Math.max(viewportH * 1.5, 1400);
+  // 6. Showcase scroll distance
+  const showcaseContentScroll = Math.max(0, showcaseContainerH - viewportH + 90);
+  const showcaseScrollDistance = Math.max(
+    viewportH * 0.65,
+    showcaseContentScroll + viewportH * 0.35,
+    650
+  );
 
   // 7. Idea (Back5) transition distance: modern liquid horizon wave curtain
   const ideaTransitionDistance = Math.max(viewportH * 0.9, 850);
 
-  // 8. Idea (Back5) scroll distance: scroll through Conceito, MaskedHeading, FolderFloat, ProcessSection, ScrollExpand and Footer
+  // 8. Idea section scroll distance
   const ideaScrollDistance = Math.max(viewportH * 3.8, ideaContainerH - viewportH + 250, 4000);
 
   // Total scrollable height for scene-wrapper so scrollbar matches perfectly
@@ -126,6 +163,8 @@ export default function SceneController() {
 
   // Projects transition progress from 0 to 1 (active once About finishes scrolling)
   const projectsTransOffset = transitionDistance + aboutScrollDistance;
+  const isAboutEffectsActive =
+    scrollY >= transitionDistance * 0.35 && scrollY < projectsTransOffset;
   const projectsTransExtraScroll = Math.max(0, scrollY - projectsTransOffset);
   const projectsTransitionProgress = Math.min(
     Math.max(projectsTransExtraScroll / projectsTransitionDistance, 0),
@@ -156,15 +195,17 @@ export default function SceneController() {
     1
   );
 
-  // Idea (Back5) transition progress from 0 to 1 (modern liquid wave curtain from Showcase)
+  // Approach transition progress from 0 to 1
   const ideaTransOffset = showcaseScrollOffset + showcaseScrollDistance;
+  const isShowcaseEffectsActive =
+    scrollY >= showcaseTransOffset && scrollY < ideaTransOffset + ideaTransitionDistance;
   const ideaTransExtraScroll = Math.max(0, scrollY - ideaTransOffset);
   const ideaTransitionProgress = Math.min(
     Math.max(ideaTransExtraScroll / ideaTransitionDistance, 0),
     1
   );
 
-  // Idea (Back5) scroll progress from 0 to 1 (active once Idea transition finishes)
+  // Approach scroll progress from 0 to 1 (active once its transition finishes)
   const ideaScrollOffset = ideaTransOffset + ideaTransitionDistance;
   const ideaExtraScroll = Math.max(0, scrollY - ideaScrollOffset);
   const ideaScrollProgress = Math.min(
@@ -172,21 +213,8 @@ export default function SceneController() {
     1
   );
 
-  // landscape_about.jpg is 2560 x 1707 (aspect ratio 2560/1707)
-  // Calculate rendered dimensions so image NEVER stretches and ALWAYS covers viewport
-  const imgAspect = 2560 / 1707;
-  let bgRenderedW = viewportW;
-  let bgRenderedH = viewportW / imgAspect;
-  if (bgRenderedH < viewportH * 1.35) {
-    bgRenderedH = viewportH * 1.35;
-    bgRenderedW = bgRenderedH * imgAspect;
-  }
-  const maxBgScrollY = Math.max(0, bgRenderedH - viewportH);
-  const bgTranslateX = -Math.max(0, (bgRenderedW - viewportW) / 2);
-  const bgTranslateY = aboutScrollProgress * maxBgScrollY;
-
-  // Content scroll: translates the card smoothly up so all 9 paragraphs are read comfortably
-  const maxContentScroll = Math.max(0, containerH - viewportH + 90);
+  // Content scroll: translates the introduction card smoothly into view.
+  const maxContentScroll = aboutContentScroll;
   const contentTranslateY = aboutScrollProgress * maxContentScroll;
 
   // Unified Star Zoom Transition states (active in Stage 1)
@@ -254,11 +282,9 @@ export default function SceneController() {
   // Projects layer entrance and exit into Showcase
   let projectsLayerOpacity = Math.min(1, Math.pow(projectsTransitionProgress, 1.4));
   let projectsLayerTranslateY = (1 - projectsTransitionProgress) * 14; // vh
-  let projectsLayerBlur = 0;
   if (showcaseTransitionProgress > 0) {
     projectsLayerOpacity = Math.max(0, 1 - Math.pow(showcaseTransitionProgress, 1.2) * 1.5);
     projectsLayerTranslateY = -showcaseTransitionProgress * 12; // vh
-    projectsLayerBlur = showcaseTransitionProgress * 8; // px
   }
 
   // Showcase layer entrance and exit into IdeaSection
@@ -271,14 +297,14 @@ export default function SceneController() {
     showcaseLayerBlur = ideaTransitionProgress * 8; // px
   }
 
-  // IdeaSection (Back5) layer entrance
+  // Approach layer entrance
   const ideaLayerOpacity = Math.min(1, Math.pow(ideaTransitionProgress, 1.4));
   const ideaLayerTranslateY = (1 - ideaTransitionProgress) * 14; // vh
 
   const starScrollY = aboutScrollProgress * (maxContentScroll * 0.75);
 
   let activeSceneId = "hero";
-  if (scrollY >= ideaScrollOffset + ideaScrollDistance * 0.78) {
+  if (scrollY >= ideaScrollOffset + ideaScrollDistance * 0.9) {
     activeSceneId = "contact";
   } else if (scrollY >= ideaTransOffset + ideaTransitionDistance * 0.4) {
     activeSceneId = "idea";
@@ -312,8 +338,10 @@ export default function SceneController() {
           about: transitionDistance + 60,
           projects: projectsScrollOffset + 60,
           showcase: showcaseScrollOffset + 60,
-          idea: ideaScrollOffset + 60,
-          contact: ideaScrollOffset + ideaScrollDistance * 0.94,
+          idea: ideaScrollOffset + ideaScrollDistance * 0.08,
+          experiment: ideaScrollOffset + ideaScrollDistance * 0.4,
+          methodology: ideaScrollOffset + ideaScrollDistance * 0.62,
+          contact: ideaScrollOffset + ideaScrollDistance * 0.9,
         }}
       />
 
@@ -349,35 +377,45 @@ export default function SceneController() {
           {/* Pure Code Light Atmosphere Background */}
           <div className="about__light-bg" aria-hidden="true" />
 
-          {/* React Bits Particles Constellation Overlay */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              pointerEvents: "none",
-              zIndex: 1,
-            }}
-          >
-            <Particles
-              particleCount={110}
-              particleSpread={10}
-              speed={0.14}
-              particleColors={["#0284c7", "#0d9488", "#16a34a", "#6366f1", "#475569"]}
-              moveParticlesOnHover={true}
-              shape="sparkle"
-              glow={0.5}
-              twinkle={0.5}
-              connections={true}
-              connectionDistance={135}
-              opacity={0.65}
-              lightMode={true}
+          <div className="about__scanner-layer" aria-hidden="true">
+            <Scanner
+              color1="#5227FF"
+              color2="#FF9FFC"
+              color3="#FFFFFF"
+              speed={lowPerformance ? 0.25 : 0.5}
+              sweepSpeed={0.25}
+              sweepWidth={1.6}
+              trail={0.5}
+              ripple={0.22}
+              bandDensity={lowPerformance ? 8 : 11}
+              glow={0.6}
+              scanDirection="vertical"
+              colorSpread={0.7}
+              scanline
+              scanlineIntensity={0.5}
+              mouseInteraction={!lowPerformance && viewportW > 900}
+              clickEffect={lowPerformance ? "none" : "ping"}
+              reverse={false}
+              scale={1.5}
+              frequency={2}
+              lineWidth={1.2}
+              brightness={1}
+              vignette={0.3}
+              grain={!lowPerformance}
+              grainIntensity={0.04}
+              opacity={lowPerformance ? 0.65 : 0.85}
+              mouseMode="repel"
+              mouseRadius={0.5}
+              mouseStrength={0.7}
+              intro
+              lightMode={false}
+              paused={!isAboutEffectsActive}
+              dpr={lowPerformance ? 1 : 1.5}
             />
           </div>
 
           {/* Soft ambient drifting mist */}
-          <DriftingMist opacity={0.16} speedMultiplier={1} />
+          <DriftingMist opacity={0.06} speedMultiplier={1} />
 
           <div
             ref={containerRef}
@@ -400,55 +438,35 @@ export default function SceneController() {
 
               <div className="about__right">
                 <div className="about__card">
+                  <h3 className="about__card-heading">Do escopo à publicação</h3>
                   <p>
-                    Eu gosto de criar coisas.<br />
-                    Sites, sistemas, experiências, ideias.
+                    O trabalho começa com o objetivo do negócio, o público e as tarefas que
+                    precisam funcionar. Com isso, definimos uma solução adequada ao contexto,
+                    em vez de partir de um modelo genérico.
                   </p>
 
                   <p>
-                    Às vezes começa com um problema. Às vezes só com uma ideia que eu quero ver funcionando.
+                    O escopo pode reunir arquitetura de páginas, interface responsiva,
+                    formulários, áreas administrativas, APIs e estrutura de dados. As entregas
+                    são alinhadas antes do desenvolvimento.
                   </p>
 
                   <p>
-                    Eu acredito em começar simples.<br />
-                    Testar. Errar. Ajustar.<br />
-                    E transformar uma ideia em algo que realmente funciona.
+                    A experiência de uso é considerada desde o início: conteúdo organizado,
+                    navegação clara e interfaces que funcionam em celulares, tablets e
+                    computadores.
                   </p>
 
                   <p>
-                    Gosto de tecnologia, mas principalmente do que dá para fazer com ela.<br />
-                    React. Java. SQL. APIs. Automação. IA.<br />
-                    Um pouco de tudo que me ajude a construir melhor.
+                    A implementação combina ferramentas adequadas ao escopo, como React,
+                    Next.js, TypeScript, Java, SQL e integrações externas. Animações e recursos
+                    de IA entram quando resolvem uma necessidade concreta.
                   </p>
 
                   <p>
-                    Também crio para empresas.<br />
-                    Websites, sistemas e soluções digitais pensadas para cada negócio.<br />
-                    Sem depender de template pronto.<br />
-                    Se precisa ser criado, eu gosto de descobrir como fazer.
-                  </p>
-
-                  <p>
-                    A tecnologia me ajuda a ir mais rápido.<br />
-                    A IA me ajuda a explorar mais possibilidades.<br />
-                    Mas ainda sou eu quem pensa, testa, quebra e constrói.
-                  </p>
-
-                  <p>
-                    Eu gosto de entender o problema antes de escolher a ferramenta.<br />
-                    Porque código por código não significa muita coisa.<br />
-                    O resultado é o que importa.
-                  </p>
-
-                  <p>
-                    No fim, sou eu por trás de tudo.<br />
-                    Do primeiro rascunho ao último detalhe.<br />
-                    Sem complicar. Sem fazer só por fazer.
-                  </p>
-
-                  <p>
-                    Tenho uma ideia?<br />
-                    Eu provavelmente já estou pensando em como construir.
+                    O processo inclui alinhamento de requisitos, desenvolvimento, validação e
+                    preparação para publicação. A comunicação é direta durante as etapas e a
+                    entrega inclui orientação para os próximos passos.
                   </p>
                 </div>
               </div>
@@ -471,7 +489,7 @@ export default function SceneController() {
           </div>
         )}
 
-        {/* Layer 4: Projects Scene (BACK3 mountain, FlexCarousel, card, title, circular text) */}
+        {/* Layer 4: Projects Scene */}
         <div
           className="scene-layer scene-layer--projects"
           style={{
@@ -485,13 +503,12 @@ export default function SceneController() {
         >
           <Projects
             scrollProgress={projectsScrollProgress}
-            viewportW={viewportW}
             viewportH={viewportH}
             nextPortalProgress={showcaseTransitionProgress}
           />
         </div>
 
-        {/* Layer 5: Showcase Scene (BACK4 misty pine forest + AccordionGallery) */}
+        {/* Layer 5: Capabilities Scene */}
         <div
           className="scene-layer scene-layer--showcase"
           style={{
@@ -506,8 +523,11 @@ export default function SceneController() {
         >
           <Showcase
             scrollProgress={showcaseScrollProgress}
-            viewportW={viewportW}
             viewportH={viewportH}
+            viewportW={viewportW}
+            lowPerformance={lowPerformance}
+            effectsActive={isShowcaseEffectsActive}
+            onContainerHeightChange={setShowcaseContainerH}
           />
         </div>
 

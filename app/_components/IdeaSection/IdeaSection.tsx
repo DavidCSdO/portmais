@@ -19,26 +19,19 @@ interface IdeaSectionProps {
   contentOpacity?: number;
 }
 
-const CONCEPT_SPECS = [
-  { label: "Fase", value: "01 / Ideação, pesquisa e prototipagem viva" },
-  { label: "Método", value: "Código limpo, arquitetura escalável e física em tempo real" },
-  { label: "Foco", value: "Interfaces que unem sensibilidade estética e alto desempenho" },
-  { label: "Status", value: "Em constante evolução e refinamento — 2026" }
-];
-
 const FOLDER_SPECS = [
-  { label: "Física", value: "Simulação de gravidade e inércia em 60 FPS com Matter.js" },
-  { label: "Princípios", value: "Menos cliques, mais impacto e arquitetura fluida" },
-  { label: "Interação", value: "Passe o cursor ou toque na pasta para abrir e soltar as notas" }
+  { label: "Tecnologia", value: "Matter.js para simular gravidade e colisões" },
+  { label: "Interação", value: "Abra a pasta por toque ou cursor para consultar as notas" },
+  { label: "Contexto", value: "Demonstração interativa desenvolvida para este portfólio" }
 ];
 
 const FOLDER_ITEMS = [
-  "✨ Menos cliques, mais impacto",
-  "⚡ 60 FPS & Física real",
-  "🎯 Foco total na experiência",
-  "📐 Arquitetura escalável",
-  "💎 Cada detalhe importa",
-  "🚀 Do protótipo à produção"
+  "Validar a tarefa principal",
+  "Prototipar antes de ampliar",
+  "Projetar para toque e teclado",
+  "Escolher efeitos com propósito",
+  "Testar antes de publicar",
+  "Documentar o que foi entregue"
 ];
 
 export default function IdeaSection({
@@ -79,19 +72,6 @@ export default function IdeaSection({
       ro?.disconnect();
     };
   }, [onContainerHeightChange]);
-
-  // landscape_idea.jpg is 2560 x 1707 (aspect ratio 2560/1707 = 1.5)
-  // Weisshorn mountain summit above an ocean of clouds in 4K resolution
-  const imgAspect = 2560 / 1707;
-  let bgRenderedW = viewportW;
-  let bgRenderedH = viewportW / imgAspect;
-  if (bgRenderedH < viewportH * 1.55) {
-    bgRenderedH = viewportH * 1.55;
-    bgRenderedW = bgRenderedH * imgAspect;
-  }
-  const maxBgScrollY = Math.max(0, bgRenderedH - viewportH);
-  const bgTranslateX = -Math.max(0, (bgRenderedW - viewportW) / 2);
-  const bgTranslateY = scrollProgress * maxBgScrollY;
 
   // Content scroll translation: exactly containerH - viewportH so footer aligns flush at the bottom
   const maxContentScroll = Math.max(0, containerH - viewportH);
@@ -150,38 +130,29 @@ export default function IdeaSection({
         }}
       >
         {/* ====================================================
-           1. TOP ZONE: Minimalist Editorial Concept (estilo Anexo 4)
+           1. TOP ZONE: project approach
            ==================================================== */}
         <section className="idea-block idea-block--concept">
           <div className="idea-block__index">
-            <span className="idea-block__index-num">03</span>
+            <span className="idea-block__index-num">04</span>
             <span className="idea-block__index-line" aria-hidden="true" />
-            <span className="idea-block__index-label">Conceito</span>
+            <span className="idea-block__index-label">Abordagem</span>
           </div>
 
-          <h2 className="idea-block__eyebrow">A Faísca do Invisível</h2>
+          <h2 className="idea-block__eyebrow">Planejamento antes da implementação</h2>
 
           <p className="idea-block__statement">
-            Tudo começa no abstrato. <em>E ganha vida no detalhe.</em>
+            Requisitos, prioridades e critérios de entrega são definidos antes do desenvolvimento para manter o projeto alinhado aos seus objetivos.
           </p>
-
-          <dl className="idea-block__specs">
-            {CONCEPT_SPECS.map(row => (
-              <div key={row.label} className="idea-block__row">
-                <dt className="idea-block__row-label">{row.label}</dt>
-                <dd className="idea-block__row-value">{row.value}</dd>
-              </div>
-            ))}
-          </dl>
         </section>
 
         {/* ====================================================
-           2. MIDDLE ZONE: MaskedHeading "TUDO COMEÇA COM UMA IDEIA"
+           2. MIDDLE ZONE: transition from project scope to delivery
            ==================================================== */}
         <section className="idea-block idea-block--heading">
           <div className="idea-block__heading-inner">
             <MaskedHeading
-              text="TUDO COMEÇA COM UMA IDEIA"
+              text="DO ESCOPO À ENTREGA"
               mediaType="image"
               src="/images/texture_gold.webp"
               fillScale={1.25}
@@ -204,21 +175,21 @@ export default function IdeaSection({
         </section>
 
         {/* ====================================================
-           3. BOTTOM ZONE: Minimalist Editorial Folder Section (estilo Anexo 4)
+           3. BOTTOM ZONE: interactive physics experiment
            ==================================================== */}
         <section className="idea-block idea-block--folder">
           <div className="idea-folder-editorial">
             <div className="idea-folder-editorial__left">
               <div className="idea-block__index">
-                <span className="idea-block__index-num">04</span>
+                <span className="idea-block__index-num">05</span>
                 <span className="idea-block__index-line" aria-hidden="true" />
-                <span className="idea-block__index-label">Iteração</span>
+                <span className="idea-block__index-label">Experimento</span>
               </div>
 
-              <h2 className="idea-block__eyebrow">Caderno de Criação</h2>
+              <h2 className="idea-block__eyebrow">Interação com física em tempo real</h2>
 
               <p className="idea-block__statement">
-                A lapidação contínua <em>de cada decisão.</em>
+                Demonstração de uma interface interativa com simulação física feita em Matter.js.
               </p>
 
               <dl className="idea-block__specs">
@@ -231,7 +202,7 @@ export default function IdeaSection({
               </dl>
             </div>
 
-            {/* FolderFloat: minimalista, sobre a floresta, sem caixas pesadas */}
+            {/* Interactive Matter.js folder */}
             <div className="idea-folder-editorial__right">
               <div className="idea-folder-float-wrap">
                 <FolderFloat
@@ -276,22 +247,22 @@ export default function IdeaSection({
         <section className="idea-block idea-block--expand" id="contato">
           <div className="idea-block__header">
             <div className="idea-block__index">
-              <span className="idea-block__index-num">05</span>
+              <span className="idea-block__index-num">07</span>
               <span className="idea-block__index-line" aria-hidden="true" />
-              <span className="idea-block__index-label">Visão & Precisão</span>
+              <span className="idea-block__index-label">Contato</span>
             </div>
 
-            <h2 className="idea-block__eyebrow">Engenharia Sem Fronteiras</h2>
+            <h2 className="idea-block__eyebrow">Solicite uma proposta</h2>
 
             <p className="idea-block__statement">
-              Do conceito ao código. <em>O palco completo para a experiência.</em>
+              Descreva o que precisa ser desenvolvido e receba um retorno sobre escopo e próximos passos.
             </p>
           </div>
 
           <div className="idea-expand-stage">
             <ScrollExpand
               src="/images/scale_hero.webp"
-              alt="Visão & Precisão"
+              alt="Paisagem alpina ao entardecer"
               title="Visão & Precisão"
               scrollHint="Role para expandir"
               startWidth={isMobile ? 82 : 54}

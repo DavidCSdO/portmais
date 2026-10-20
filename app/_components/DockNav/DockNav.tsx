@@ -79,18 +79,13 @@ export default function DockNav({
 
   // Current active chapter index
   const activeChapterIndex = useMemo(() => {
-    const idx = CHAPTERS.findIndex(
-      (c) => c.id === activeSceneId || (c.id === 'idea' && activeSceneId === 'contact')
-    );
+    const chapterId = activeSceneId === 'contact' ? 'idea' : activeSceneId;
+    const idx = CHAPTERS.findIndex((chapter) => chapter.id === chapterId);
     return idx >= 0 ? idx : 0;
   }, [activeSceneId]);
 
-  const [previewIndex, setPreviewIndex] = useState(activeChapterIndex);
-
-  // Synchronize previewIndex when activeChapterIndex changes (if not hovering another)
-  useEffect(() => {
-    setPreviewIndex(activeChapterIndex);
-  }, [activeChapterIndex]);
+  const [hoveredPreviewIndex, setHoveredPreviewIndex] = useState<number | null>(null);
+  const previewIndex = hoveredPreviewIndex ?? activeChapterIndex;
 
   // Close when clicking outside of the dock card
   useEffect(() => {
@@ -119,6 +114,7 @@ export default function DockNav({
     try {
       playClickSound('tick');
     } catch {}
+    setHoveredPreviewIndex(null);
     setIsExpanded((prev) => !prev);
   };
 
@@ -127,13 +123,13 @@ export default function DockNav({
       case 'hero':
         return 0;
       case 'about':
-        return chapterOffsets.about || 800;
+        return chapterOffsets.about ?? 800;
       case 'projects':
-        return chapterOffsets.projects || 2200;
+        return chapterOffsets.projects ?? 2200;
       case 'showcase':
-        return chapterOffsets.showcase || 3600;
+        return chapterOffsets.showcase ?? 3600;
       case 'idea':
-        return chapterOffsets.contact || 5000;
+        return chapterOffsets.idea ?? 5000;
       default:
         return 0;
     }
@@ -157,16 +153,16 @@ export default function DockNav({
     } catch {}
     if (type === 'schedule') {
       const text = encodeURIComponent('Olá David, vi seu portfólio e gostaria de agendar uma conversa sobre um projeto.');
-      window.open(`https://wa.me/?text=${text}`, '_blank');
+      window.open(`https://wa.me/5524992622909?text=${text}`, '_blank', 'noopener,noreferrer');
     } else if (type === 'github') {
       window.open('https://github.com/DavidCSdO', '_blank');
     } else if (type === 'linkedin') {
-      window.open('https://linkedin.com', '_blank');
+      window.open('https://www.linkedin.com/in/david-cardoso-659239215/', '_blank', 'noopener,noreferrer');
     } else if (type === 'whatsapp') {
-      window.open('https://wa.me/?text=Olá%20David,%20gostaria%20de%20conversar%20sobre%20um%20projeto.', '_blank');
+      window.open('https://wa.me/5524992622909?text=Olá%20David,%20gostaria%20de%20conversar%20sobre%20um%20projeto.', '_blank', 'noopener,noreferrer');
     } else if (type === 'email') {
       if (navigator.clipboard) {
-        navigator.clipboard.writeText('davidcsdo@gmail.com');
+        navigator.clipboard.writeText('cardosodavid92@gmail.com');
       }
     }
   };
@@ -191,7 +187,7 @@ export default function DockNav({
         >
           <span className="dock-nav-pill__dot" aria-hidden="true" />
           <span className="dock-nav-pill__chapter">
-            {currentChapter.num} {currentChapter.title}
+            {currentChapter.id === 'hero' ? currentChapter.title : `${currentChapter.num} ${currentChapter.title}`}
           </span>
           <span className="dock-nav-pill__separator" aria-hidden="true">·</span>
           <span className="dock-nav-pill__gauge">{scrollPercentage}%</span>
@@ -243,7 +239,7 @@ export default function DockNav({
                           isCurrent ? 'dock-nav-list__btn--current' : ''
                         } ${isHovered ? 'dock-nav-list__btn--hovered' : ''}`}
                         onClick={() => handleNavigate(item.id)}
-                        onMouseEnter={() => setPreviewIndex(index)}
+                        onMouseEnter={() => setHoveredPreviewIndex(index)}
                       >
                         <span className="dock-nav-list__num">{item.num}</span>
                         <span className="dock-nav-list__label">{item.title}</span>
@@ -297,7 +293,7 @@ export default function DockNav({
               </div>
             </div>
 
-            {/* Right Column: Dynamic Landscape Image Preview */}
+            {/* Right Column: chapter preview */}
             <div className="dock-nav-stage__preview">
               <div
                 className="dock-nav-preview-box"
@@ -312,9 +308,9 @@ export default function DockNav({
                   src={activePreview.image}
                   alt={activePreview.title}
                   fill
-                  priority={false}
-                  sizes="(max-width: 900px) 100vw, 420px"
+                  sizes="(max-width: 860px) 100vw, 480px"
                   className="dock-nav-preview-img"
+                  priority={activePreview.id === 'hero'}
                 />
                 <div className="dock-nav-preview-overlay" />
 

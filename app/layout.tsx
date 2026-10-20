@@ -5,6 +5,8 @@ import CustomCursor from "./_components/CustomCursor";
 import AmbientSpotlight from "./_components/AmbientSpotlight";
 import "./_styles/globals.css";
 
+const siteUrl = "https://portmais.vercel.app";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -35,21 +37,20 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://davidcardoso.dev"),
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "David Cardoso — Creative Developer & Digital Architect",
+    default: "David Cardoso — Sites e Sistemas Web",
     template: "%s | David Cardoso",
   },
   description:
-    "Portfólio profissional de David Cardoso. Engenharia criativa, interfaces imersivas, WebGL, Next.js e design sensorial de alto desempenho.",
+    "Desenvolvimento de sites e sistemas web sob medida. Projetos acompanhados diretamente por David Cardoso, do escopo à publicação.",
   keywords: [
     "David Cardoso",
-    "Creative Developer",
-    "Frontend Engineer",
+    "Desenvolvedor web",
     "Next.js",
     "React 19",
-    "Design Imersivo",
-    "WebGL",
+    "Sites sob medida",
+    "Sistemas web",
     "Portfolio",
     "Matter.js",
     "Canvas 2D",
@@ -59,25 +60,25 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    url: "https://davidcardoso.dev",
-    siteName: "David Cardoso — Portfolio",
-    title: "David Cardoso — Creative Developer & Digital Architect",
+    url: siteUrl,
+    siteName: "David Cardoso",
+    title: "David Cardoso — Sites e Sistemas Web",
     description:
-      "Do conceito à execução técnica. Interfaces de alto impacto, física em tempo real e arquitetura escalável.",
+      "Desenvolvimento de sites e sistemas web sob medida, com contato direto do início à publicação.",
     images: [
       {
         url: "/images/hero.jpg",
         width: 1200,
         height: 630,
-        alt: "David Cardoso — Creative Developer",
+        alt: "David Cardoso — desenvolvimento web",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "David Cardoso — Creative Developer & Digital Architect",
+    title: "David Cardoso — Sites e Sistemas Web",
     description:
-      "Do conceito à execução técnica. Interfaces de alto impacto, física em tempo real e arquitetura escalável.",
+      "Desenvolvimento de sites e sistemas web sob medida, com contato direto do início à publicação.",
     images: ["/images/hero.jpg"],
   },
 };

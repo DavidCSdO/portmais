@@ -1,7 +1,4 @@
-/* ========================================================
-   Hero Section — Editorial Masterpiece & Brand Identity
-   Estilo Awwwards / High-Fashion Magazine Cover
-   ======================================================== */
+/* Hero composition: title behind the mountain foreground. */
 
 .hero {
   position: relative;
@@ -12,155 +9,41 @@
   align-items: center;
   justify-content: flex-start;
   overflow: hidden;
-  background:
-    radial-gradient(ellipse 70% 50% at 50% 12%, rgba(2, 132, 199, 0.07) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 45% at 85% 70%, rgba(5, 150, 105, 0.04) 0%, transparent 60%),
-    radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.035) 1px, transparent 0) 0 0 / 32px 32px,
-    linear-gradient(180deg, #ffffff 0%, #fbfcfd 35%, #f6f8fb 70%, #f1f4f8 100%);
+  background: #8bd8f4;
   z-index: 1;
 }
 
-/* 1. Pure Code ReactBits Aurora Light Horizon */
-.hero__sky-backdrop {
-  position: absolute;
-  inset: -5%;
-  width: 110%;
-  height: 110%;
-  z-index: 1;
-  pointer-events: none;
-  will-change: transform;
-}
-
-.hero__sky-overlay {
+.hero__sky {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(251, 252, 254, 0.35) 55%,
-    rgba(244, 246, 250, 0.7) 100%
-  );
+  z-index: 0;
+  background:
+    linear-gradient(180deg, rgba(119, 211, 244, 0.98) 0%, rgba(174, 232, 246, 0.98) 52%, #d6f0ef 100%);
   pointer-events: none;
 }
 
-/* 2. Atmospheric Solar Aura */
-.hero__dawn-aura {
+.hero__mountain-layer {
   position: absolute;
-  bottom: 18%;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero__mountain {
+  position: absolute;
   left: 50%;
+  bottom: 0;
+  display: block;
+  width: 120vw;
+  max-width: 2200px;
+  height: auto;
   transform: translateX(-50%);
-  width: 110vw;
-  max-width: 1600px;
-  height: 55vh;
-  background: radial-gradient(
-    ellipse 60% 45% at 50% 70%,
-    rgba(56, 189, 248, 0.22) 0%,
-    rgba(16, 185, 129, 0.12) 40%,
-    rgba(255, 255, 255, 0) 75%
-  );
-  filter: blur(50px);
-  pointer-events: none;
-  z-index: 2;
-  animation: heroDawnAuraBreathe 7s ease-in-out infinite alternate;
-  will-change: transform, opacity;
+  mix-blend-mode: multiply;
+  user-select: none;
 }
 
-@keyframes heroDawnAuraBreathe {
-  0% {
-    opacity: 0.75;
-    transform: translateX(-50%) scale(0.97);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1.04);
-  }
-}
-
-/* 3. Monumental Brand Emblem Watermark: The 4-Pointed Star & Astrolabe Rings */
-.hero__brand-emblem {
-  position: absolute;
-  top: 42%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(85vw, 680px);
-  height: min(85vw, 680px);
-  pointer-events: none;
-  z-index: 2;
-  transition: opacity 0.5s ease;
-  will-change: transform;
-}
-
-.hero__brand-emblem-svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.hero__emblem-ring {
-  fill: none;
-  stroke: rgba(15, 23, 42, 0.12);
-  stroke-dasharray: 4 6;
-  stroke-width: 1;
-  animation: heroEmblemRotate 140s linear infinite;
-  transform-origin: 250px 250px;
-}
-
-.hero__emblem-ring--outer {
-  stroke-dasharray: 6 10;
-  stroke: rgba(2, 132, 199, 0.2);
-}
-
-.hero__emblem-ring--mid {
-  stroke-dasharray: 2 6;
-  stroke: rgba(5, 150, 105, 0.22);
-  animation-direction: reverse;
-  animation-duration: 90s;
-}
-
-.hero__emblem-ring--inner {
-  stroke-dasharray: 3 5;
-  stroke: rgba(15, 23, 42, 0.14);
-}
-
-.hero__emblem-axis {
-  stroke: rgba(15, 23, 42, 0.1);
-  stroke-width: 1;
-  stroke-dasharray: 6 8;
-}
-
-.hero__emblem-tick {
-  stroke: rgba(2, 132, 199, 0.25);
-  stroke-width: 1;
-}
-
-.hero__emblem-star {
-  fill: rgba(2, 132, 199, 0.02);
-  stroke: rgba(2, 132, 199, 0.35);
-  stroke-width: 1;
-  animation: heroEmblemStarPulse 4s ease-in-out infinite alternate;
-}
-
-@keyframes heroEmblemRotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes heroEmblemStarPulse {
-  0% {
-    stroke-opacity: 0.2;
-    transform: scale(0.98);
-  }
-  100% {
-    stroke-opacity: 0.45;
-    transform: scale(1.02);
-  }
-}
-
-/* 4. Editorial Header */
+/* Brand header */
 .hero__header {
   position: absolute;
   top: clamp(1.2rem, 3vh, 2.4rem);
@@ -170,10 +53,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  z-index: 15;
+  z-index: 5;
 }
 
-/* Striking Brand Monogram (Left) */
 .hero__brand-stamp {
   display: inline-flex;
   align-items: center;
@@ -183,8 +65,8 @@
 
 .hero__brand-star {
   font-size: 1.25rem;
-  color: #0284c7;
-  text-shadow: 0 0 16px rgba(2, 132, 199, 0.45);
+  color: #bcff7e;
+  text-shadow: 0 0 16px rgba(188, 255, 126, 0.45);
   animation: heroBrandStarGlow 2.8s ease-in-out infinite alternate;
 }
 
@@ -210,7 +92,8 @@
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.14em;
-  color: #0f172a;
+  color: #123746;
+  text-shadow: 0 1px 8px rgba(255, 255, 255, 0.45);
   text-transform: uppercase;
 }
 
@@ -218,67 +101,27 @@
   font-family: var(--font-geist-mono), monospace;
   font-size: 0.6rem;
   letter-spacing: 0.18em;
-  color: #0284c7;
+  color: rgba(18, 55, 70, 0.72);
 }
 
-/* 5. Center Title "DAVID" — Luxury Masthead Treatment */
+/* Masthead */
 .hero__title-wrapper {
-  position: relative;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: clamp(3.2rem, 6.5vh, 5.5rem);
+  position: absolute;
+  z-index: 1;
+  top: clamp(3rem, 7vh, 6.5rem);
+  left: 50%;
+  width: 100%;
+  transform: translateX(-50%);
   user-select: none;
-  will-change: transform;
-}
-
-.hero__eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  margin-bottom: 0.6rem;
-  user-select: none;
-  opacity: 0;
-  animation: heroEyebrowFadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) 2.2s forwards;
-}
-
-@keyframes heroEyebrowFadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  100% {
-    opacity: 0.9;
-    transform: translateY(0);
-  }
-}
-
-.hero__eyebrow-line {
-  width: clamp(20px, 3.5vw, 44px);
-  height: 1px;
-  background: linear-gradient(90deg, rgba(2, 132, 199, 0), rgba(2, 132, 199, 0.6));
-}
-
-.hero__eyebrow-line:last-child {
-  background: linear-gradient(90deg, rgba(2, 132, 199, 0.6), rgba(2, 132, 199, 0));
-}
-
-.hero__eyebrow-text {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: clamp(0.58rem, 0.85vw, 0.7rem);
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: #475569;
 }
 
 .hero__title {
   font-family: var(--font-display), 'Delamoore', serif;
-  font-size: min(25vw, 44vh, 490px);
-  color: #0f172a;
+  font-size: clamp(5rem, 30vw, 430px);
+  color: #bcff7e;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  line-height: 0.82;
+  letter-spacing: 0.015em;
+  line-height: 0.76;
   margin: 0;
   text-align: center;
   user-select: none;
@@ -286,7 +129,7 @@
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-shadow: 0 0 35px rgba(2, 132, 199, 0.12);
+  text-shadow: 0 2px 18px rgba(20, 69, 59, 0.15);
 }
 
 .hero__char {
@@ -301,15 +144,14 @@
 }
 
 .hero__char:hover {
-  transform: translateY(-4px) scale(1.02);
-  text-shadow: 0 0 35px rgba(2, 132, 199, 0.35);
+  text-shadow: 0 0 35px rgba(188, 255, 126, 0.5);
 }
 
 .hero__char-stroke {
   position: absolute;
   inset: 0;
   color: transparent;
-  -webkit-text-stroke: 1.5px #0f172a;
+  -webkit-text-stroke: 1.5px #345c31;
   opacity: 0;
   clip-path: polygon(0% 0%, 0% 0%, -35% 100%, -35% 100%);
   animation: heroCharStrokeWrite 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
@@ -319,7 +161,7 @@
 
 .hero__char-fill {
   display: inline-block;
-  color: #0f172a;
+  color: #bcff7e;
   opacity: 0;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
@@ -329,29 +171,12 @@
   animation-delay: calc(1.88s + var(--char-index) * 0.32s);
 }
 
-/* 6. Luminous Horizon Mist and Depth */
-.hero__horizon-glow {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 38vh;
-  background: linear-gradient(
-    0deg,
-    #eef2f7 0%,
-    rgba(238, 242, 247, 0.75) 40%,
-    rgba(240, 244, 248, 0) 100%
-  );
-  pointer-events: none;
-  z-index: 4;
-}
-
-/* 7. Discreet, High-Fashion Scroll Cue at Bottom Right */
+/* Scroll cue */
 .hero__footer {
   position: absolute;
   bottom: clamp(1.2rem, 3vh, 2.5rem);
   right: clamp(1.5rem, 4vw, 3rem);
-  z-index: 15;
+  z-index: 5;
 }
 
 .hero__scroll-cue {
@@ -362,21 +187,21 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #475569;
+  color: #123746;
   padding: 0.4rem;
   transition: all 0.3s ease;
   user-select: none;
 }
 
 .hero__scroll-cue:hover {
-  color: #0f172a;
+  color: #315a29;
   transform: translateY(2px);
 }
 
 .hero__scroll-cue-line {
   width: 1px;
   height: 30px;
-  background: linear-gradient(180deg, rgba(2, 132, 199, 0.85) 0%, rgba(15, 23, 42, 0.15) 100%);
+  background: linear-gradient(180deg, rgba(49, 90, 41, 0.9) 0%, rgba(18, 55, 70, 0.15) 100%);
   animation: heroScrollCuePulse 2.4s ease-in-out infinite;
 }
 
@@ -407,10 +232,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, #e8eef6 0%, #eef3f8 100%);
+  background: linear-gradient(180deg, #8bd8f4 0%, #d6f0ef 100%);
   z-index: 25;
   box-shadow: 0 30px 90px 20px rgba(15, 23, 42, 0.08);
-  border-bottom: 1px solid rgba(2, 132, 199, 0.15);
+  border-bottom: 1px solid rgba(49, 90, 41, 0.16);
   animation: heroCurtainSlideUp 3.6s forwards;
   pointer-events: none;
   will-change: transform;
@@ -463,17 +288,6 @@
   }
 }
 
-@keyframes heroMountainSlideUp {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(70px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
 @keyframes heroCurtainSlideUp {
   0%, 38% {
     transform: translateY(0);
@@ -493,32 +307,17 @@
 }
 
 @media (min-width: 601px) and (max-width: 900px) {
-  .hero__title-wrapper {
-    margin-top: clamp(4.2rem, 9vh, 6rem);
-  }
-
   .hero__title {
-    font-size: clamp(5.5rem, 20vw, 8rem);
-    line-height: 0.84;
-  }
-
-  .hero__brand-emblem {
-    top: clamp(140px, 19vh, 190px);
-    width: min(85vw, 480px);
-    height: min(85vw, 480px);
-  }
-
-  .hero__mountain-wrapper {
-    width: max(160%, 140vw);
-    height: clamp(46vh, 52vh, 60vh);
+    font-size: clamp(7rem, 34vw, 360px);
   }
 }
 
 @media (max-width: 600px) {
   .hero__header {
     top: clamp(1rem, 2.5vh, 1.8rem);
-    left: clamp(1rem, 4vw, 1.8rem);
-    right: clamp(1rem, 4vw, 1.8rem);
+    left: auto;
+    right: 1rem;
+    justify-content: flex-end;
   }
 
   .hero__brand-sub {
@@ -534,71 +333,18 @@
     font-size: 1.1rem;
   }
 
-  /* Centered and scaled title for mobile portrait */
   .hero__title-wrapper {
-    margin-top: clamp(3.6rem, 8.5vh, 4.8rem);
-    padding: 0 0.75rem;
-    width: 100%;
-  }
-
-  .hero__eyebrow {
-    gap: 0.5rem;
-    margin-bottom: 0.45rem;
-  }
-
-  .hero__eyebrow-line {
-    width: clamp(14px, 5vw, 28px);
-  }
-
-  .hero__eyebrow-text {
-    font-size: clamp(0.5rem, 2.2vw, 0.6rem);
-    letter-spacing: 0.2em;
-    white-space: nowrap;
+    top: clamp(6rem, 19vh, 9rem);
   }
 
   .hero__title {
-    font-size: clamp(4.4rem, 22.5vw, 5.8rem);
-    line-height: 0.82;
-    letter-spacing: 0.03em;
-    text-shadow: 0 0 28px rgba(188, 255, 126, 0.3);
+    font-size: clamp(5.25rem, 42vw, 180px);
   }
 
-  /* Astrolabe emblem precisely centered behind "DAVID" */
-  .hero__brand-emblem {
-    top: clamp(118px, 15.8vh, 148px);
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: min(84vw, 330px);
-    height: min(84vw, 330px);
+  .hero__mountain {
+    width: max(180vw, 165vh);
   }
 
-  .hero__emblem-ring {
-    stroke-width: 1.2;
-    stroke: rgba(188, 255, 126, 0.22);
-  }
-
-  .hero__emblem-axis {
-    stroke-width: 1;
-    stroke: rgba(188, 255, 126, 0.16);
-  }
-
-  .hero__emblem-star {
-    stroke: rgba(188, 255, 126, 0.26);
-  }
-
-  /* Foreground Mountain: rises higher to majestically frame the lower half of the title and screen */
-  .hero__mountain-wrapper {
-    width: max(185%, 175vw);
-    height: clamp(52vh, 58vh, 65vh);
-  }
-
-  .hero__dawn-aura {
-    width: 140vw;
-    height: 46vh;
-    bottom: 16%;
-  }
-
-  /* Hide scroll cue on mobile to avoid colliding with bottom DockNav */
   .hero__footer {
     display: none;
   }
@@ -616,14 +362,5 @@
     opacity: 1;
     clip-path: none;
     transform: none;
-  }
-  .hero__mountain-wrapper {
-    animation: none;
-    opacity: 1;
-    transform: translateX(-50%);
-  }
-  .hero__brand-emblem-svg,
-  .hero__emblem-ring {
-    animation: none;
   }
 }

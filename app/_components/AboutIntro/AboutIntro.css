@@ -45,7 +45,7 @@
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.12em;
-  color: #0284c7;
+  color: #bcff7e;
   opacity: 0.9;
 }
 
@@ -72,7 +72,15 @@
 
 .intro__statement em {
   font-style: normal;
-  color: #64748b;
+  color: #4a7b26;
+}
+
+.intro__summary {
+  max-width: 38rem;
+  margin: 0 0 clamp(2rem, 4vh, 3rem);
+  color: #334155;
+  font-size: clamp(0.98rem, 1.15vw, 1.08rem);
+  line-height: 1.75;
 }
 
 /* Spec rows */
@@ -147,7 +155,7 @@
   font-family: var(--font-delamoore), cursive;
   font-size: clamp(2.2rem, 3.4vw, 2.9rem);
   line-height: 1;
-  color: rgba(15, 23, 42, 0.45);
+  color: rgba(15, 23, 42, 0.4);
   transform: rotate(-4deg);
   user-select: none;
 }

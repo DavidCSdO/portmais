@@ -138,6 +138,10 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(2, 132, 199, 0.45), transparent 52%),
+    linear-gradient(145deg, #172033, #090e13);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -145,19 +149,25 @@
   box-sizing: border-box;
 }
 
-.process-card-front__bg {
+.process-card-front__image {
+  z-index: -1;
   object-fit: cover;
-  object-position: center;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  animation: process-card-image-cycle 16s ease-in-out infinite;
 }
 
-.process-card-box:hover .process-card-front__bg {
-  transform: scale(1.05);
+.process-col:nth-child(2) .process-card-front__image {
+  animation-delay: -5.3s;
+}
+
+.process-col:nth-child(3) .process-card-front__image {
+  animation-delay: -10.6s;
 }
 
 .process-card-front__overlay {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background: linear-gradient(
     180deg,
     rgba(6, 10, 14, 0.1) 0%,
@@ -165,6 +175,18 @@
     rgba(6, 10, 14, 0.94) 100%
   );
   pointer-events: none;
+}
+
+@keyframes process-card-image-cycle {
+  0%, 100% {
+    opacity: 0;
+  }
+  12%, 34% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
 .process-card-front__body {
@@ -529,5 +551,12 @@
   .process-steps-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process-card-front__image {
+    animation: none;
+    opacity: 0.4;
   }
 }
