@@ -13,10 +13,11 @@
    =========================== */
 
 :root {
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f4f6fa;
-  --color-accent: #0284c7;
-  --color-accent-emerald: #059669;
+  --color-bg-primary: #f7f8f3;
+  --color-bg-secondary: #eef1e8;
+  --color-accent: #4d7c0f;
+  --color-accent-emerald: #65a30d;
+  --color-brand-lime: #bcff7e;
   --color-text-light: #52525b;
   --color-text-dark: #09090b;
 
@@ -24,7 +25,7 @@
   --font-body: var(--font-geist-sans);
   --font-inter: var(--font-inter);
 
-  --background: #fcfcfd;
+  --background: #f7f8f3;
   --foreground: #09090b;
 }
 
@@ -49,7 +50,7 @@
 
 html {
   scroll-behavior: smooth;
-  background-color: #fcfcfd;
+  background-color: #f7f8f3;
 }
 
 body {

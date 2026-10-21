@@ -9,25 +9,59 @@
   align-items: center;
   justify-content: flex-start;
   overflow: hidden;
-  background: #8bd8f4;
+  background: #10242c;
   z-index: 1;
+}
+
+.hero__backdrop {
+  position: absolute;
+  inset: -12vh -4vw;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.hero__backdrop-image {
+  object-fit: cover;
+  object-position: center 54%;
+  transform: scale(1.06);
+  filter: saturate(0.82) brightness(0.88);
 }
 
 .hero__sky {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
   background:
-    linear-gradient(180deg, rgba(119, 211, 244, 0.98) 0%, rgba(174, 232, 246, 0.98) 52%, #d6f0ef 100%);
+    linear-gradient(
+      180deg,
+      rgba(26, 49, 44, 0.14) 0%,
+      rgba(86, 105, 77, 0.1) 35%,
+      rgba(33, 51, 34, 0.16) 100%
+    );
   pointer-events: none;
 }
 
 .hero__mountain-layer {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 3;
   overflow: hidden;
   pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.08) 16%,
+    rgba(0, 0, 0, 0.45) 30%,
+    #000 48%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.08) 16%,
+    rgba(0, 0, 0, 0.45) 30%,
+    #000 48%
+  );
 }
 
 .hero__mountain {
@@ -39,8 +73,21 @@
   max-width: 2200px;
   height: auto;
   transform: translateX(-50%);
-  mix-blend-mode: multiply;
+  filter: saturate(0.88) contrast(0.96) brightness(0.92);
   user-select: none;
+}
+
+.hero__mountain-layer::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    180deg,
+    rgba(214, 221, 187, 0.12) 0%,
+    transparent 38%,
+    rgba(22, 39, 27, 0.08) 100%
+  );
+  pointer-events: none;
 }
 
 /* Brand header */
@@ -92,7 +139,7 @@
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.14em;
-  color: #123746;
+  color: #f4f8ed;
   text-shadow: 0 1px 8px rgba(255, 255, 255, 0.45);
   text-transform: uppercase;
 }
@@ -101,13 +148,13 @@
   font-family: var(--font-geist-mono), monospace;
   font-size: 0.6rem;
   letter-spacing: 0.18em;
-  color: rgba(18, 55, 70, 0.72);
+  color: rgba(244, 248, 237, 0.78);
 }
 
 /* Masthead */
 .hero__title-wrapper {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   top: clamp(3rem, 7vh, 6.5rem);
   left: 50%;
   width: 100%;
@@ -187,21 +234,21 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #123746;
+  color: #f4f8ed;
   padding: 0.4rem;
   transition: all 0.3s ease;
   user-select: none;
 }
 
 .hero__scroll-cue:hover {
-  color: #315a29;
+  color: #bcff7e;
   transform: translateY(2px);
 }
 
 .hero__scroll-cue-line {
   width: 1px;
   height: 30px;
-  background: linear-gradient(180deg, rgba(49, 90, 41, 0.9) 0%, rgba(18, 55, 70, 0.15) 100%);
+  background: linear-gradient(180deg, rgba(188, 255, 126, 0.9) 0%, rgba(244, 248, 237, 0.2) 100%);
   animation: heroScrollCuePulse 2.4s ease-in-out infinite;
 }
 
@@ -232,7 +279,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, #8bd8f4 0%, #d6f0ef 100%);
+  background: linear-gradient(180deg, #dfe9d5 0%, #edf0e4 100%);
   z-index: 25;
   box-shadow: 0 30px 90px 20px rgba(15, 23, 42, 0.08);
   border-bottom: 1px solid rgba(49, 90, 41, 0.16);

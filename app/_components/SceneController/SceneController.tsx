@@ -38,6 +38,7 @@ export default function SceneController() {
   const [lowPerformance] = useState(detectLowPerformanceDevice);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [containerH, setContainerH] = useState(1200);
+  const [projectsContainerH, setProjectsContainerH] = useState(2400);
   const [showcaseContainerH, setShowcaseContainerH] = useState(1100);
   const [ideaContainerH, setIdeaContainerH] = useState(4200);
   const isAboutContemplating = useContemplation();
@@ -112,7 +113,10 @@ export default function SceneController() {
   const transitionDistance = Math.max(viewportH * 0.85, 650);
 
   // 2. About scroll distance: enough room to read the introduction comfortably
-  const aboutContentScroll = Math.max(0, containerH - viewportH + 90);
+  const aboutContentScroll = Math.max(
+    viewportH * 0.2,
+    containerH - viewportH + 90
+  );
   const aboutScrollDistance = Math.max(
     viewportH * 0.65,
     aboutContentScroll + viewportH * 0.35,
@@ -122,8 +126,13 @@ export default function SceneController() {
   // 3. Projects transition distance: smooth fluid horizon wave transition
   const projectsTransitionDistance = Math.max(viewportH * 0.65, 580);
 
-  // 4. Projects scroll distance: equally large height as about
-  const projectsScrollDistance = Math.max(viewportH * 1.6, 1500);
+  // 4. Projects scroll distance: scale with the full portfolio content
+  const projectsContentScroll = Math.max(0, projectsContainerH - viewportH + 120);
+  const projectsScrollDistance = Math.max(
+    viewportH * 0.65,
+    projectsContentScroll + viewportH * 0.35,
+    1500
+  );
 
   // 5. Showcase transition distance: modern liquid horizon wave curtain
   const showcaseTransitionDistance = Math.max(viewportH * 0.9, 850);
@@ -330,10 +339,8 @@ export default function SceneController() {
     >
       {/* Contemporary Floating Glass Island Dock */}
       <DockNav
-        scrollY={scrollY}
-        totalHeight={totalSceneHeight}
         activeSceneId={activeSceneId}
-        hidden={isAboutContemplating}
+        hidden={isAboutContemplating || activeSceneId === "hero"}
         chapterOffsets={{
           about: transitionDistance + 60,
           projects: projectsScrollOffset + 60,
@@ -358,7 +365,10 @@ export default function SceneController() {
             pointerEvents: transitionProgress > 0.4 ? "none" : "auto",
           }}
         >
-          <Hero onExplore={handleExplore} />
+          <Hero
+            onExplore={handleExplore}
+            parallaxOffset={lowPerformance ? 0 : Math.min(scrollY * 0.16, viewportH * 0.18)}
+          />
         </div>
 
         {/* Layer 2: About Scene */}
@@ -504,6 +514,7 @@ export default function SceneController() {
           <Projects
             scrollProgress={projectsScrollProgress}
             viewportH={viewportH}
+            onContainerHeightChange={setProjectsContainerH}
             nextPortalProgress={showcaseTransitionProgress}
           />
         </div>
@@ -560,7 +571,7 @@ export default function SceneController() {
               : undefined,
             opacity: isAboutContemplating ? 0 : (hasScrolled ? starOpacity : undefined),
             transition: "opacity 0.5s ease",
-            filter: `drop-shadow(0 0 ${35 * Math.min(starScale, 2.5)}px rgba(2, 132, 199, ${starGlow}))`,
+            filter: `drop-shadow(0 0 ${35 * Math.min(starScale, 2.5)}px rgba(101, 163, 13, ${starGlow}))`,
           }}
         >
           <Image

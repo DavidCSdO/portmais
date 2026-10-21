@@ -5,7 +5,7 @@
 .scene-wrapper {
   position: relative;
   width: 100%;
-  background: #fcfcfd;
+  background: #f7f8f3;
 }
 
 .scene-stage {
@@ -15,7 +15,7 @@
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background: #fcfcfd;
+  background: #f7f8f3;
 }
 
 /* Layer 1: Hero */
@@ -42,7 +42,7 @@
   height: 100%;
   overflow: hidden;
   z-index: 1;
-  background: #f5f8fa;
+  background: #f2f4ed;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -153,7 +153,7 @@
 .about__card {
   width: 100%;
   max-width: 640px;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(248, 250, 244, 0.96);
   border-radius: 18px;
   border: 1px solid rgba(15, 23, 42, 0.07);
   box-shadow: 0 24px 60px -34px rgba(15, 23, 42, 0.24), 0 3px 12px rgba(15, 23, 42, 0.04);
@@ -313,7 +313,7 @@
   }
 
   .about__card {
-    background: #ffffff;
+    background: #f8faf4;
   }
 
   .scene-star-img {
@@ -322,7 +322,7 @@
 }
 
 html[data-performance="reduced"] .about__card {
-  background: #ffffff;
+  background: #f8faf4;
 }
 
 html[data-performance="reduced"] .about__light-bg::before,
@@ -378,12 +378,12 @@ html[data-performance="reduced"] .scene-star-img {
   border-radius: 50% 50% 0 0 / 14% 14% 0 0;
   background: radial-gradient(
     ellipse at 50% 0%,
-    rgba(255, 255, 255, 0.98) 0%,
-    rgba(248, 250, 253, 0.96) 45%,
-    rgba(241, 245, 250, 0.94) 80%
+    rgba(248, 250, 244, 0.98) 0%,
+    rgba(242, 245, 235, 0.96) 45%,
+    rgba(233, 238, 224, 0.94) 80%
   );
   box-shadow: 0 -15px 45px rgba(15, 23, 42, 0.05),
-    0 -2px 10px rgba(2, 132, 199, 0.15);
+    0 -2px 10px rgba(101, 163, 13, 0.12);
   will-change: transform, opacity;
 }
 
@@ -396,12 +396,12 @@ html[data-performance="reduced"] .scene-star-img {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(2, 132, 199, 0.7) 25%,
-    #ffffff 50%,
-    rgba(16, 185, 129, 0.7) 75%,
+    rgba(101, 163, 13, 0.55) 25%,
+    #f4f6ed 50%,
+    rgba(77, 124, 15, 0.55) 75%,
     transparent 100%
   );
-  filter: drop-shadow(0 0 10px rgba(2, 132, 199, 0.5));
+  filter: drop-shadow(0 0 10px rgba(101, 163, 13, 0.3));
 }
 
 .scene-transition-wave__light-beam {
@@ -412,7 +412,7 @@ html[data-performance="reduced"] .scene-star-img {
   height: 80px;
   background: radial-gradient(
     ellipse at 50% 50%,
-    rgba(2, 132, 199, 0.14) 0%,
+    rgba(132, 204, 22, 0.12) 0%,
     transparent 70%
   );
   filter: blur(12px);
@@ -429,7 +429,7 @@ html[data-performance="reduced"] .scene-star-img {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: radial-gradient(ellipse 100% 80% at 70% 30%, #ffffff 0%, #f9fbfd 40%, #f3f6fa 80%, #edf1f6 100%);
+  background: radial-gradient(ellipse 100% 80% at 70% 30%, #f7f8f3 0%, #f3f5ed 40%, #edf1e6 80%, #e8ede1 100%);
   z-index: 30;
   will-change: opacity, transform, filter;
 }
@@ -449,9 +449,9 @@ html[data-performance="reduced"] .scene-star-img {
   border-radius: 50% 50% 0 0 / 14% 14% 0 0;
   background: radial-gradient(
     ellipse at 50% 0%,
-    rgba(255, 255, 255, 0.98) 0%,
-    rgba(248, 250, 253, 0.96) 45%,
-    rgba(241, 245, 250, 0.94) 80%
+    rgba(248, 250, 244, 0.98) 0%,
+    rgba(242, 245, 235, 0.96) 45%,
+    rgba(233, 238, 224, 0.94) 80%
   );
   box-shadow: 0 -15px 45px rgba(15, 23, 42, 0.05),
     0 -2px 10px rgba(5, 150, 105, 0.15);
@@ -469,7 +469,7 @@ html[data-performance="reduced"] .scene-star-img {
     transparent 0%,
     rgba(5, 150, 105, 0.7) 25%,
     #ffffff 50%,
-    rgba(2, 132, 199, 0.7) 75%,
+    rgba(77, 124, 15, 0.55) 75%,
     transparent 100%
   );
   filter: drop-shadow(0 0 10px rgba(5, 150, 105, 0.5));
@@ -500,7 +500,7 @@ html[data-performance="reduced"] .scene-star-img {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: radial-gradient(ellipse 110% 85% at 40% 25%, #ffffff 0%, #f9fafd 40%, #f4f6fa 80%, #eef2f7 100%);
+  background: radial-gradient(ellipse 110% 85% at 40% 25%, #f7f8f3 0%, #f2f4ec 40%, #ebefe5 80%, #e7ece1 100%);
   z-index: 35;
   will-change: opacity, transform, filter;
 }
@@ -520,12 +520,12 @@ html[data-performance="reduced"] .scene-star-img {
   border-radius: 50% 50% 0 0 / 14% 14% 0 0;
   background: radial-gradient(
     ellipse at 50% 0%,
-    rgba(255, 255, 255, 0.98) 0%,
-    rgba(248, 250, 253, 0.96) 45%,
-    rgba(241, 245, 250, 0.94) 80%
+    rgba(248, 250, 244, 0.98) 0%,
+    rgba(242, 245, 235, 0.96) 45%,
+    rgba(233, 238, 224, 0.94) 80%
   );
   box-shadow: 0 -15px 45px rgba(15, 23, 42, 0.05),
-    0 -2px 10px rgba(2, 132, 199, 0.15);
+    0 -2px 10px rgba(101, 163, 13, 0.12);
   will-change: transform, opacity;
 }
 
@@ -538,12 +538,12 @@ html[data-performance="reduced"] .scene-star-img {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(2, 132, 199, 0.7) 25%,
-    #ffffff 50%,
-    rgba(56, 189, 248, 0.7) 75%,
+    rgba(101, 163, 13, 0.55) 25%,
+    #f4f6ed 50%,
+    rgba(188, 255, 126, 0.55) 75%,
     transparent 100%
   );
-  filter: drop-shadow(0 0 10px rgba(2, 132, 199, 0.5));
+  filter: drop-shadow(0 0 10px rgba(101, 163, 13, 0.3));
 }
 
 .scene-transition-idea-wave__light-beam {
@@ -554,7 +554,7 @@ html[data-performance="reduced"] .scene-star-img {
   height: 80px;
   background: radial-gradient(
     ellipse at 50% 50%,
-    rgba(2, 132, 199, 0.14) 0%,
+    rgba(132, 204, 22, 0.12) 0%,
     transparent 70%
   );
   filter: blur(12px);
@@ -571,7 +571,7 @@ html[data-performance="reduced"] .scene-star-img {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: radial-gradient(ellipse 100% 90% at 50% 20%, #ffffff 0%, #f9fbfd 35%, #f4f6fa 70%, #eff2f7 100%);
+  background: radial-gradient(ellipse 100% 90% at 50% 20%, #f7f8f3 0%, #f2f4ec 35%, #ebefe5 70%, #e7ece1 100%);
   z-index: 40;
   will-change: opacity, transform;
 }

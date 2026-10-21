@@ -7,15 +7,31 @@ import './Hero.css';
 
 interface HeroProps {
   onExplore?: () => void;
+  parallaxOffset?: number;
 }
 
-export default function Hero({ onExplore }: HeroProps) {
+export default function Hero({ onExplore, parallaxOffset = 0 }: HeroProps) {
   const handleLetterHover = () => {
     playClickSound('tick');
   };
 
   return (
     <section className="hero" id="hero">
+      <div
+        className="hero__backdrop"
+        aria-hidden="true"
+        style={{ transform: `translate3d(0, -${parallaxOffset}px, 0)` }}
+      >
+        <Image
+          src="/images/hero_editorial_sky_2x.webp"
+          alt=""
+          fill
+          sizes="108vw"
+          className="hero__backdrop-image"
+          quality={90}
+          priority
+        />
+      </div>
       <div className="hero__sky" aria-hidden="true" />
 
       <div className="hero__title-wrapper">

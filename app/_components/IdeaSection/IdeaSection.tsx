@@ -104,7 +104,7 @@ export default function IdeaSection({
       >
         <LightRays
           raysOrigin="top-center"
-          raysColor="#0284c7"
+          raysColor="#65a30d"
           lightMode={true}
           raysSpeed={0.5}
           lightSpread={1.4}

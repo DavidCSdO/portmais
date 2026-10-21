@@ -6,8 +6,6 @@ import { playClickSound } from '../../_utils/sound';
 import './DockNav.css';
 
 interface DockNavProps {
-  scrollY: number;
-  totalHeight: number;
   activeSceneId?: string;
   chapterOffsets?: Record<string, number>;
   /** Hides the dock (e.g. while Contemplation Mode is active) */
@@ -61,21 +59,12 @@ const CHAPTERS: ChapterItem[] = [
 ];
 
 export default function DockNav({
-  scrollY,
-  totalHeight,
   activeSceneId = 'hero',
   chapterOffsets = {},
   hidden = false,
 }: DockNavProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-
-  // Compute live scroll percentage (0% to 100%)
-  const maxScroll = Math.max(
-    1,
-    totalHeight - (typeof window !== 'undefined' ? window.innerHeight : 900)
-  );
-  const scrollPercentage = Math.min(Math.max(Math.round((scrollY / maxScroll) * 100), 0), 100);
 
   // Current active chapter index
   const activeChapterIndex = useMemo(() => {
@@ -182,17 +171,15 @@ export default function DockNav({
           type="button"
           onClick={handleToggleExpand}
           className="dock-nav-pill"
-          aria-label="Expandir índice e navegação"
+          aria-label="Abrir menu de navegação"
           title="Abrir índice de navegação"
         >
           <span className="dock-nav-pill__dot" aria-hidden="true" />
           <span className="dock-nav-pill__chapter">
             {currentChapter.id === 'hero' ? currentChapter.title : `${currentChapter.num} ${currentChapter.title}`}
           </span>
-          <span className="dock-nav-pill__separator" aria-hidden="true">·</span>
-          <span className="dock-nav-pill__gauge">{scrollPercentage}%</span>
           <span className="dock-nav-pill__action">
-            <span>ÍNDICE</span>
+            <span>Menu</span>
             <span className="dock-nav-pill__arrow" aria-hidden="true">↑</span>
           </span>
         </button>

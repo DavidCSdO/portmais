@@ -44,8 +44,8 @@
 }
 
 .circular-text:hover span {
-  color: #0284c7;
-  text-shadow: 0 0 16px rgba(2, 132, 199, 0.35);
+  color: #4d7c0f;
+  text-shadow: 0 0 16px rgba(77, 124, 15, 0.25);
 }
 
 /* Center Slot for Logo / Next Page Portal */

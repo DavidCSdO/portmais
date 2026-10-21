@@ -28,10 +28,10 @@
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(ellipse 65% 62% at 14% 18%, rgba(104, 211, 239, 0.58) 0%, transparent 72%),
-    radial-gradient(ellipse 65% 58% at 92% 80%, rgba(188, 255, 126, 0.44) 0%, transparent 70%),
-    linear-gradient(145deg, #eaf7fb 0%, #f4f8f4 52%, #edf7e8 100%),
-    radial-gradient(circle, rgba(14, 116, 144, 0.3) 1.3px, transparent 1.8px);
+    radial-gradient(ellipse 65% 62% at 14% 18%, rgba(188, 255, 126, 0.28) 0%, transparent 72%),
+    radial-gradient(ellipse 65% 58% at 92% 80%, rgba(132, 204, 22, 0.22) 0%, transparent 70%),
+    linear-gradient(145deg, #f2f5eb 0%, #f5f6ef 52%, #edf2e5 100%),
+    radial-gradient(circle, rgba(77, 124, 15, 0.18) 1.3px, transparent 1.8px);
   background-size: auto, auto, auto, 36px 36px;
   z-index: 0;
   pointer-events: none;
@@ -52,7 +52,7 @@
 .showcase__light-bg::before {
   top: 24%;
   left: -14%;
-  background: rgba(56, 189, 248, 0.56);
+  background: rgba(188, 255, 126, 0.4);
 }
 
 .showcase__light-bg::after {
@@ -148,12 +148,12 @@
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.14em;
-  color: #0284c7;
+  color: #4d7c0f;
   opacity: 0.9;
 }
 
 .showcase__biome-tag svg {
-  color: #0284c7;
+  color: #4d7c0f;
 }
 
 /* Kicker */
@@ -384,8 +384,8 @@
   margin-top: 0.9rem;
   margin-left: calc(36px + 1rem);
   padding: 0.85rem 1rem;
-  background: rgba(2, 132, 199, 0.04);
-  border-left: 2px solid #0284c7;
+  background: rgba(101, 163, 13, 0.06);
+  border-left: 2px solid #65a30d;
   border-radius: 4px;
   animation: showcaseDetailFade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -410,7 +410,7 @@
 }
 
 .showcase__item:hover .showcase__item-title {
-  color: #0284c7;
+  color: #4d7c0f;
 }
 
 .showcase__item:hover .showcase__item-num,
@@ -419,7 +419,7 @@
 }
 
 .showcase__item--expanded {
-  border-bottom-color: rgba(2, 132, 199, 0.35);
+  border-bottom-color: rgba(101, 163, 13, 0.35);
 }
 
 /* Minimalist Tech Tags Ribbon at the base of the card */
@@ -459,8 +459,8 @@
 
 .showcase__tech-pill:hover {
   color: #0f172a;
-  background: rgba(2, 132, 199, 0.1);
-  border-color: rgba(2, 132, 199, 0.25);
+  background: rgba(101, 163, 13, 0.1);
+  border-color: rgba(101, 163, 13, 0.25);
 }
 
 /* ==========================================================================
