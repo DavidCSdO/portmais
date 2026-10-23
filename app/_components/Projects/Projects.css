@@ -21,9 +21,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 70% 38% at 86% 4%, rgba(188, 255, 126, 0.19), transparent 70%),
-    radial-gradient(ellipse 52% 44% at 6% 64%, rgba(111, 141, 77, 0.08), transparent 68%),
-    linear-gradient(180deg, #f7f8f3 0%, #f2f4ec 48%, #edf0e6 100%);
+    radial-gradient(ellipse 72% 48% at 88% 8%, rgba(221, 229, 207, 0.3), transparent 72%),
+    linear-gradient(180deg, #f5f4ee 0%, #f1f1e9 54%, #e9ece3 100%);
   pointer-events: none;
 }
 
@@ -273,7 +272,10 @@
 .projects__atom-visual {
   position: relative;
   display: flex;
-  min-height: clamp(340px, 42vw, 500px);
+  align-self: center;
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   align-items: flex-end;
   border: 1px solid rgba(188, 255, 126, 0.22);
@@ -326,24 +328,6 @@
 .projects__visual-topline {
   top: 1.1rem;
   color: rgba(245, 249, 237, 0.82);
-}
-
-.projects__visual-mark {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  color: rgba(247, 250, 240, 0.94);
-  font-family: var(--font-display), Georgia, serif;
-  font-size: clamp(4rem, 8vw, 7.5rem);
-  letter-spacing: 0.03em;
-  line-height: 1;
-  text-shadow: 0 5px 30px rgba(0, 0, 0, 0.35);
-  transform: translate(-50%, -50%);
-  transition: letter-spacing 450ms ease;
-}
-
-.projects__atom-visual:hover .projects__visual-mark {
-  letter-spacing: 0.12em;
 }
 
 .projects__visual-bottom {
@@ -562,21 +546,37 @@
 }
 
 .projects__other {
-  padding-top: clamp(0.5rem, 1vw, 1rem);
+  padding: clamp(1.25rem, 2.8vw, 2.25rem);
+  border: 1px solid rgba(53, 67, 48, 0.09);
+  border-radius: 22px;
+  background: rgba(245, 245, 238, 0.74);
+  box-shadow: 0 18px 50px rgba(40, 49, 36, 0.035);
 }
 
 .projects__project-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.2rem;
+  gap: clamp(1rem, 1.8vw, 1.5rem);
 }
 
 .projects__project-card {
   overflow: hidden;
-  border: 1px solid rgba(40, 58, 39, 0.12);
-  border-radius: 18px;
-  background: rgba(250, 251, 246, 0.84);
-  box-shadow: 0 14px 34px rgba(34, 47, 32, 0.055);
+  border: 1px solid rgba(40, 58, 39, 0.11);
+  border-radius: 14px;
+  background: #fbfaf6;
+  box-shadow:
+    0 10px 28px rgba(34, 47, 32, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  font-family: var(--font-inter), sans-serif;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.projects__project-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(57, 78, 49, 0.2);
+  box-shadow:
+    0 16px 34px rgba(34, 47, 32, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 .projects__project-art {
@@ -585,8 +585,9 @@
   min-height: clamp(185px, 21vw, 250px);
   flex-direction: column;
   justify-content: space-between;
-  padding: 1rem 1.15rem;
+  padding: 1.1rem 1.25rem;
   overflow: hidden;
+  background: #e5ebdc;
   isolation: isolate;
 }
 
@@ -601,52 +602,32 @@
 .projects__project-art::before {
   inset: 0;
   background:
-    radial-gradient(ellipse at 72% 35%, rgba(255, 255, 255, 0.5), transparent 42%),
-    linear-gradient(135deg, #e7edda, #dce7ce);
+    linear-gradient(135deg, #e8ece2, #dce3d5);
 }
 
 .projects__project-card--wedding .projects__project-art::before {
   background:
-    radial-gradient(ellipse at 72% 26%, rgba(255, 255, 255, 0.85), transparent 40%),
-    linear-gradient(135deg, #f5e9e4, #ebd9d2 58%, #e5d4ca);
+    linear-gradient(135deg, #efe5de, #e5d7cc);
 }
 
 .projects__project-card--ache .projects__project-art::before {
-  background:
-    radial-gradient(ellipse at 78% 28%, rgba(205, 227, 161, 0.7), transparent 38%),
-    linear-gradient(135deg, #dce8ca, #b9cc9c 60%, #a8bc8b);
+  background: linear-gradient(135deg, #e2e8da, #d0dac6);
 }
 
 .projects__project-card--symphony .projects__project-art::before {
-  background:
-    radial-gradient(ellipse at 76% 28%, rgba(205, 172, 91, 0.25), transparent 38%),
-    linear-gradient(135deg, #211e1a, #171715 58%, #30251b);
+  background: linear-gradient(135deg, #eae8df, #dad8ce);
 }
 
 .projects__project-card--agenda .projects__project-art::before {
-  background:
-    radial-gradient(ellipse at 78% 25%, rgba(188, 255, 126, 0.38), transparent 40%),
-    linear-gradient(135deg, #26392b, #1a2a20 58%, #34452e);
+  background: linear-gradient(135deg, #e0e7dc, #cbd6c5);
 }
 
 .projects__project-art::after {
-  top: 18%;
-  right: 10%;
-  width: clamp(120px, 16vw, 190px);
-  aspect-ratio: 1;
-  border: 1px solid rgba(67, 91, 50, 0.22);
-  border-radius: 50%;
-  box-shadow:
-    0 0 0 18px rgba(90, 119, 67, 0.045),
-    0 0 0 42px rgba(90, 119, 67, 0.035);
-}
-
-.projects__project-card--symphony .projects__project-art::after,
-.projects__project-card--agenda .projects__project-art::after {
-  border-color: rgba(222, 194, 129, 0.26);
-  box-shadow:
-    0 0 0 18px rgba(222, 194, 129, 0.055),
-    0 0 0 42px rgba(222, 194, 129, 0.035);
+  top: 22%;
+  right: 8%;
+  width: 1px;
+  height: 56%;
+  background: rgba(52, 70, 51, 0.18);
 }
 
 .projects__project-art-index,
@@ -659,49 +640,16 @@
   text-transform: uppercase;
 }
 
-.projects__project-card--symphony .projects__project-art-index,
-.projects__project-card--symphony .projects__project-art-label,
-.projects__project-card--agenda .projects__project-art-index,
-.projects__project-card--agenda .projects__project-art-label {
-  color: #c7c3b1;
-}
-
 .projects__project-monogram {
   z-index: 1;
   align-self: center;
-  color: rgba(39, 53, 38, 0.86);
-  font-family: var(--font-display), Georgia, serif;
-  font-size: clamp(4.2rem, 7vw, 7rem);
+  color: #344633;
+  font-family: var(--font-delamoore), Georgia, serif;
+  font-size: clamp(4.5rem, 7.5vw, 7rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
   line-height: 0.9;
-  text-shadow: 0 8px 28px rgba(45, 58, 39, 0.12);
   transition: transform 400ms ease;
-}
-
-.projects__project-card--wedding .projects__project-monogram {
-  color: #503c37;
-  font-family: var(--font-display), Georgia, serif;
-  font-size: clamp(4.5rem, 8vw, 7.5rem);
-  font-style: italic;
-}
-
-.projects__project-card--ache .projects__project-monogram {
-  color: #304722;
-  font-family: var(--font-inter), sans-serif;
-  font-size: clamp(4.4rem, 8vw, 7rem);
-  font-weight: 700;
-  letter-spacing: -0.1em;
-}
-
-.projects__project-card--symphony .projects__project-monogram {
-  color: #d8bf85;
-}
-
-.projects__project-card--agenda .projects__project-monogram {
-  color: #d7e7c4;
-  font-family: var(--font-inter), sans-serif;
-  font-size: clamp(4rem, 7vw, 6rem);
-  font-weight: 500;
-  letter-spacing: -0.1em;
 }
 
 .projects__project-card:hover .projects__project-monogram {
@@ -710,6 +658,7 @@
 
 .projects__project-body {
   padding: clamp(1.2rem, 2vw, 1.65rem);
+  background: #fbfaf6;
 }
 
 .projects__project-meta {
@@ -721,18 +670,12 @@
 .projects__project-status {
   display: inline-flex;
   align-items: center;
-  padding: 0.27rem 0.48rem;
-  border: 1px solid rgba(82, 112, 59, 0.18);
-  border-radius: 999px;
-  background: rgba(101, 137, 69, 0.07);
+  padding: 0.25rem 0.48rem;
+  border: 1px solid rgba(82, 112, 59, 0.16);
+  border-radius: 5px;
+  background: rgba(101, 137, 69, 0.055);
   color: #536e3b;
   letter-spacing: 0.02em;
-}
-
-.projects__project-card--symphony .projects__project-status {
-  border-color: rgba(133, 107, 49, 0.2);
-  background: rgba(186, 150, 68, 0.08);
-  color: #806a39;
 }
 
 .projects__project-body h4 {
@@ -776,9 +719,10 @@
 .projects__project-highlight {
   margin-top: 0.25rem;
   padding: 0.9rem 1rem;
-  border-left: 2px solid #8aaa60;
-  border-radius: 0 8px 8px 0;
-  background: rgba(101, 137, 69, 0.07);
+  border: 1px solid rgba(101, 137, 69, 0.12);
+  border-left: 2px solid #77935c;
+  border-radius: 3px;
+  background: #f2f3eb;
 }
 
 .projects__project-highlight p {
@@ -1002,10 +946,6 @@
     gap: 0.3rem;
   }
 
-  .projects__visual-mark {
-    font-size: 4.4rem;
-  }
-
   .projects__service-list {
     grid-template-columns: 1fr;
   }
@@ -1044,6 +984,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .projects__atom-image,
+  .projects__project-card,
   .projects__project-monogram,
   .projects__external-link {
     transition-duration: 0.01ms;

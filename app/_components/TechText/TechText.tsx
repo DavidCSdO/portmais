@@ -187,7 +187,6 @@ const TechText: React.FC<TechTextProps> = ({
     const scratchCtx = scratch.getContext('2d');
     if (!container || !canvas || !ctx || !scratchCtx) return undefined;
 
-    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     let width = 1;
     let height = 1;
     let dpr = 1;
@@ -200,7 +199,6 @@ const TechText: React.FC<TechTextProps> = ({
     let word: LayoutView | null = null;
     let glyphs: Glyph[] = [];
     let presence = 0;
-    let clock = 0;
     let pulse = 0;
     let placed = false;
     let dragging = -1;
@@ -215,7 +213,7 @@ const TechText: React.FC<TechTextProps> = ({
     };
 
     const family = (s: Settings) => {
-      let f = s.fontFamily?.trim();
+      const f = s.fontFamily?.trim();
       if (!f || f.includes('var(')) {
         if (f && f.includes('var(')) {
           const match = f.match(/var\((--[^,\)]+)/);
@@ -631,12 +629,11 @@ const TechText: React.FC<TechTextProps> = ({
       if (!s) return;
       const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
       last = now;
-      const view = ensureLayout(s);
+      ensureLayout(s);
 
-      const sweeping = false;
       pulse += dt;
-      let targetX = pointer.x;
-      let targetY = pointer.y;
+      const targetX = pointer.x;
+      const targetY = pointer.y;
       const active = pointer.inside || dragging >= 0;
       if (active && !placed) {
         lens.x = targetX;

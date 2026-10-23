@@ -50,8 +50,15 @@ const CHAPTERS: ChapterItem[] = [
     image: '/images/landscape_showcase.webp',
   },
   {
-    id: 'idea',
+    id: 'resume',
     num: '05',
+    title: 'Currículo',
+    subtitle: 'Experiência, formação & projetos',
+    image: '/images/landscape_projects.webp',
+  },
+  {
+    id: 'idea',
+    num: '06',
     title: 'Contato',
     subtitle: 'Conceito, Criação & Parcerias',
     image: '/images/landscape_idea.webp',
@@ -117,6 +124,8 @@ export default function DockNav({
         return chapterOffsets.projects ?? 2200;
       case 'showcase':
         return chapterOffsets.showcase ?? 3600;
+      case 'resume':
+        return chapterOffsets.resume ?? 4700;
       case 'idea':
         return chapterOffsets.idea ?? 5000;
       default:

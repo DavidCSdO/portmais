@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { LineWaves } from "../Backgrounds";
 import { playClickSound } from "../../_utils/sound";
 import { useContemplation } from "../../_utils/contemplation";
@@ -82,7 +82,7 @@ const CORE_TECH_TAGS = [
   "Matter.js",
 ];
 
-export default function Showcase({
+function Showcase({
   scrollProgress,
   viewportH,
   viewportW,
@@ -139,7 +139,7 @@ export default function Showcase({
       <div className="showcase__light-bg" aria-hidden="true" />
 
       <div className="showcase__line-waves" aria-hidden="true">
-        <LineWaves
+        {!lowPerformance && <LineWaves
           color1="#0284C7"
           color2="#059669"
           color3="#BCFF7E"
@@ -163,7 +163,7 @@ export default function Showcase({
           opacity={lowPerformance ? 0.55 : 0.8}
           maxDevicePixelRatio={lowPerformance ? 1 : 1.5}
           paused={!effectsActive}
-        />
+        />}
       </div>
 
       {/* Main Content Container */}
@@ -238,6 +238,8 @@ export default function Showcase({
                           e.preventDefault();
                           handleToggleRow(idx);
                         }
+
+                        export default memo(Showcase);
                       }}
                       aria-expanded={isExpanded}
                     >

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useId, useMemo, useRef } from 'react';
+import Image from 'next/image';
 import { gsap } from 'gsap';
 import './MaskedHeading.css';
 
@@ -71,7 +72,9 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
   const words = useMemo(() => String(text).split(/\s+/).filter(Boolean), [text]);
 
   const settingsRef = useRef({ fillScale, parallax, drift, brightness, saturation, grayscale, textScale });
-  settingsRef.current = { fillScale, parallax, drift, brightness, saturation, grayscale, textScale };
+  useEffect(() => {
+    settingsRef.current = { fillScale, parallax, drift, brightness, saturation, grayscale, textScale };
+  }, [fillScale, parallax, drift, brightness, saturation, grayscale, textScale]);
 
   const place = useCallback(() => {
     const root = rootRef.current;
@@ -274,7 +277,7 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
     };
   }, [reveal, trigger, duration, stagger, words]);
 
-  const Tag = (tag || 'h2') as any;
+  const Tag: React.ElementType = tag;
 
   return (
     <Tag
@@ -334,7 +337,14 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
             {mediaType === 'video' ? (
               <video className="masked-heading__source" src={src} poster={poster} autoPlay muted loop playsInline />
             ) : (
-              <img className="masked-heading__source" src={src} alt="" draggable={false} />
+              <Image
+                className="masked-heading__source"
+                src={src}
+                alt=""
+                fill
+                sizes="100vw"
+                draggable={false}
+              />
             )}
           </span>
         </span>

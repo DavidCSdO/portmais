@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import './PixelSwap.css';
 
 // Every pixel is a window onto its own copy of the incoming content, so the
@@ -192,11 +192,17 @@ function PixelSwap({
 
   // Snapshot the animation inputs so a transition already in flight is never
   // rebuilt halfway through by an unrelated prop change.
-  const config = { duration, pixelDuration, pixelSpin, pixelScale, pixelRadius, fade, easing, onComplete };
+  const config = useMemo(
+    () => ({ duration, pixelDuration, pixelSpin, pixelScale, pixelRadius, fade, easing, onComplete }),
+    [duration, pixelDuration, pixelSpin, pixelScale, pixelRadius, fade, easing, onComplete]
+  );
   const configRef = useRef(config);
   const gridRef = useRef(grid);
-  configRef.current = config;
-  gridRef.current = grid;
+
+  useLayoutEffect(() => {
+    configRef.current = config;
+    gridRef.current = grid;
+  }, [config, grid]);
 
   useEffect(() => {
     const container = containerRef.current;

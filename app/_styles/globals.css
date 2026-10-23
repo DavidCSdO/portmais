@@ -1,13 +1,5 @@
 @import "tailwindcss";
 
-@font-face {
-  font-family: 'Delamoore';
-  src: url('/fonts/Delamoore.woff') format('woff');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* ===========================
    Design Tokens & Theme
    =========================== */
@@ -23,7 +15,6 @@
 
   --font-display: var(--font-delamoore);
   --font-body: var(--font-geist-sans);
-  --font-inter: var(--font-inter);
 
   --background: #f7f8f3;
   --foreground: #09090b;

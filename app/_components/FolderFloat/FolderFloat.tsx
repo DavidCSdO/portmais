@@ -168,7 +168,14 @@ export default function FolderFloat({
     drift: number;
     reduce: boolean;
   }>({ onSelect, onOpenChange, drift, reduce: false });
-  latest.current = { onSelect, onOpenChange, drift, reduce: false };
+  useEffect(() => {
+    latest.current = {
+      ...latest.current,
+      onSelect,
+      onOpenChange,
+      drift
+    };
+  }, [onSelect, onOpenChange, drift]);
 
   const popTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const liveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -179,6 +186,7 @@ export default function FolderFloat({
   const n = list.length;
   const sub = sublabel || `${n} ${n === 1 ? 'note' : 'notes'}`;
   const pos = layout(list, spread, lift, tilt, sizes);
+  const positionKey = pos.map(p => `${p.x},${p.y}`).join('|');
 
   const labelsKey = list.map(item => item.label).join('|');
 
@@ -198,7 +206,7 @@ export default function FolderFloat({
     }
   }, [n, labelsKey]);
 
-  const stopPhysics = useCallback(() => {
+  const disposePhysics = useCallback(() => {
     const w = world.current;
     clearTimeout(liveTimer.current);
     cancelAnimationFrame(w.raf);
@@ -217,8 +225,12 @@ export default function FolderFloat({
     w.bodies = [];
     w.drag = null;
     w.live = false;
-    setLive(false);
   }, []);
+
+  const stopPhysics = useCallback(() => {
+    disposePhysics();
+    setLive(false);
+  }, [disposePhysics]);
 
   const startPhysics = useCallback(() => {
     const w = world.current;
@@ -270,12 +282,13 @@ export default function FolderFloat({
     Composite.add(engine.world, [...w.bodies, ...walls]);
     w.live = true;
     w.last = 0;
-    w.t0 = performance.now();
+    w.t0 = 0;
     setLive(true);
 
     const tick = (now: number) => {
       const s = world.current;
       if (!s.engine) return;
+      if (!s.t0) s.t0 = now;
       const dt = s.last ? Math.min(32, now - s.last) : 16;
       s.last = now;
       const t = (now - s.t0) / 1000;
@@ -302,7 +315,7 @@ export default function FolderFloat({
 
     w.raf = requestAnimationFrame(tick);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [n, spread, lift, pos.map(p => `${p.x},${p.y}`).join('|')]);
+  }, [n, spread, lift, positionKey]);
 
   const set = useCallback(
     (next: boolean) => {
@@ -319,30 +332,30 @@ export default function FolderFloat({
   useEffect(() => {
     clearTimeout(liveTimer.current);
     if (!open || !physics || latest.current.reduce) {
-      if (!open) stopPhysics();
-      else if (!physics) stopPhysics();
+      disposePhysics();
       return undefined;
     }
     liveTimer.current = setTimeout(startPhysics, openDuration + (n - 1) * stagger + 80);
     return () => clearTimeout(liveTimer.current);
-  }, [open, physics, openDuration, stagger, n, startPhysics, stopPhysics]);
+  }, [open, physics, openDuration, stagger, n, startPhysics, disposePhysics]);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    latest.current.reduce = mq.matches;
     const sync = () => {
       latest.current.reduce = mq.matches;
+      if (mq.matches) stopPhysics();
     };
-    sync();
     mq.addEventListener('change', sync);
     return () => mq.removeEventListener('change', sync);
-  }, []);
+  }, [stopPhysics]);
 
   useEffect(
     () => () => {
       clearTimeout(popTimer.current);
-      stopPhysics();
+      disposePhysics();
     },
-    [stopPhysics]
+    [disposePhysics]
   );
 
   const pick = (item: FolderItem, i: number) => {
@@ -416,7 +429,7 @@ export default function FolderFloat({
     <div
       className={`folder-float${className ? ` ${className}` : ''}`}
       data-open={open ? '' : undefined}
-      data-live={live ? '' : undefined}
+      data-live={live && open && physics ? '' : undefined}
       data-physics={physics ? '' : undefined}
       data-trigger={trigger}
       onPointerEnter={hover ? () => set(true) : undefined}

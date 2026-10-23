@@ -154,7 +154,7 @@ export default function Footer({ onScrollToTop }: FooterProps) {
             dashLength={4}
             dashGap={2}
             specks={16}
-            fontFamily="'Delamoore', serif"
+            fontFamily="var(--font-delamoore), serif"
             color="#ffffff"
             accentColor="#ffffff"
             letterSpacing={0.01}

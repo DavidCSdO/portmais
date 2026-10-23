@@ -35,25 +35,32 @@ export default function SceneController() {
   const [scrollY, setScrollY] = useState(0);
   const [viewportW, setViewportW] = useState(1920);
   const [viewportH, setViewportH] = useState(1080);
-  const [lowPerformance] = useState(detectLowPerformanceDevice);
+  const [lowPerformance, setLowPerformance] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [containerH, setContainerH] = useState(1200);
   const [projectsContainerH, setProjectsContainerH] = useState(2400);
   const [showcaseContainerH, setShowcaseContainerH] = useState(1100);
   const [ideaContainerH, setIdeaContainerH] = useState(4200);
+  const [ideaSectionOffsets, setIdeaSectionOffsets] = useState({
+    resume: 0,
+    contact: 0,
+  });
   const isAboutContemplating = useContemplation();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (lowPerformance) document.documentElement.dataset.performance = "reduced";
+    const reduced = detectLowPerformanceDevice();
+    setLowPerformance(reduced);
+
+    if (reduced) document.documentElement.dataset.performance = "reduced";
 
     return () => {
-      if (document.documentElement.dataset.performance === "reduced") {
+      if (reduced && document.documentElement.dataset.performance === "reduced") {
         delete document.documentElement.dataset.performance;
       }
     };
-  }, [lowPerformance]);
+  }, []);
 
   useEffect(() => {
     let ticking = false;
@@ -221,6 +228,17 @@ export default function SceneController() {
     Math.max(ideaExtraScroll / ideaScrollDistance, 0),
     1
   );
+  const ideaContentScroll = Math.max(0, ideaContainerH - viewportH);
+  const contentOffsetToScroll = (offset: number) =>
+    ideaScrollOffset +
+    ideaScrollDistance *
+      Math.min(Math.max(offset, 0) / Math.max(ideaContentScroll, 1), 1);
+  const resumeScrollOffset = contentOffsetToScroll(
+    ideaSectionOffsets.resume || ideaContainerH * 0.65
+  );
+  const contactScrollOffset = contentOffsetToScroll(
+    ideaSectionOffsets.contact || ideaContainerH * 0.88
+  );
 
   // Content scroll: translates the introduction card smoothly into view.
   const maxContentScroll = aboutContentScroll;
@@ -313,8 +331,10 @@ export default function SceneController() {
   const starScrollY = aboutScrollProgress * (maxContentScroll * 0.75);
 
   let activeSceneId = "hero";
-  if (scrollY >= ideaScrollOffset + ideaScrollDistance * 0.9) {
+  if (scrollY >= contactScrollOffset - viewportH * 0.15) {
     activeSceneId = "contact";
+  } else if (scrollY >= resumeScrollOffset - viewportH * 0.15) {
+    activeSceneId = "resume";
   } else if (scrollY >= ideaTransOffset + ideaTransitionDistance * 0.4) {
     activeSceneId = "idea";
   } else if (scrollY >= showcaseTransOffset + showcaseTransitionDistance * 0.4) {
@@ -345,10 +365,10 @@ export default function SceneController() {
           about: transitionDistance + 60,
           projects: projectsScrollOffset + 60,
           showcase: showcaseScrollOffset + 60,
-          idea: ideaScrollOffset + ideaScrollDistance * 0.08,
+          idea: contactScrollOffset,
           experiment: ideaScrollOffset + ideaScrollDistance * 0.4,
           methodology: ideaScrollOffset + ideaScrollDistance * 0.62,
-          contact: ideaScrollOffset + ideaScrollDistance * 0.9,
+          resume: resumeScrollOffset,
         }}
       />
 
@@ -388,7 +408,7 @@ export default function SceneController() {
           <div className="about__light-bg" aria-hidden="true" />
 
           <div className="about__scanner-layer" aria-hidden="true">
-            <Scanner
+            {!lowPerformance && <Scanner
               color1="#5227FF"
               color2="#FF9FFC"
               color3="#FFFFFF"
@@ -421,7 +441,7 @@ export default function SceneController() {
               lightMode={false}
               paused={!isAboutEffectsActive}
               dpr={lowPerformance ? 1 : 1.5}
-            />
+            />}
           </div>
 
           {/* Soft ambient drifting mist */}
@@ -514,6 +534,7 @@ export default function SceneController() {
           <Projects
             scrollProgress={projectsScrollProgress}
             viewportH={viewportH}
+            lowPerformance={lowPerformance}
             onContainerHeightChange={setProjectsContainerH}
             nextPortalProgress={showcaseTransitionProgress}
           />
@@ -557,7 +578,9 @@ export default function SceneController() {
             scrollProgress={ideaScrollProgress}
             viewportW={viewportW}
             viewportH={viewportH}
+            lowPerformance={lowPerformance}
             onContainerHeightChange={setIdeaContainerH}
+            onSectionOffsetsChange={setIdeaSectionOffsets}
           />
         </div>
 

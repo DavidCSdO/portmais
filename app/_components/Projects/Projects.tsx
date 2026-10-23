@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import CircularText from "../CircularText";
 import DriftingMist from "../DriftingMist";
@@ -144,13 +144,15 @@ const SKILLS = [
 interface ProjectsProps {
   scrollProgress: number;
   viewportH: number;
+  lowPerformance: boolean;
   onContainerHeightChange?: (height: number) => void;
   nextPortalProgress?: number;
 }
 
-export default function Projects({
+function Projects({
   scrollProgress,
   viewportH,
+  lowPerformance,
   onContainerHeightChange,
   nextPortalProgress,
 }: ProjectsProps) {
@@ -197,22 +199,24 @@ export default function Projects({
       <div className="projects__light-bg" aria-hidden="true" />
 
       <div className="projects__threads" aria-hidden="true">
-        <Threads
-          color={[0.3, 0.42, 0.2]}
-          accentColor={[0.55, 0.72, 0.34]}
-          lineCount={36}
-          amplitude={1.1}
-          distance={0.35}
-          enableMouseInteraction={true}
-          thickness={0.75}
-          softness={1.4}
-          speed={0.2}
-          waves={1}
-          opacity={0.2}
-        />
+        {!lowPerformance && (
+          <Threads
+            color={[0.3, 0.42, 0.2]}
+            accentColor={[0.55, 0.72, 0.34]}
+            lineCount={36}
+            amplitude={1.1}
+            distance={0.35}
+            enableMouseInteraction={true}
+            thickness={0.75}
+            softness={1.4}
+            speed={0.2}
+            waves={1}
+            opacity={0.12}
+          />
+        )}
       </div>
 
-      <DriftingMist opacity={0.08} speedMultiplier={0.7} />
+      <DriftingMist opacity={0.045} speedMultiplier={0.7} />
 
       <div
         ref={containerRef}
@@ -302,9 +306,6 @@ export default function Projects({
               <span className="projects__visual-topline">
                 <span>ATOM / STUDIO</span>
                 <span>WEB · SYSTEMS · AUTOMATION</span>
-              </span>
-              <span className="projects__visual-mark" aria-hidden="true">
-                ATOM
               </span>
               <span className="projects__visual-bottom">
                 Explorar plataforma <span aria-hidden="true">↗</span>
@@ -544,3 +545,5 @@ export default function Projects({
     </div>
   );
 }
+
+export default memo(Projects);

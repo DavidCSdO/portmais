@@ -90,7 +90,7 @@ export interface SplitFlapTextProps {
   style?: React.CSSProperties;
 }
 
-const SplitFlapText: React.FC<SplitFlapTextProps> = ({
+const SplitFlapTextContent: React.FC<SplitFlapTextProps> = ({
   words = DEFAULT_WORDS,
   text,
   flipDuration = 0.12,
@@ -144,7 +144,6 @@ const SplitFlapText: React.FC<SplitFlapTextProps> = ({
 
     const firstPhrase = normalizedPhrases[0] || '';
     currentTextRef.current = firstPhrase;
-    setTiles(createTiles(firstPhrase));
 
     if (normalizedPhrases.length <= 1 || typeof window === 'undefined') {
       return clearAnimation;
@@ -340,6 +339,15 @@ const SplitFlapText: React.FC<SplitFlapTextProps> = ({
       ))}
     </div>
   );
+};
+
+const SplitFlapText: React.FC<SplitFlapTextProps> = props => {
+  const phraseKey =
+    typeof props.text === 'string'
+      ? `text:${props.text}`
+      : `words:${(props.words ?? DEFAULT_WORDS).map(word => String(word ?? '')).join('\u001f')}`;
+
+  return <SplitFlapTextContent key={phraseKey} {...props} />;
 };
 
 export default SplitFlapText;

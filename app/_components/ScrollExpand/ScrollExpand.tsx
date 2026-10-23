@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import Image from 'next/image';
 import './ScrollExpand.css';
 
 export interface ScrollExpandProps {
@@ -82,7 +83,22 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     enabled,
     progress
   });
-  propsRef.current = {
+  useLayoutEffect(() => {
+    propsRef.current = {
+      startWidth,
+      startHeight,
+      startRadius,
+      endRadius,
+      mediaZoom,
+      scrollDistance,
+      holdDistance,
+      smoothing,
+      overlayScrim,
+      useWindowScroll,
+      enabled,
+      progress
+    };
+  }, [
     startWidth,
     startHeight,
     startRadius,
@@ -95,7 +111,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     useWindowScroll,
     enabled,
     progress
-  };
+  ]);
 
   const applyProgress = useCallback((p: number) => {
     const frame = frameRef.current;
@@ -157,10 +173,11 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       stageH = c.useWindowScroll ? window.innerHeight : (root.clientHeight || 520);
       if (stageH <= 0) stageH = 520;
       stage.style.height = `${stageH}px`;
-      const isControlled = c.useWindowScroll || typeof c.progress === 'number';
-      track.style.height = isControlled
-        ? `${stageH}px`
-        : `${stageH * (1 + Math.max(0, c.scrollDistance) + Math.max(0, c.holdDistance))}px`;
+      const isControlled = typeof c.progress === 'number';
+      track.style.height =
+        c.useWindowScroll || !isControlled
+          ? `${stageH * (1 + Math.max(0, c.scrollDistance) + Math.max(0, c.holdDistance))}px`
+          : `${stageH}px`;
 
       const w = root.clientWidth || stageH;
       stage.style.setProperty('--se-title-size', `${clamp(w * 0.065, 24, 64)}px`);
@@ -169,6 +186,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     const readProgress = () => {
       const c = propsRef.current;
       if (!c.enabled) return 1;
+      if (typeof c.progress === 'number') return clamp(c.progress, 0, 1);
       const span = stageH * Math.max(0.01, c.scrollDistance);
       let internal = 0;
       if (c.useWindowScroll) {
@@ -176,9 +194,6 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
         internal = clamp(-top / span, 0, 1);
       } else {
         internal = span > 0 ? clamp(root.scrollTop / span, 0, 1) : 0;
-      }
-      if (typeof c.progress === 'number') {
-        return clamp(Math.max(internal, c.progress), 0, 1);
       }
       return internal;
     };
@@ -269,7 +284,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     current = target;
     applyProgress(current);
 
-    const isControlled = useWindowScroll || typeof progress === 'number';
+    const isControlled = propsRef.current.useWindowScroll || typeof propsRef.current.progress === 'number';
     const scroller = useWindowScroll ? window : root;
     scroller.addEventListener('scroll', onScroll, { passive: true });
     if (!isControlled) {
@@ -314,11 +329,13 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
         playsInline
       />
     ) : (
-      <img
+      <Image
         ref={mediaRef as React.RefObject<HTMLImageElement>}
         className="scroll-expand__media"
         src={src}
         alt={alt}
+        fill
+        sizes="100vw"
         draggable={false}
       />
     );
