@@ -28,6 +28,7 @@ interface LightRaysProps {
   noiseAmount?: number;
   distortion?: number;
   lightMode?: boolean;
+  paused?: boolean;
   className?: string;
 }
 
@@ -100,6 +101,7 @@ export default function LightRays({
   noiseAmount = 0.05,
   distortion = 0.08,
   lightMode = false,
+  paused = false,
   className = ''
 }: LightRaysProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -109,6 +111,8 @@ export default function LightRays({
   const smoothMouseRef = useRef({ x: 0.5, y: 0.5 });
   const animationIdRef = useRef<number | null>(null);
   const meshRef = useRef<Mesh | null>(null);
+  const loopRef = useRef<((t: number) => void) | null>(null);
+  const pausedRef = useRef(paused);
   const cleanupFunctionRef = useRef<(() => void) | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -309,7 +313,7 @@ void main() {
       const updatePlacement = () => {
         if (!containerRef.current || !renderer) return;
 
-        renderer.dpr = Math.min(window.devicePixelRatio, 2);
+        renderer.dpr = Math.min(window.devicePixelRatio, 1.15);
 
         const { clientWidth: wCSS, clientHeight: hCSS } = containerRef.current;
         renderer.setSize(wCSS, hCSS);
@@ -326,7 +330,8 @@ void main() {
       };
 
       const loop = (t: number) => {
-        if (!rendererRef.current || !uniformsRef.current || !meshRef.current) {
+        animationIdRef.current = null;
+        if (pausedRef.current || !rendererRef.current || !uniformsRef.current || !meshRef.current) {
           return;
         }
 
@@ -343,15 +348,20 @@ void main() {
 
         try {
           renderer.render({ scene: mesh });
-          animationIdRef.current = requestAnimationFrame(loop);
+          if (!pausedRef.current) {
+            animationIdRef.current = requestAnimationFrame(loop);
+          }
         } catch {
           return;
         }
       };
 
+      loopRef.current = loop;
       window.addEventListener('resize', updatePlacement);
       updatePlacement();
-      animationIdRef.current = requestAnimationFrame(loop);
+      if (!pausedRef.current) {
+        animationIdRef.current = requestAnimationFrame(loop);
+      }
 
       cleanupFunctionRef.current = () => {
         if (animationIdRef.current) {
@@ -445,6 +455,13 @@ void main() {
     distortion,
     lightMode
   ]);
+
+  useEffect(() => {
+    pausedRef.current = paused;
+    if (!paused && !animationIdRef.current && loopRef.current && rendererRef.current && uniformsRef.current && meshRef.current) {
+      animationIdRef.current = requestAnimationFrame(loopRef.current);
+    }
+  }, [paused]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {

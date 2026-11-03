@@ -49,6 +49,8 @@
   justify-content: flex-start;
   padding: 0 clamp(1.5rem, 4vw, 3rem);
   will-change: opacity;
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* Modern Mesh Atmosphere Background */
@@ -74,7 +76,6 @@
   width: min(48vw, 620px);
   aspect-ratio: 1;
   border-radius: 50%;
-  filter: blur(60px);
   opacity: 0.58;
   animation: sceneAmbientDrift 18s ease-in-out infinite alternate;
 }
@@ -82,14 +83,19 @@
 .about__light-bg::before {
   top: 20%;
   right: -12%;
-  background: rgba(74, 190, 231, 0.5);
+  background: radial-gradient(ellipse, rgba(74, 190, 231, 0.38) 0%, rgba(74, 190, 231, 0.16) 42%, transparent 72%);
 }
 
 .about__light-bg::after {
   bottom: -26%;
   left: -12%;
-  background: rgba(188, 255, 126, 0.42);
+  background: radial-gradient(ellipse, rgba(188, 255, 126, 0.34) 0%, rgba(188, 255, 126, 0.14) 42%, transparent 72%);
   animation-delay: -8s;
+}
+
+.scene-layer--about:not([data-effects-active="true"]) .about__light-bg::before,
+.scene-layer--about:not([data-effects-active="true"]) .about__light-bg::after {
+  animation-play-state: paused;
 }
 
 @keyframes sceneAmbientDrift {
@@ -186,6 +192,7 @@
 .scene-star-portal {
   position: absolute;
   left: 50%;
+  top: 76vh;
   z-index: 50;
   display: flex;
   align-items: center;
@@ -208,7 +215,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  animation: heroLogoPulse 3.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 38px rgba(188, 255, 126, 0.42));
 }
 
 /* Star logo: appears on black screen at center, holds, then glides down to final position */
@@ -241,18 +248,6 @@
   }
 }
 
-/* Continuous breathing glow for the star */
-@keyframes heroLogoPulse {
-  0%,
-  100% {
-    filter: drop-shadow(0 0 35px rgba(188, 255, 126, 0.35));
-  }
-
-  50% {
-    filter: drop-shadow(0 0 65px rgba(188, 255, 126, 0.65));
-  }
-}
-
 /* Responsive adjustments */
 @media (max-width: 900px) {
   .about__content {
@@ -281,6 +276,7 @@
 
 @media (max-width: 600px) {
   .scene-star-portal {
+    top: 66vh;
     width: clamp(132px, 35vw, 180px);
     height: clamp(132px, 35vw, 180px);
   }
@@ -307,7 +303,6 @@
 @media (max-width: 900px), (pointer: coarse), (prefers-reduced-motion: reduce) {
   .about__light-bg::before,
   .about__light-bg::after {
-    filter: blur(48px);
     opacity: 0.32;
     animation: none;
   }
@@ -316,9 +311,6 @@
     background: #f8faf4;
   }
 
-  .scene-star-img {
-    animation: none;
-  }
 }
 
 html[data-performance="reduced"] .about__card {
@@ -327,10 +319,6 @@ html[data-performance="reduced"] .about__card {
 
 html[data-performance="reduced"] .about__light-bg::before,
 html[data-performance="reduced"] .about__light-bg::after {
-  animation: none;
-}
-
-html[data-performance="reduced"] .scene-star-img {
   animation: none;
 }
 
@@ -432,6 +420,9 @@ html[data-performance="reduced"] .scene-star-img {
   background: radial-gradient(ellipse 100% 80% at 70% 30%, #f7f8f3 0%, #f3f5ed 40%, #edf1e6 80%, #e8ede1 100%);
   z-index: 30;
   will-change: opacity, transform, filter;
+  opacity: 0;
+  transform: translate3d(0, 14vh, 0);
+  pointer-events: none;
 }
 
 /* ========================================================
@@ -503,6 +494,9 @@ html[data-performance="reduced"] .scene-star-img {
   background: radial-gradient(ellipse 110% 85% at 40% 25%, #f7f8f3 0%, #f2f4ec 40%, #ebefe5 80%, #e7ece1 100%);
   z-index: 35;
   will-change: opacity, transform, filter;
+  opacity: 0;
+  transform: translate3d(0, 14vh, 0);
+  pointer-events: none;
 }
 
 /* ========================================================
@@ -574,4 +568,7 @@ html[data-performance="reduced"] .scene-star-img {
   background: radial-gradient(ellipse 100% 90% at 50% 20%, #f7f8f3 0%, #f2f4ec 35%, #ebefe5 70%, #e7ece1 100%);
   z-index: 40;
   will-change: opacity, transform;
+  opacity: 0;
+  transform: translate3d(0, 14vh, 0);
+  pointer-events: none;
 }

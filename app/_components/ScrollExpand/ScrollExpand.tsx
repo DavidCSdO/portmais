@@ -23,6 +23,7 @@ export interface ScrollExpandProps {
   useWindowScroll?: boolean;
   enabled?: boolean;
   progress?: number;
+  progressRef?: { current: number };
   children?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
@@ -54,6 +55,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
   useWindowScroll = false,
   enabled = true,
   progress,
+  progressRef,
   children,
   className = '',
   style,
@@ -81,7 +83,8 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     overlayScrim,
     useWindowScroll,
     enabled,
-    progress
+    progress,
+    progressRef
   });
   useLayoutEffect(() => {
     propsRef.current = {
@@ -96,7 +99,8 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       overlayScrim,
       useWindowScroll,
       enabled,
-      progress
+      progress,
+      progressRef
     };
   }, [
     startWidth,
@@ -110,7 +114,8 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     overlayScrim,
     useWindowScroll,
     enabled,
-    progress
+    progress,
+    progressRef
   ]);
 
   const applyProgress = useCallback((p: number) => {
@@ -121,12 +126,11 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
 
     const e = smoothstep(0, 1, p);
 
-    const w = c.startWidth + (100 - c.startWidth) * e;
-    const h = c.startHeight + (100 - c.startHeight) * e;
-    const ix = Math.max(0, (100 - w) / 2);
-    const iy = Math.max(0, (100 - h) / 2);
+    const scaleX = 1 + (100 / c.startWidth - 1) * e;
+    const scaleY = 1 + (100 / c.startHeight - 1) * e;
     const r = c.startRadius + (c.endRadius - c.startRadius) * e;
-    frame.style.clipPath = `inset(${iy}% ${ix}% ${iy}% ${ix}% round ${r}px)`;
+    frame.style.transform = `translate3d(-50%, -50%, 0) scale(${scaleX}, ${scaleY})`;
+    frame.style.borderRadius = `${r}px`;
 
     media.style.transform = `scale(${c.mediaZoom + (1 - c.mediaZoom) * e})`;
 
@@ -158,7 +162,8 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     const root = rootRef.current;
     const track = trackRef.current;
     const stage = stageRef.current;
-    if (!root || !track || !stage) return;
+    const frame = frameRef.current;
+    if (!root || !track || !stage || !frame) return;
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -173,7 +178,9 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       stageH = c.useWindowScroll ? window.innerHeight : (root.clientHeight || 520);
       if (stageH <= 0) stageH = 520;
       stage.style.height = `${stageH}px`;
-      const isControlled = typeof c.progress === 'number';
+      frame.style.width = `${c.startWidth}%`;
+      frame.style.height = `${c.startHeight}%`;
+      const isControlled = typeof c.progress === 'number' || c.progressRef !== undefined;
       track.style.height =
         c.useWindowScroll || !isControlled
           ? `${stageH * (1 + Math.max(0, c.scrollDistance) + Math.max(0, c.holdDistance))}px`
@@ -186,6 +193,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     const readProgress = () => {
       const c = propsRef.current;
       if (!c.enabled) return 1;
+      if (c.progressRef) return clamp(c.progressRef.current, 0, 1);
       if (typeof c.progress === 'number') return clamp(c.progress, 0, 1);
       const span = stageH * Math.max(0.01, c.scrollDistance);
       let internal = 0;
@@ -200,7 +208,15 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
 
     const tick = () => {
       const c = propsRef.current;
-      const k = c.smoothing <= 0 ? 1 : 1 - Math.exp(-1 / (60 * c.smoothing));
+      if (c.progressRef) target = readProgress();
+      if (reduceMotion || c.smoothing <= 0) {
+        current = target;
+        running = false;
+        applyProgress(current);
+        raf = 0;
+        return;
+      }
+      const k = 1 - Math.exp(-1 / (60 * c.smoothing));
       current += (target - current) * k;
       if (Math.abs(target - current) < 0.0004) {
         current = target;
@@ -228,7 +244,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
 
     const onScroll = () => {
       target = readProgress();
-      if (propsRef.current.smoothing <= 0 || reduceMotion) {
+      if (!propsRef.current.progressRef && (propsRef.current.smoothing <= 0 || reduceMotion)) {
         current = target;
         applyProgress(current);
         return;
@@ -284,8 +300,11 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     current = target;
     applyProgress(current);
 
-    const isControlled = propsRef.current.useWindowScroll || typeof propsRef.current.progress === 'number';
-    const scroller = useWindowScroll ? window : root;
+    const isControlled =
+      propsRef.current.useWindowScroll ||
+      typeof propsRef.current.progress === 'number' ||
+      propsRef.current.progressRef !== undefined;
+    const scroller = isControlled ? window : root;
     scroller.addEventListener('scroll', onScroll, { passive: true });
     if (!isControlled) {
       root.addEventListener('wheel', onWheel, { passive: false });
@@ -307,7 +326,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       window.removeEventListener('resize', onResize);
       ro.disconnect();
     };
-  }, [applyProgress, useWindowScroll]);
+  }, [applyProgress, useWindowScroll, progressRef]);
 
   // Update progress if externally provided
   useEffect(() => {
@@ -343,7 +362,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
   return (
     <div
       ref={rootRef}
-      className={`scroll-expand ${useWindowScroll || typeof progress === 'number' ? '' : 'scroll-expand--scroller'} ${className}`.trim()}
+      className={`scroll-expand ${useWindowScroll || typeof progress === 'number' || progressRef ? '' : 'scroll-expand--scroller'} ${className}`.trim()}
       style={style}
       {...rest}
     >
@@ -352,12 +371,12 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
           <div ref={frameRef} className="scroll-expand__frame">
             {media}
             <div ref={scrimRef} className="scroll-expand__scrim" />
-            {children ? (
-              <div ref={overlayRef} className="scroll-expand__overlay">
-                {children}
-              </div>
-            ) : null}
           </div>
+          {children ? (
+            <div ref={overlayRef} className="scroll-expand__overlay">
+              {children}
+            </div>
+          ) : null}
           {title ? (
             <div ref={titleRef} className="scroll-expand__title">
               {title}

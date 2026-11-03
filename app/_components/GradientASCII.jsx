@@ -446,7 +446,7 @@ const GradientASCII = ({
   intro = true,
   lightMode = false,
   fontFamily = DEFAULT_FONT,
-  dpr = undefined,
+  dpr = 1,
   className = '',
   style = undefined,
   ...rest

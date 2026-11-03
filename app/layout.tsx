@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import localFont from "next/font/local";
+import Script from "next/script";
 import CustomCursor from "./_components/CustomCursor";
 import AmbientSpotlight from "./_components/AmbientSpotlight";
 import "./_styles/globals.css";
@@ -90,6 +91,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} ${delamoore.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <Script id="scroll-to-hero-on-reload" strategy="beforeInteractive">
+          {`if (performance.getEntriesByType("navigation")[0]?.type === "reload") {
+  history.scrollRestoration = "manual";
+  window.addEventListener("pageshow", () => {
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => {
+      history.scrollRestoration = "auto";
+    });
+  }, { once: true });
+}`}
+        </Script>
         <div className="film-grain-overlay" aria-hidden="true" />
         <CustomCursor />
         <AmbientSpotlight />

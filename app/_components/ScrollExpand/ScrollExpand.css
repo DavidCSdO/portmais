@@ -30,10 +30,12 @@
 
 .scroll-expand__frame {
   position: absolute;
-  inset: 0;
-  clip-path: inset(21% 29% 21% 29% round 24px);
-  will-change: clip-path;
-  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.85));
+  top: 50%;
+  left: 50%;
+  overflow: hidden;
+  transform: translate3d(-50%, -50%, 0);
+  transform-origin: center;
+  will-change: transform;
 }
 
 .scroll-expand__media {

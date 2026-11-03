@@ -1,26 +1,9 @@
 'use client';
 
-import React, { useState, useSyncExternalStore } from 'react';
-import TechText from '../TechText';
+import React, { useState } from 'react';
 import SplitFlapText from '../SplitFlapText';
 import { toggleAudio, playClickSound } from '../../_utils/sound';
 import './Footer.css';
-
-const subscribeToTouchPreferences = (onChange: () => void) => {
-  const coarsePointer = window.matchMedia('(pointer: coarse)');
-  coarsePointer.addEventListener('change', onChange);
-  window.addEventListener('resize', onChange, { passive: true });
-
-  return () => {
-    coarsePointer.removeEventListener('change', onChange);
-    window.removeEventListener('resize', onChange);
-  };
-};
-
-const getTouchPreference = () =>
-  window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768;
-
-const getServerTouchPreference = () => false;
 
 interface FooterProps {
   onScrollToTop?: () => void;
@@ -29,11 +12,6 @@ interface FooterProps {
 export default function Footer({ onScrollToTop }: FooterProps) {
   const [copied, setCopied] = useState(false);
   const [soundActive, setSoundActive] = useState(false);
-  const isTouch = useSyncExternalStore(
-    subscribeToTouchPreferences,
-    getTouchPreference,
-    getServerTouchPreference
-  );
   const email = 'cardosodavid92@gmail.com';
 
   const handleToggleAudio = () => {
@@ -143,33 +121,10 @@ export default function Footer({ onScrollToTop }: FooterProps) {
         </div>
 
         {/* ====================================================
-           2. MONUMENTAL "DAVID" (TechText Restaurado)
+           2. MONUMENTAL "DAVID" BRAND
            ==================================================== */}
-        <div className="footer-brand-stage" data-cursor-text={isTouch ? undefined : "ARRASTAR"}>
-          <TechText
-            text="DAVID"
-            fontWeight={400}
-            fontSize={320}
-            reveal="letter"
-            dashLength={4}
-            dashGap={2}
-            specks={16}
-            fontFamily="var(--font-delamoore), serif"
-            color="#ffffff"
-            accentColor="#ffffff"
-            letterSpacing={0.01}
-            reach={220}
-            softness={0.7}
-            strokeWidth={1.8}
-            speed={1}
-            lineStyle="dashed"
-            selection={true}
-            labels={true}
-            draggable={!isTouch}
-            sweep={false}
-            verticalAlign="center"
-            fitToWidth={true}
-          />
+        <div className="footer-brand-stage" aria-hidden="true">
+          <span className="footer-brand-word">DAVID</span>
         </div>
 
         {/* ====================================================

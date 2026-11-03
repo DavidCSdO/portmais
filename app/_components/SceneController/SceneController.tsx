@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import AboutIntro from "../AboutIntro";
 import Projects from "../Projects";
@@ -31,30 +31,427 @@ function detectLowPerformanceDevice() {
   );
 }
 
+// ------------------------------------------------------------------
+// Helper: clamp(v, 0, 1)
+// ------------------------------------------------------------------
+const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+
 export default function SceneController() {
-  const [scrollY, setScrollY] = useState(0);
+  // ----------------------------------------------------------------
+  // Static refs — never cause a re-render
+  // ----------------------------------------------------------------
+  const stateRef = useRef({
+    scrollY: 0,
+    viewportW: 1920,
+    viewportH: 1080,
+    containerH: 1200,
+    projectsContainerH: 2400,
+    showcaseContainerH: 1100,
+    ideaContainerH: 4200,
+    ideaSectionOffsets: { resume: 0, contact: 0 },
+    hasScrolled: false,
+    rafId: null as number | null,
+  });
+
+  // ----------------------------------------------------------------
+  // React state — only what drives JSX structure / class changes
+  // ----------------------------------------------------------------
+  const [lowPerformance, setLowPerformance] = useState(false);
   const [viewportW, setViewportW] = useState(1920);
   const [viewportH, setViewportH] = useState(1080);
-  const [lowPerformance, setLowPerformance] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
-  const [containerH, setContainerH] = useState(1200);
-  const [projectsContainerH, setProjectsContainerH] = useState(2400);
-  const [showcaseContainerH, setShowcaseContainerH] = useState(1100);
-  const [ideaContainerH, setIdeaContainerH] = useState(4200);
-  const [ideaSectionOffsets, setIdeaSectionOffsets] = useState({
-    resume: 0,
-    contact: 0,
+
+  // Heights — only needed to compute totalSceneHeight for the wrapper div
+  const [totalSceneHeight, setTotalSceneHeight] = useState(10000);
+  const [chapterOffsets, setChapterOffsets] = useState({
+    about: 800,
+    projects: 2200,
+    showcase: 3600,
+    idea: 5000,
+    experiment: 4200,
+    methodology: 4400,
+    resume: 4700,
   });
+
+  const [activeSceneId, setActiveSceneId] = useState("hero");
+  const [isAboutEffectsActive, setIsAboutEffectsActive] = useState(false);
+  const [isProjectsEffectsActive, setIsProjectsEffectsActive] = useState(false);
+  const [isShowcaseEffectsActive, setIsShowcaseEffectsActive] = useState(false);
+  const [isIdeaEffectsActive, setIsIdeaEffectsActive] = useState(false);
+  const [nextPortalProgress, setNextPortalProgress] = useState(0);
+
   const isAboutContemplating = useContemplation();
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  // DOM layer refs — for direct style manipulation
+  const heroLayerRef = useRef<HTMLDivElement>(null);
+  const aboutLayerRef = useRef<HTMLDivElement>(null);
+  const aboutContainerRef = useRef<HTMLDivElement>(null);
+  const projectsLayerRef = useRef<HTMLDivElement>(null);
+  const showcaseLayerRef = useRef<HTMLDivElement>(null);
+  const ideaLayerRef = useRef<HTMLDivElement>(null);
+  const starPortalRef = useRef<HTMLDivElement>(null);
+  const waveRef = useRef<HTMLDivElement>(null);
 
+  // ----------------------------------------------------------------
+  // Compute scene geometry (called when heights change)
+  // ----------------------------------------------------------------
+  const computeGeometry = useCallback(() => {
+    const s = stateRef.current;
+    const { viewportH, viewportW } = s;
+
+    const transitionDistance = Math.max(viewportH * 0.85, 650);
+    const aboutContentScroll = Math.max(viewportH * 0.2, s.containerH - viewportH + 90);
+    const aboutScrollDistance = Math.max(viewportH * 0.65, aboutContentScroll + viewportH * 0.35, 650);
+    const projectsTransitionDistance = Math.max(viewportH * 0.65, 580);
+    const projectsContentScroll = Math.max(0, s.projectsContainerH - viewportH + 120);
+    const projectsScrollDistance = Math.max(viewportH * 0.65, projectsContentScroll + viewportH * 0.35, 1500);
+    const showcaseTransitionDistance = Math.max(viewportH * 0.9, 850);
+    const showcaseContentScroll = Math.max(0, s.showcaseContainerH - viewportH + 90);
+    const showcaseScrollDistance = Math.max(viewportH * 0.65, showcaseContentScroll + viewportH * 0.35, 650);
+    const ideaTransitionDistance = Math.max(viewportH * 0.9, 850);
+    const ideaScrollDistance = Math.max(viewportH * 3.8, s.ideaContainerH - viewportH + 250, 4000);
+
+    const totalHeight =
+      transitionDistance +
+      aboutScrollDistance +
+      projectsTransitionDistance +
+      projectsScrollDistance +
+      showcaseTransitionDistance +
+      showcaseScrollDistance +
+      ideaTransitionDistance +
+      ideaScrollDistance +
+      viewportH;
+
+    // Offsets
+    const projectsTransOffset = transitionDistance + aboutScrollDistance;
+    const projectsScrollOffset = projectsTransOffset + projectsTransitionDistance;
+    const showcaseTransOffset = projectsScrollOffset + projectsScrollDistance;
+    const showcaseScrollOffset = showcaseTransOffset + showcaseTransitionDistance;
+    const ideaTransOffset = showcaseScrollOffset + showcaseScrollDistance;
+    const ideaScrollOffset = ideaTransOffset + ideaTransitionDistance;
+
+    // Idea section sub-offsets
+    const ideaContentScroll = Math.max(0, s.ideaContainerH - viewportH);
+    const contentOffsetToScroll = (offset: number) =>
+      ideaScrollOffset +
+      ideaScrollDistance * clamp01(offset / Math.max(ideaContentScroll, 1));
+    const resumeScrollOffset = contentOffsetToScroll(
+      s.ideaSectionOffsets.resume || s.ideaContainerH * 0.65
+    );
+    const contactScrollOffset = contentOffsetToScroll(
+      s.ideaSectionOffsets.contact || s.ideaContainerH * 0.88
+    );
+
+    return {
+      transitionDistance,
+      aboutContentScroll,
+      aboutScrollDistance,
+      projectsTransitionDistance,
+      projectsScrollDistance,
+      showcaseTransitionDistance,
+      showcaseScrollDistance,
+      ideaTransitionDistance,
+      ideaScrollDistance,
+      totalHeight,
+      projectsTransOffset,
+      projectsScrollOffset,
+      showcaseTransOffset,
+      showcaseScrollOffset,
+      ideaTransOffset,
+      ideaScrollOffset,
+      resumeScrollOffset,
+      contactScrollOffset,
+      viewportW,
+      viewportH,
+    };
+  }, []);
+
+  // ----------------------------------------------------------------
+  // rAF loop — writes styles directly, no React re-renders
+  // ----------------------------------------------------------------
+  const scheduleRaf = useCallback(() => {
+    const s = stateRef.current;
+    if (s.rafId !== null) return;
+    s.rafId = requestAnimationFrame(() => {
+      s.rafId = null;
+      applyFrame();
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function applyFrame() {
+    const s = stateRef.current;
+    const geo = computeGeometry();
+    const sy = s.scrollY;
+    const {
+      transitionDistance, aboutContentScroll, aboutScrollDistance,
+      projectsTransitionDistance, projectsScrollDistance,
+      showcaseTransitionDistance, showcaseScrollDistance,
+      ideaTransitionDistance,
+      projectsTransOffset, projectsScrollOffset,
+      showcaseTransOffset, showcaseScrollOffset,
+      ideaTransOffset, ideaScrollOffset,
+      resumeScrollOffset, contactScrollOffset,
+      viewportH, viewportW,
+    } = geo;
+
+    // --- Progress values ---
+    const transitionProgress = clamp01(sy / transitionDistance);
+    const aboutExtraScroll = Math.max(0, sy - transitionDistance);
+    const aboutScrollProgress = clamp01(aboutExtraScroll / aboutScrollDistance);
+
+    const projectsTransExtraScroll = Math.max(0, sy - projectsTransOffset);
+    const projectsTransitionProgress = clamp01(projectsTransExtraScroll / projectsTransitionDistance);
+    const projectsExtraScroll = Math.max(0, sy - projectsScrollOffset);
+    const projectsScrollProgress = clamp01(projectsExtraScroll / projectsScrollDistance);
+
+    const showcaseTransExtraScroll = Math.max(0, sy - showcaseTransOffset);
+    const showcaseTransitionProgress = clamp01(showcaseTransExtraScroll / showcaseTransitionDistance);
+    const showcaseExtraScroll = Math.max(0, sy - showcaseScrollOffset);
+    const showcaseScrollProgress = clamp01(showcaseExtraScroll / showcaseScrollDistance);
+
+    const ideaTransExtraScroll = Math.max(0, sy - ideaTransOffset);
+    const ideaTransitionProgress = clamp01(ideaTransExtraScroll / ideaTransitionDistance);
+    const ideaExtraScroll = Math.max(0, sy - ideaScrollOffset);
+    const ideaScrollProgress = clamp01(ideaExtraScroll / Math.max(geo.ideaScrollDistance, 1));
+
+    const maxContentScroll = aboutContentScroll;
+    const contentTranslateY = aboutScrollProgress * maxContentScroll;
+
+    // --- Star portal ---
+    const isMobile = viewportW <= 600;
+    const baseStarTop = isMobile ? 66 : 76;
+    let starScale = 1, starTopVh = baseStarTop;
+    let heroOpacity = 1, aboutOpacity = 0, aboutContentOpacity = 0, starOpacity = 1;
+
+    const isInLaterStages =
+      projectsScrollProgress > 0 ||
+      showcaseTransitionProgress > 0 ||
+      showcaseScrollProgress > 0 ||
+      ideaTransitionProgress > 0 ||
+      ideaScrollProgress > 0;
+
+    if (isInLaterStages) {
+      heroOpacity = 0; aboutOpacity = 0; aboutContentOpacity = 0; starOpacity = 0;
+    } else if (projectsTransitionProgress > 0) {
+      heroOpacity = 0;
+      aboutOpacity = Math.max(0, 1 - Math.pow(projectsTransitionProgress, 1.2) * 1.5);
+      aboutContentOpacity = Math.max(0, 1 - Math.pow(projectsTransitionProgress, 1.1) * 1.5);
+      starOpacity = 0;
+    } else if (transitionProgress <= 0.5) {
+      const p1 = transitionProgress / 0.5;
+      heroOpacity = Math.max(0, 1 - Math.pow(p1, 1.3));
+      aboutOpacity = Math.min(1, Math.pow(p1, 1.8));
+      starScale = 1 + Math.sin(p1 * (Math.PI / 2)) * 3.2;
+      starTopVh = baseStarTop - p1 * (baseStarTop - 28);
+      aboutContentOpacity = 0;
+      starOpacity = 1;
+    } else {
+      const p2 = (transitionProgress - 0.5) / 0.5;
+      heroOpacity = 0; aboutOpacity = 1;
+      starScale = 4.2 - Math.sin(p2 * (Math.PI / 2)) * 3.74;
+      starTopVh = 28 - p2 * 20;
+      aboutContentOpacity = clamp01((p2 - 0.2) / 0.8);
+      starOpacity = s.hasScrolled && aboutScrollProgress > 0
+        ? Math.max(0, 1 - aboutScrollProgress * 2.2)
+        : 1;
+    }
+
+    // About translate (no blur — replaced with opacity to avoid expensive GPU pass)
+    let aboutTranslateY = 0;
+    if (projectsTransitionProgress > 0) {
+      aboutTranslateY = projectsTransitionProgress * 8;
+    }
+
+    // Projects layer
+    let projectsLayerOpacity = Math.min(1, Math.pow(projectsTransitionProgress, 1.4));
+    let projectsLayerTranslateY = (1 - projectsTransitionProgress) * 14;
+    if (showcaseTransitionProgress > 0) {
+      projectsLayerOpacity = Math.max(0, 1 - Math.pow(showcaseTransitionProgress, 1.2) * 1.5);
+      projectsLayerTranslateY = -showcaseTransitionProgress * 12;
+    }
+
+    // Showcase layer (no blur)
+    let showcaseLayerOpacity = Math.min(1, Math.pow(showcaseTransitionProgress, 1.4));
+    let showcaseLayerTranslateY = (1 - showcaseTransitionProgress) * 14;
+    if (ideaTransitionProgress > 0) {
+      showcaseLayerOpacity = Math.max(0, 1 - Math.pow(ideaTransitionProgress, 1.2) * 1.5);
+      showcaseLayerTranslateY = -ideaTransitionProgress * 12;
+    }
+
+    // Idea layer
+    const ideaLayerOpacity = Math.min(1, Math.pow(ideaTransitionProgress, 1.4));
+    const ideaLayerTranslateY = (1 - ideaTransitionProgress) * 14;
+
+    const starScrollY = aboutScrollProgress * (maxContentScroll * 0.75);
+
+    // --- Apply styles directly ---
+    if (heroLayerRef.current) {
+      heroLayerRef.current.style.opacity = String(heroOpacity);
+      heroLayerRef.current.style.pointerEvents = transitionProgress > 0.4 ? "none" : "auto";
+    }
+
+    if (aboutLayerRef.current) {
+      aboutLayerRef.current.style.opacity = String(aboutOpacity);
+      aboutLayerRef.current.style.transform = `translate3d(0, -${aboutTranslateY}vh, 0)`;
+      aboutLayerRef.current.style.pointerEvents =
+        transitionProgress > 0.5 && projectsTransitionProgress < 0.4 ? "auto" : "none";
+    }
+
+    if (aboutContainerRef.current) {
+      aboutContainerRef.current.style.opacity = String(aboutContentOpacity);
+      aboutContainerRef.current.style.transform = `translate3d(0, -${contentTranslateY}px, 0)`;
+    }
+
+    if (projectsLayerRef.current) {
+      projectsLayerRef.current.style.opacity = String(projectsLayerOpacity);
+      projectsLayerRef.current.style.transform = `translate3d(0, ${projectsLayerTranslateY}vh, 0)`;
+      projectsLayerRef.current.style.pointerEvents =
+        projectsTransitionProgress >= 0.4 && showcaseTransitionProgress < 0.4 ? "auto" : "none";
+    }
+
+    if (showcaseLayerRef.current) {
+      showcaseLayerRef.current.style.opacity = String(showcaseLayerOpacity);
+      showcaseLayerRef.current.style.transform = `translate3d(0, ${showcaseLayerTranslateY}vh, 0)`;
+      showcaseLayerRef.current.style.pointerEvents =
+        showcaseTransitionProgress >= 0.4 && ideaTransitionProgress < 0.4 ? "auto" : "none";
+    }
+
+    if (ideaLayerRef.current) {
+      ideaLayerRef.current.style.opacity = String(ideaLayerOpacity);
+      ideaLayerRef.current.style.transform = `translate3d(0, ${ideaLayerTranslateY}vh, 0)`;
+      ideaLayerRef.current.style.pointerEvents = ideaTransitionProgress >= 0.4 ? "auto" : "none";
+    }
+
+    if (starPortalRef.current) {
+      if (s.hasScrolled) {
+        const starTopOffset = starTopVh - baseStarTop;
+        starPortalRef.current.style.transform = `translate3d(-50%, calc(-50% + ${starTopOffset}vh - ${starScrollY}px), 0) scale(${starScale})`;
+        starPortalRef.current.style.opacity = isAboutContemplating ? "0" : String(starOpacity);
+      } else {
+        // Intro animation: keep inline styles cleared so CSS @keyframes heroLogoOpening runs unhindered
+        starPortalRef.current.style.transform = "";
+        starPortalRef.current.style.opacity = isAboutContemplating ? "0" : "";
+      }
+    }
+
+    // Wave curtain
+    if (waveRef.current) {
+      const showWave = projectsTransitionProgress > 0 && projectsTransitionProgress < 1;
+      waveRef.current.style.display = showWave ? "" : "none";
+      if (showWave) {
+        waveRef.current.style.transform = `translate3d(-50%, ${(1 - projectsTransitionProgress) * 105}%, 0)`;
+        waveRef.current.style.opacity = String(Math.min(1, projectsTransitionProgress * 2));
+      }
+    }
+
+    // Pass scroll progress via CSS custom properties to children
+    // (children read these via their own rAF if needed — avoids prop drilling on scroll)
+    // Expose as data attrs so child components can read via ref
+    if (projectsLayerRef.current) {
+      projectsLayerRef.current.dataset.scrollProgress = String(projectsScrollProgress);
+    }
+    if (showcaseLayerRef.current) {
+      showcaseLayerRef.current.dataset.scrollProgress = String(showcaseScrollProgress);
+    }
+    if (ideaLayerRef.current) {
+      ideaLayerRef.current.dataset.scrollProgress = String(ideaScrollProgress);
+    }
+
+    // --- Low-frequency React state updates (threshold crossings only) ---
+    const newActiveScene =
+      sy >= contactScrollOffset - viewportH * 0.15 ? "contact"
+      : sy >= resumeScrollOffset - viewportH * 0.15 ? "resume"
+      : sy >= ideaTransOffset + ideaTransitionDistance * 0.4 ? "idea"
+      : sy >= showcaseTransOffset + showcaseTransitionDistance * 0.4 ? "showcase"
+      : sy >= projectsTransOffset + projectsTransitionDistance * 0.4 ? "projects"
+      : sy >= transitionDistance - 80 ? "about"
+      : "hero";
+
+    setActiveSceneId((prev) => (prev !== newActiveScene ? newActiveScene : prev));
+
+    const newAboutEffects = sy >= transitionDistance * 0.35 && sy < projectsTransOffset;
+    setIsAboutEffectsActive((prev) => (prev !== newAboutEffects ? newAboutEffects : prev));
+
+    const newProjectsEffects = sy >= projectsTransOffset * 0.85 && sy < showcaseTransOffset;
+    setIsProjectsEffectsActive((prev) => (prev !== newProjectsEffects ? newProjectsEffects : prev));
+
+    const newShowcaseEffects = sy >= showcaseTransOffset * 0.85 && sy < ideaTransOffset;
+    setIsShowcaseEffectsActive((prev) => (prev !== newShowcaseEffects ? newShowcaseEffects : prev));
+
+    const newIdeaEffects = sy >= ideaTransOffset * 0.85;
+    setIsIdeaEffectsActive((prev) => (prev !== newIdeaEffects ? newIdeaEffects : prev));
+
+    // Portal star progress (threshold-gated to avoid per-frame React renders during non-transition)
+    if (showcaseTransitionProgress > 0 || showcaseTransitionProgress === 0) {
+      setNextPortalProgress((prev) =>
+        Math.abs(prev - showcaseTransitionProgress) > 0.004 ? showcaseTransitionProgress : prev
+      );
+    }
+  }
+
+  // ----------------------------------------------------------------
+  // Geometry recompute (on height changes) → update totalSceneHeight
+  // ----------------------------------------------------------------
+  const recomputeTotalHeight = useCallback(() => {
+    const geo = computeGeometry();
+    setTotalSceneHeight(geo.totalHeight);
+    setChapterOffsets({
+      about: geo.transitionDistance + 60,
+      projects: geo.projectsScrollOffset + 60,
+      showcase: geo.showcaseScrollOffset + 60,
+      idea: geo.contactScrollOffset,
+      experiment: geo.ideaScrollOffset + geo.ideaScrollDistance * 0.4,
+      methodology: geo.ideaScrollOffset + geo.ideaScrollDistance * 0.62,
+      resume: geo.resumeScrollOffset,
+    });
+    scheduleRaf();
+  }, [computeGeometry, scheduleRaf]);
+
+  // ----------------------------------------------------------------
+  // Stable callbacks for children (no re-renders on every height change)
+  // ----------------------------------------------------------------
+  const handleProjectsHeightChange = useCallback(
+    (h: number) => {
+      if (Math.abs(stateRef.current.projectsContainerH - h) < 2) return;
+      stateRef.current.projectsContainerH = h;
+      recomputeTotalHeight();
+    },
+    [recomputeTotalHeight]
+  );
+
+  const handleShowcaseHeightChange = useCallback(
+    (h: number) => {
+      if (Math.abs(stateRef.current.showcaseContainerH - h) < 2) return;
+      stateRef.current.showcaseContainerH = h;
+      recomputeTotalHeight();
+    },
+    [recomputeTotalHeight]
+  );
+
+  const handleIdeaHeightChange = useCallback(
+    (h: number) => {
+      if (Math.abs(stateRef.current.ideaContainerH - h) < 2) return;
+      stateRef.current.ideaContainerH = h;
+      recomputeTotalHeight();
+    },
+    [recomputeTotalHeight]
+  );
+
+  const handleIdeaSectionOffsetsChange = useCallback(
+    (offsets: { resume: number; contact: number }) => {
+      stateRef.current.ideaSectionOffsets = offsets;
+      recomputeTotalHeight();
+    },
+    [recomputeTotalHeight]
+  );
+
+  // ----------------------------------------------------------------
+  // Effects
+  // ----------------------------------------------------------------
   useEffect(() => {
     const reduced = detectLowPerformanceDevice();
     setLowPerformance(reduced);
-
     if (reduced) document.documentElement.dataset.performance = "reduced";
-
     return () => {
       if (reduced && document.documentElement.dataset.performance === "reduced") {
         delete document.documentElement.dataset.performance;
@@ -63,294 +460,63 @@ export default function SceneController() {
   }, []);
 
   useEffect(() => {
-    let ticking = false;
-    let scrollFrame = 0;
+    const s = stateRef.current;
 
     const handleResize = () => {
-      setViewportW(window.innerWidth);
-      setViewportH(window.innerHeight);
-      if (containerRef.current) {
-        setContainerH(containerRef.current.offsetHeight);
-      }
+      const w = window.innerWidth, h = window.innerHeight;
+      s.viewportW = w; s.viewportH = h;
+      if (aboutContainerRef.current) s.containerH = aboutContainerRef.current.offsetHeight;
+      setViewportW(w); setViewportH(h);
+      recomputeTotalHeight();
     };
     handleResize();
     window.addEventListener("resize", handleResize);
 
     const handleScroll = () => {
-      if (!ticking) {
-        scrollFrame = window.requestAnimationFrame(() => {
-          const sy = window.scrollY;
-          setScrollY(sy);
-          if (sy > 8) setHasScrolled(true);
-          ticking = false;
-        });
-        ticking = true;
+      const sy = window.scrollY;
+      s.scrollY = sy;
+      if (sy > 8 && !s.hasScrolled) {
+        s.hasScrolled = true;
+        setHasScrolled(true);
       }
+      scheduleRaf();
     };
-
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
     let ro: ResizeObserver | null = null;
-    if (containerRef.current && typeof ResizeObserver !== "undefined") {
+    if (aboutContainerRef.current && typeof ResizeObserver !== "undefined") {
       ro = new ResizeObserver(() => {
-        if (containerRef.current) {
-          setContainerH(containerRef.current.offsetHeight);
+        if (aboutContainerRef.current) {
+          s.containerH = aboutContainerRef.current.offsetHeight;
+          recomputeTotalHeight();
         }
       });
-      ro.observe(containerRef.current);
+      ro.observe(aboutContainerRef.current);
     }
 
     const timer = setTimeout(() => {
-      if (containerRef.current) {
-        setContainerH(containerRef.current.offsetHeight);
+      if (aboutContainerRef.current) {
+        s.containerH = aboutContainerRef.current.offsetHeight;
+        recomputeTotalHeight();
       }
     }, 250);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResize);
-      window.cancelAnimationFrame(scrollFrame);
+      if (s.rafId !== null) { cancelAnimationFrame(s.rafId); s.rafId = null; }
       ro?.disconnect();
       clearTimeout(timer);
     };
-  }, []);
+  }, [recomputeTotalHeight, scheduleRaf]);
 
-  // 1. Hero -> About Transition distance: star zoom from Hero to About
-  const transitionDistance = Math.max(viewportH * 0.85, 650);
+  const handleExplore = useCallback(() => {
+    const geo = computeGeometry();
+    window.scrollTo({ top: geo.transitionDistance + 60, behavior: "smooth" });
+  }, [computeGeometry]);
 
-  // 2. About scroll distance: enough room to read the introduction comfortably
-  const aboutContentScroll = Math.max(
-    viewportH * 0.2,
-    containerH - viewportH + 90
-  );
-  const aboutScrollDistance = Math.max(
-    viewportH * 0.65,
-    aboutContentScroll + viewportH * 0.35,
-    650
-  );
-
-  // 3. Projects transition distance: smooth fluid horizon wave transition
-  const projectsTransitionDistance = Math.max(viewportH * 0.65, 580);
-
-  // 4. Projects scroll distance: scale with the full portfolio content
-  const projectsContentScroll = Math.max(0, projectsContainerH - viewportH + 120);
-  const projectsScrollDistance = Math.max(
-    viewportH * 0.65,
-    projectsContentScroll + viewportH * 0.35,
-    1500
-  );
-
-  // 5. Showcase transition distance: modern liquid horizon wave curtain
-  const showcaseTransitionDistance = Math.max(viewportH * 0.9, 850);
-
-  // 6. Showcase scroll distance
-  const showcaseContentScroll = Math.max(0, showcaseContainerH - viewportH + 90);
-  const showcaseScrollDistance = Math.max(
-    viewportH * 0.65,
-    showcaseContentScroll + viewportH * 0.35,
-    650
-  );
-
-  // 7. Idea (Back5) transition distance: modern liquid horizon wave curtain
-  const ideaTransitionDistance = Math.max(viewportH * 0.9, 850);
-
-  // 8. Idea section scroll distance
-  const ideaScrollDistance = Math.max(viewportH * 3.8, ideaContainerH - viewportH + 250, 4000);
-
-  // Total scrollable height for scene-wrapper so scrollbar matches perfectly
-  const totalSceneHeight =
-    transitionDistance +
-    aboutScrollDistance +
-    projectsTransitionDistance +
-    projectsScrollDistance +
-    showcaseTransitionDistance +
-    showcaseScrollDistance +
-    ideaTransitionDistance +
-    ideaScrollDistance +
-    viewportH;
-
-  // Transition progress from 0 to 1 (Hero -> About)
-  const transitionProgress = Math.min(Math.max(scrollY / transitionDistance, 0), 1);
-
-  // About scroll progress from 0 to 1 (active once Hero transition finishes)
-  const aboutExtraScroll = Math.max(0, scrollY - transitionDistance);
-  const aboutScrollProgress = Math.min(Math.max(aboutExtraScroll / aboutScrollDistance, 0), 1);
-
-  // Projects transition progress from 0 to 1 (active once About finishes scrolling)
-  const projectsTransOffset = transitionDistance + aboutScrollDistance;
-  const isAboutEffectsActive =
-    scrollY >= transitionDistance * 0.35 && scrollY < projectsTransOffset;
-  const projectsTransExtraScroll = Math.max(0, scrollY - projectsTransOffset);
-  const projectsTransitionProgress = Math.min(
-    Math.max(projectsTransExtraScroll / projectsTransitionDistance, 0),
-    1
-  );
-
-  // Projects scroll progress from 0 to 1 (active once Projects transition finishes)
-  const projectsScrollOffset = projectsTransOffset + projectsTransitionDistance;
-  const projectsExtraScroll = Math.max(0, scrollY - projectsScrollOffset);
-  const projectsScrollProgress = Math.min(
-    Math.max(projectsExtraScroll / projectsScrollDistance, 0),
-    1
-  );
-
-  // Showcase transition progress from 0 to 1 (modern liquid wave curtain from Projects)
-  const showcaseTransOffset = projectsScrollOffset + projectsScrollDistance;
-  const showcaseTransExtraScroll = Math.max(0, scrollY - showcaseTransOffset);
-  const showcaseTransitionProgress = Math.min(
-    Math.max(showcaseTransExtraScroll / showcaseTransitionDistance, 0),
-    1
-  );
-
-  // Showcase scroll progress from 0 to 1 (active once Showcase transition finishes)
-  const showcaseScrollOffset = showcaseTransOffset + showcaseTransitionDistance;
-  const showcaseExtraScroll = Math.max(0, scrollY - showcaseScrollOffset);
-  const showcaseScrollProgress = Math.min(
-    Math.max(showcaseExtraScroll / showcaseScrollDistance, 0),
-    1
-  );
-
-  // Approach transition progress from 0 to 1
-  const ideaTransOffset = showcaseScrollOffset + showcaseScrollDistance;
-  const isShowcaseEffectsActive =
-    scrollY >= showcaseTransOffset && scrollY < ideaTransOffset + ideaTransitionDistance;
-  const ideaTransExtraScroll = Math.max(0, scrollY - ideaTransOffset);
-  const ideaTransitionProgress = Math.min(
-    Math.max(ideaTransExtraScroll / ideaTransitionDistance, 0),
-    1
-  );
-
-  // Approach scroll progress from 0 to 1 (active once its transition finishes)
-  const ideaScrollOffset = ideaTransOffset + ideaTransitionDistance;
-  const ideaExtraScroll = Math.max(0, scrollY - ideaScrollOffset);
-  const ideaScrollProgress = Math.min(
-    Math.max(ideaExtraScroll / ideaScrollDistance, 0),
-    1
-  );
-  const ideaContentScroll = Math.max(0, ideaContainerH - viewportH);
-  const contentOffsetToScroll = (offset: number) =>
-    ideaScrollOffset +
-    ideaScrollDistance *
-      Math.min(Math.max(offset, 0) / Math.max(ideaContentScroll, 1), 1);
-  const resumeScrollOffset = contentOffsetToScroll(
-    ideaSectionOffsets.resume || ideaContainerH * 0.65
-  );
-  const contactScrollOffset = contentOffsetToScroll(
-    ideaSectionOffsets.contact || ideaContainerH * 0.88
-  );
-
-  // Content scroll: translates the introduction card smoothly into view.
-  const maxContentScroll = aboutContentScroll;
-  const contentTranslateY = aboutScrollProgress * maxContentScroll;
-
-  // Unified Star Zoom Transition states (active in Stage 1)
   const isMobile = viewportW <= 600;
-  const baseStarTop = isMobile ? 66 : 76;
-  let starScale = 1;
-  let starTopVh = baseStarTop; // in vh
-  let starGlow = 0.45;
-  let heroOpacity = 1;
-  let aboutOpacity = 0;
-  let aboutContentOpacity = 0;
-  let starOpacity = 1;
-
-  if (
-    projectsScrollProgress > 0 ||
-    showcaseTransitionProgress > 0 ||
-    showcaseScrollProgress > 0 ||
-    ideaTransitionProgress > 0 ||
-    ideaScrollProgress > 0
-  ) {
-    // Stages 3, 4, 5
-    heroOpacity = 0;
-    aboutOpacity = 0;
-    aboutContentOpacity = 0;
-    starOpacity = 0;
-  } else if (projectsTransitionProgress > 0) {
-    // Stage 2 -> 3 Transition: About content and mountain fade out harmoniously as Projects enters
-    heroOpacity = 0;
-    aboutOpacity = Math.max(0, 1 - Math.pow(projectsTransitionProgress, 1.2) * 1.5);
-    aboutContentOpacity = Math.max(0, 1 - Math.pow(projectsTransitionProgress, 1.1) * 1.5);
-    starOpacity = 0;
-  } else if (transitionProgress <= 0.5) {
-    // Stage 1: Hero -> About zoom in
-    const p1 = transitionProgress / 0.5;
-    heroOpacity = Math.max(0, 1 - Math.pow(p1, 1.3));
-    aboutOpacity = Math.min(1, Math.pow(p1, 1.8));
-    starScale = 1 + Math.sin(p1 * (Math.PI / 2)) * 3.2;
-    starTopVh = baseStarTop - p1 * (baseStarTop - 28); // from baseStarTop to 28vh
-    starGlow = 0.45 + p1 * 0.45;
-    aboutContentOpacity = 0;
-    starOpacity = 1;
-  } else {
-    // Stage 1: Hero -> About landing at 8vh
-    const p2 = (transitionProgress - 0.5) / 0.5;
-    heroOpacity = 0;
-    aboutOpacity = 1;
-    starScale = 4.2 - Math.sin(p2 * (Math.PI / 2)) * 3.74;
-    starTopVh = 28 - p2 * 20; // lands at 8vh
-    starGlow = 0.9 - p2 * 0.45;
-    aboutContentOpacity = Math.min(1, Math.max(0, (p2 - 0.2) / 0.8));
-    starOpacity =
-      hasScrolled && aboutScrollProgress > 0
-        ? Math.max(0, 1 - aboutScrollProgress * 2.2)
-        : 1;
-  }
-
-  // When transition to Projects starts, About gently lifts and blurs
-  let aboutTranslateY = 0;
-  let aboutBlur = 0;
-  if (projectsTransitionProgress > 0) {
-    aboutTranslateY = projectsTransitionProgress * 8; // vh
-    aboutBlur = projectsTransitionProgress * 6; // px
-  }
-
-  // Projects layer entrance and exit into Showcase
-  let projectsLayerOpacity = Math.min(1, Math.pow(projectsTransitionProgress, 1.4));
-  let projectsLayerTranslateY = (1 - projectsTransitionProgress) * 14; // vh
-  if (showcaseTransitionProgress > 0) {
-    projectsLayerOpacity = Math.max(0, 1 - Math.pow(showcaseTransitionProgress, 1.2) * 1.5);
-    projectsLayerTranslateY = -showcaseTransitionProgress * 12; // vh
-  }
-
-  // Showcase layer entrance and exit into IdeaSection
-  let showcaseLayerOpacity = Math.min(1, Math.pow(showcaseTransitionProgress, 1.4));
-  let showcaseLayerTranslateY = (1 - showcaseTransitionProgress) * 14; // vh
-  let showcaseLayerBlur = 0;
-  if (ideaTransitionProgress > 0) {
-    showcaseLayerOpacity = Math.max(0, 1 - Math.pow(ideaTransitionProgress, 1.2) * 1.5);
-    showcaseLayerTranslateY = -ideaTransitionProgress * 12; // vh
-    showcaseLayerBlur = ideaTransitionProgress * 8; // px
-  }
-
-  // Approach layer entrance
-  const ideaLayerOpacity = Math.min(1, Math.pow(ideaTransitionProgress, 1.4));
-  const ideaLayerTranslateY = (1 - ideaTransitionProgress) * 14; // vh
-
-  const starScrollY = aboutScrollProgress * (maxContentScroll * 0.75);
-
-  let activeSceneId = "hero";
-  if (scrollY >= contactScrollOffset - viewportH * 0.15) {
-    activeSceneId = "contact";
-  } else if (scrollY >= resumeScrollOffset - viewportH * 0.15) {
-    activeSceneId = "resume";
-  } else if (scrollY >= ideaTransOffset + ideaTransitionDistance * 0.4) {
-    activeSceneId = "idea";
-  } else if (scrollY >= showcaseTransOffset + showcaseTransitionDistance * 0.4) {
-    activeSceneId = "showcase";
-  } else if (scrollY >= projectsTransOffset + projectsTransitionDistance * 0.4) {
-    activeSceneId = "projects";
-  } else if (scrollY >= transitionDistance - 80) {
-    activeSceneId = "about";
-  }
-
-  const handleExplore = () => {
-    window.scrollTo({
-      top: transitionDistance + 60,
-      behavior: "smooth",
-    });
-  };
 
   return (
     <div
@@ -361,111 +527,83 @@ export default function SceneController() {
       <DockNav
         activeSceneId={activeSceneId}
         hidden={isAboutContemplating || activeSceneId === "hero"}
-        chapterOffsets={{
-          about: transitionDistance + 60,
-          projects: projectsScrollOffset + 60,
-          showcase: showcaseScrollOffset + 60,
-          idea: contactScrollOffset,
-          experiment: ideaScrollOffset + ideaScrollDistance * 0.4,
-          methodology: ideaScrollOffset + ideaScrollDistance * 0.62,
-          resume: resumeScrollOffset,
-        }}
+        chapterOffsets={chapterOffsets}
       />
 
-      {/* Global Contemplation exit pill (outside transformed layers, above the dock) */}
+      {/* Global Contemplation exit pill */}
       <ContemplationExitPill />
 
       {/* Sticky Fullscreen Stage */}
       <div className="scene-stage">
-        {/* Layer 1: Hero Scene */}
-        <div
-          className="scene-layer scene-layer--hero"
-          style={{
-            opacity: heroOpacity,
-            pointerEvents: transitionProgress > 0.4 ? "none" : "auto",
-          }}
-        >
+        {/* Layer 1: Hero */}
+        <div ref={heroLayerRef} className="scene-layer scene-layer--hero">
           <Hero
             onExplore={handleExplore}
-            parallaxOffset={lowPerformance ? 0 : Math.min(scrollY * 0.16, viewportH * 0.18)}
+            parallaxOffset={lowPerformance ? 0 : undefined}
           />
         </div>
 
-        {/* Layer 2: About Scene */}
+        {/* Layer 2: About */}
         <div
+          ref={aboutLayerRef}
           className="scene-layer scene-layer--about"
-          style={{
-            opacity: aboutOpacity,
-            transform: `translate3d(0, -${aboutTranslateY}vh, 0)`,
-            filter: aboutBlur > 0 ? `blur(${aboutBlur}px)` : undefined,
-            pointerEvents:
-              transitionProgress > 0.5 && projectsTransitionProgress < 0.4
-                ? "auto"
-                : "none",
-          }}
+          data-effects-active={isAboutEffectsActive}
+          style={{ opacity: 0, pointerEvents: "none" }}
         >
           {/* Pure Code Light Atmosphere Background */}
           <div className="about__light-bg" aria-hidden="true" />
 
           <div className="about__scanner-layer" aria-hidden="true">
-            {!lowPerformance && <Scanner
-              color1="#5227FF"
-              color2="#FF9FFC"
-              color3="#FFFFFF"
-              speed={lowPerformance ? 0.25 : 0.5}
-              sweepSpeed={0.25}
-              sweepWidth={1.6}
-              trail={0.5}
-              ripple={0.22}
-              bandDensity={lowPerformance ? 8 : 11}
-              glow={0.6}
-              scanDirection="vertical"
-              colorSpread={0.7}
-              scanline
-              scanlineIntensity={0.5}
-              mouseInteraction={!lowPerformance && viewportW > 900}
-              clickEffect={lowPerformance ? "none" : "ping"}
-              reverse={false}
-              scale={1.5}
-              frequency={2}
-              lineWidth={1.2}
-              brightness={1}
-              vignette={0.3}
-              grain={!lowPerformance}
-              grainIntensity={0.04}
-              opacity={lowPerformance ? 0.65 : 0.85}
-              mouseMode="repel"
-              mouseRadius={0.5}
-              mouseStrength={0.7}
-              intro
-              lightMode={false}
-              paused={!isAboutEffectsActive}
-              dpr={lowPerformance ? 1 : 1.5}
-            />}
+            {!lowPerformance && (
+              <Scanner
+                color1="#5227FF"
+                color2="#FF9FFC"
+                color3="#FFFFFF"
+                speed={0.5}
+                sweepSpeed={0.25}
+                sweepWidth={1.6}
+                trail={0.5}
+                ripple={0.22}
+                bandDensity={8}
+                glow={0.6}
+                scanDirection="vertical"
+                colorSpread={0.7}
+                scanline
+                scanlineIntensity={0.5}
+                mouseInteraction={viewportW > 900}
+                clickEffect="ping"
+                reverse={false}
+                scale={1.5}
+                frequency={2}
+                lineWidth={1.2}
+                brightness={1}
+                vignette={0.3}
+                grain
+                grainIntensity={0.02}
+                opacity={0.85}
+                mouseMode="repel"
+                mouseRadius={0.5}
+                mouseStrength={0.7}
+                intro
+                lightMode={false}
+                paused={!isAboutEffectsActive}
+                dpr={0.9}
+              />
+            )}
           </div>
 
-          {/* Soft ambient drifting mist */}
           <DriftingMist opacity={0.06} speedMultiplier={1} />
 
           <div
-            ref={containerRef}
+            ref={aboutContainerRef}
             className="about__container"
-            style={{
-              opacity: isAboutContemplating ? 0 : aboutContentOpacity,
-              transform: `translate3d(0, -${contentTranslateY}px, 0)`,
-              transition: "opacity 0.5s ease",
-              pointerEvents: isAboutContemplating ? "none" : undefined,
-            }}
+            style={{ transition: "opacity 0.5s ease" }}
           >
-            {/* Generous Star clearance spacer so star NEVER touches the card */}
             <div className="about__star-spacer" />
-
-            {/* Two-column Content with the user's preferred generous scales */}
             <div className="about__content">
               <div className="about__left">
                 <AboutIntro />
               </div>
-
               <div className="about__right">
                 <div className="about__card">
                   <h3 className="about__card-heading">Do escopo à publicação</h3>
@@ -474,25 +612,21 @@ export default function SceneController() {
                     precisam funcionar. Com isso, definimos uma solução adequada ao contexto,
                     em vez de partir de um modelo genérico.
                   </p>
-
                   <p>
                     O escopo pode reunir arquitetura de páginas, interface responsiva,
                     formulários, áreas administrativas, APIs e estrutura de dados. As entregas
                     são alinhadas antes do desenvolvimento.
                   </p>
-
                   <p>
                     A experiência de uso é considerada desde o início: conteúdo organizado,
                     navegação clara e interfaces que funcionam em celulares, tablets e
                     computadores.
                   </p>
-
                   <p>
                     A implementação combina ferramentas adequadas ao escopo, como React,
                     Next.js, TypeScript, Java, SQL e integrações externas. Animações e recursos
                     de IA entram quando resolvem uma necessidade concreta.
                   </p>
-
                   <p>
                     O processo inclui alinhamento de requisitos, desenvolvimento, validação e
                     preparação para publicação. A comunicação é direta durante as etapas e a
@@ -504,98 +638,70 @@ export default function SceneController() {
           </div>
         </div>
 
-        {/* Layer 3: Transition Wave Curtain (Modern Differentiated Liquid Horizon) */}
-        {projectsTransitionProgress > 0 && projectsTransitionProgress < 1 && (
-          <div
-            className="scene-transition-liquid-wave"
-            style={{
-              transform: `translate3d(-50%, ${(1 - projectsTransitionProgress) * 105}%, 0)`,
-              opacity: Math.min(1, projectsTransitionProgress * 2),
-            }}
-            aria-hidden="true"
-          >
-            <div className="scene-transition-wave__edge-glow" />
-            <div className="scene-transition-wave__light-beam" />
-          </div>
-        )}
-
-        {/* Layer 4: Projects Scene */}
+        {/* Layer 3: Transition Wave Curtain */}
         <div
+          ref={waveRef}
+          className="scene-transition-liquid-wave"
+          style={{ display: "none" }}
+          aria-hidden="true"
+        >
+          <div className="scene-transition-wave__edge-glow" />
+          <div className="scene-transition-wave__light-beam" />
+        </div>
+
+        {/* Layer 4: Projects */}
+        <div
+          ref={projectsLayerRef}
           className="scene-layer scene-layer--projects"
-          style={{
-            opacity: projectsLayerOpacity,
-            transform: `translate3d(0, ${projectsLayerTranslateY}vh, 0)`,
-            pointerEvents:
-              projectsTransitionProgress >= 0.4 && showcaseTransitionProgress < 0.4
-                ? "auto"
-                : "none",
-          }}
+          style={{ opacity: 0, transform: "translate3d(0, 14vh, 0)", pointerEvents: "none" }}
         >
           <Projects
-            scrollProgress={projectsScrollProgress}
             viewportH={viewportH}
             lowPerformance={lowPerformance}
-            onContainerHeightChange={setProjectsContainerH}
-            nextPortalProgress={showcaseTransitionProgress}
+            effectsActive={isProjectsEffectsActive}
+            onContainerHeightChange={handleProjectsHeightChange}
+            nextPortalProgress={nextPortalProgress}
           />
         </div>
 
-        {/* Layer 5: Capabilities Scene */}
+        {/* Layer 5: Showcase */}
         <div
+          ref={showcaseLayerRef}
           className="scene-layer scene-layer--showcase"
-          style={{
-            opacity: showcaseLayerOpacity,
-            transform: `translate3d(0, ${showcaseLayerTranslateY}vh, 0)`,
-            filter: showcaseLayerBlur > 0 ? `blur(${showcaseLayerBlur}px)` : undefined,
-            pointerEvents:
-              showcaseTransitionProgress >= 0.4 && ideaTransitionProgress < 0.4
-                ? "auto"
-                : "none",
-          }}
+          style={{ opacity: 0, transform: "translate3d(0, 14vh, 0)", pointerEvents: "none" }}
         >
           <Showcase
-            scrollProgress={showcaseScrollProgress}
+            scrollProgress={0}
             viewportH={viewportH}
             viewportW={viewportW}
             lowPerformance={lowPerformance}
             effectsActive={isShowcaseEffectsActive}
-            onContainerHeightChange={setShowcaseContainerH}
+            onContainerHeightChange={handleShowcaseHeightChange}
           />
         </div>
 
-
-
-        {/* Layer 6: Idea / Back5 Scene (NeuralNexus + MaskedHeading + FolderFloat) */}
+        {/* Layer 6: Idea Section */}
         <div
+          ref={ideaLayerRef}
           className="scene-layer scene-layer--idea"
-          style={{
-            opacity: ideaLayerOpacity,
-            transform: `translate3d(0, ${ideaLayerTranslateY}vh, 0)`,
-            pointerEvents: ideaTransitionProgress >= 0.4 ? "auto" : "none",
-          }}
+          style={{ opacity: 0, transform: "translate3d(0, 14vh, 0)", pointerEvents: "none" }}
         >
           <IdeaSection
-            scrollProgress={ideaScrollProgress}
+            scrollProgress={0}
             viewportW={viewportW}
             viewportH={viewportH}
             lowPerformance={lowPerformance}
-            onContainerHeightChange={setIdeaContainerH}
-            onSectionOffsetsChange={setIdeaSectionOffsets}
+            effectsActive={isIdeaEffectsActive}
+            onContainerHeightChange={handleIdeaHeightChange}
+            onSectionOffsetsChange={handleIdeaSectionOffsetsChange}
           />
         </div>
 
-        {/* Layer 6: The Unified Star Portal */}
+        {/* Star Portal */}
         <div
+          ref={starPortalRef}
           className={`scene-star-portal ${!hasScrolled ? "scene-star-portal--intro" : ""}`}
-          style={{
-            top: hasScrolled ? `${starTopVh}vh` : undefined,
-            transform: hasScrolled
-              ? `translate3d(-50%, calc(-50% - ${starScrollY}px), 0) scale(${starScale})`
-              : undefined,
-            opacity: isAboutContemplating ? 0 : (hasScrolled ? starOpacity : undefined),
-            transition: "opacity 0.5s ease",
-            filter: `drop-shadow(0 0 ${35 * Math.min(starScale, 2.5)}px rgba(101, 163, 13, ${starGlow}))`,
-          }}
+          style={{ transition: "opacity 0.5s ease" }}
         >
           <Image
             src="/images/LOGO.webp"

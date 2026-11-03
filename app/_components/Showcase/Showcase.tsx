@@ -1,13 +1,13 @@
 "use client";
 
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { LineWaves } from "../Backgrounds";
 import { playClickSound } from "../../_utils/sound";
 import { useContemplation } from "../../_utils/contemplation";
 import "./Showcase.css";
 
 interface ShowcaseProps {
-  scrollProgress: number; // 0 to 1
+  scrollProgress?: number; // kept for back-compat, no longer driven per frame
   viewportH: number;
   viewportW: number;
   lowPerformance: boolean;
@@ -83,7 +83,6 @@ const CORE_TECH_TAGS = [
 ];
 
 function Showcase({
-  scrollProgress,
   viewportH,
   viewportW,
   lowPerformance,
@@ -92,28 +91,26 @@ function Showcase({
   contentOpacity = 1,
 }: ShowcaseProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerH, setContainerH] = useState(1100);
+  const containerHRef = useRef(1100);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const isContemplating = useContemplation();
 
-  useEffect(() => {
-    const updateHeight = () => {
-      if (containerRef.current) {
-        const h = containerRef.current.offsetHeight;
-        setContainerH(h);
-        onContainerHeightChange?.(h);
-      }
-    };
+  const updateHeight = useCallback(() => {
+    if (containerRef.current) {
+      const h = containerRef.current.offsetHeight;
+      containerHRef.current = h;
+      onContainerHeightChange?.(h);
+    }
+  }, [onContainerHeightChange]);
 
+  useEffect(() => {
     updateHeight();
     const timer = setTimeout(updateHeight, 250);
     window.addEventListener("resize", updateHeight);
 
     let ro: ResizeObserver | null = null;
     if (containerRef.current && typeof ResizeObserver !== "undefined") {
-      ro = new ResizeObserver(() => {
-        updateHeight();
-      });
+      ro = new ResizeObserver(updateHeight);
       ro.observe(containerRef.current);
     }
 
@@ -122,11 +119,35 @@ function Showcase({
       window.removeEventListener("resize", updateHeight);
       ro?.disconnect();
     };
-  }, [onContainerHeightChange, expandedIndex]);
+  }, [updateHeight, expandedIndex]);
 
-  // Content scroll translation
-  const maxContentScroll = Math.max(0, containerH - viewportH + 90);
-  const contentTranslateY = scrollProgress * maxContentScroll;
+  // Event-driven rAF: reads scrollProgress on scroll, writes transform directly
+  useEffect(() => {
+    let rafId: number | null = null;
+    const tick = () => {
+      rafId = null;
+      const layer = containerRef.current?.closest<HTMLElement>("[data-scroll-progress]");
+      const sp = layer ? parseFloat(layer.dataset.scrollProgress ?? "0") : 0;
+      const maxContentScroll = Math.max(0, containerHRef.current - viewportH + 90);
+      const translateY = sp * maxContentScroll;
+      if (containerRef.current) {
+        containerRef.current.style.transform = `translate3d(0, -${translateY}px, 0)`;
+      }
+    };
+
+    const onScroll = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(tick);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, [viewportH]);
 
   const handleToggleRow = (index: number) => {
     playClickSound("tick");
@@ -144,7 +165,7 @@ function Showcase({
           color2="#059669"
           color3="#BCFF7E"
           speed={lowPerformance ? 0.16 : 0.3}
-          lineCount={lowPerformance ? 36 : 72}
+          lineCount={lowPerformance ? 30 : 48}
           lineWidth={1.3}
           highlight={1}
           warpIntensity={1}
@@ -161,7 +182,7 @@ function Showcase({
           intro
           lightMode={false}
           opacity={lowPerformance ? 0.55 : 0.8}
-          maxDevicePixelRatio={lowPerformance ? 1 : 1.5}
+          maxDevicePixelRatio={lowPerformance ? 1 : 1.15}
           paused={!effectsActive}
         />}
       </div>
@@ -172,7 +193,6 @@ function Showcase({
         className="showcase__container"
         style={{
           opacity: isContemplating ? 0 : contentOpacity,
-          transform: `translate3d(0, -${contentTranslateY}px, 0)`,
           transition: "opacity 0.5s ease",
           pointerEvents: isContemplating ? "none" : undefined,
         }}
@@ -238,8 +258,6 @@ function Showcase({
                           e.preventDefault();
                           handleToggleRow(idx);
                         }
-
-                        export default memo(Showcase);
                       }}
                       aria-expanded={isExpanded}
                     >
@@ -284,3 +302,5 @@ function Showcase({
     </div>
   );
 }
+
+export default memo(Showcase);

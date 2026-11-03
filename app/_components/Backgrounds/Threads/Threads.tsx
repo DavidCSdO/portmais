@@ -297,6 +297,9 @@ export default function Threads({
 
   useEffect(() => {
     settingsRef.current = settings;
+    if (!settings.paused) {
+      wakeRef.current?.();
+    }
   }, [settings]);
 
   useEffect(() => {
@@ -421,7 +424,7 @@ export default function Threads({
     const resize = () => {
       const width = Math.max(1, container.clientWidth);
       const height = Math.max(1, container.clientHeight);
-      const baseDpr = Math.min(window.devicePixelRatio || 1, 2);
+      const baseDpr = Math.min(window.devicePixelRatio || 1, 1.25);
       const longest = Math.max(width, height) * baseDpr;
       const dpr = longest > MAX_RENDER_DIM ? (baseDpr * MAX_RENDER_DIM) / longest : baseDpr;
       canvas.width = Math.max(1, Math.round(width * dpr));
@@ -501,7 +504,7 @@ export default function Threads({
 
     const frame = (now: number) => {
       raf = 0;
-      if (!alive || !visible || document.hidden) return;
+      if (!alive || !visible || document.hidden || settingsRef.current.paused) return;
       const s = settingsRef.current;
       const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
       last = now;
@@ -526,7 +529,9 @@ export default function Threads({
     };
 
     const wake = () => {
-      if (!raf && alive && visible && !document.hidden) raf = requestAnimationFrame(frame);
+      if (!raf && alive && visible && !document.hidden && !settingsRef.current.paused) {
+        raf = requestAnimationFrame(frame);
+      }
     };
 
     const onPointerMove = (event: PointerEvent) => {

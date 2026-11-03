@@ -142,21 +142,25 @@ const SKILLS = [
 ];
 
 interface ProjectsProps {
-  scrollProgress: number;
+  scrollProgress?: number; // kept for back-compat, no longer used on each frame
   viewportH: number;
   lowPerformance: boolean;
+  effectsActive?: boolean;
   onContainerHeightChange?: (height: number) => void;
   nextPortalProgress?: number;
 }
 
 function Projects({
-  scrollProgress,
   viewportH,
   lowPerformance,
+  effectsActive = false,
   onContainerHeightChange,
   nextPortalProgress,
 }: ProjectsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const portalStarRef = useRef<HTMLDivElement | null>(null);
+  const circTextWrapRef = useRef<HTMLDivElement | null>(null);
+  const containerHRef = useRef(2400);
   const [containerH, setContainerH] = useState(2400);
   const isContemplating = useContemplation();
 
@@ -164,6 +168,7 @@ function Projects({
     const updateHeight = () => {
       if (!containerRef.current) return;
       const height = containerRef.current.offsetHeight;
+      containerHRef.current = height;
       setContainerH(height);
       onContainerHeightChange?.(height);
     };
@@ -184,15 +189,52 @@ function Projects({
     };
   }, [onContainerHeightChange]);
 
-  const maxContentScroll = Math.max(0, containerH - viewportH + 120);
-  const contentTranslateY = scrollProgress * maxContentScroll;
-  const portalProgress =
-    typeof nextPortalProgress === "number"
-      ? nextPortalProgress
-      : Math.min(Math.max((scrollProgress - 0.82) / 0.18, 0), 1);
-  const starScale = 1 + Math.sin(portalProgress * (Math.PI / 2)) * 3.6;
-  const starGlow = 0.5 + portalProgress * 0.45;
-  const circularTextOpacity = Math.max(0, 1 - portalProgress * 2.2);
+  // Event-driven rAF: read scrollProgress on scroll and apply transforms directly
+  useEffect(() => {
+    let rafId: number | null = null;
+
+    const tick = () => {
+      rafId = null;
+      const layer = containerRef.current?.closest<HTMLElement>("[data-scroll-progress]");
+      const sp = layer ? parseFloat(layer.dataset.scrollProgress ?? "0") : 0;
+      const maxContentScroll = Math.max(0, containerHRef.current - viewportH + 120);
+      const contentTranslateY = sp * maxContentScroll;
+
+      if (containerRef.current) {
+        containerRef.current.style.transform = `translate3d(0, -${contentTranslateY}px, 0)`;
+      }
+
+      // Portal star animation driven by nextPortalProgress (passed as prop, stays stable)
+      const pp = typeof nextPortalProgress === "number" ? nextPortalProgress : 0;
+      const starScale = 1 + Math.sin(pp * (Math.PI / 2)) * 3.6;
+      const starGlow = 0.5 + pp * 0.45;
+      const circularTextOpacity = Math.max(0, 1 - pp * 2.2);
+
+      if (circTextWrapRef.current) {
+        circTextWrapRef.current.style.opacity = String(circularTextOpacity);
+        circTextWrapRef.current.style.transform = `scale(${1 + pp * 0.25})`;
+      }
+      if (portalStarRef.current) {
+        portalStarRef.current.style.transform = `scale(${starScale})`;
+        portalStarRef.current.style.filter = `drop-shadow(0 0 ${20 * starScale}px rgba(101, 163, 13, ${starGlow}))`;
+      }
+    };
+
+    const onScroll = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(tick);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, [viewportH, nextPortalProgress]);
+
+  const portalProgress = typeof nextPortalProgress === "number" ? nextPortalProgress : 0;
 
   return (
     <div className="projects-scene">
@@ -203,7 +245,7 @@ function Projects({
           <Threads
             color={[0.3, 0.42, 0.2]}
             accentColor={[0.55, 0.72, 0.34]}
-            lineCount={36}
+            lineCount={28}
             amplitude={1.1}
             distance={0.35}
             enableMouseInteraction={true}
@@ -212,6 +254,7 @@ function Projects({
             speed={0.2}
             waves={1}
             opacity={0.12}
+            paused={!effectsActive}
           />
         )}
       </div>
@@ -223,7 +266,6 @@ function Projects({
         className="projects__container"
         style={{
           opacity: isContemplating ? 0 : 1,
-          transform: `translate3d(0, -${contentTranslateY}px, 0)`,
           transition: "opacity 0.5s ease",
           pointerEvents: isContemplating ? "none" : undefined,
         }}
@@ -509,37 +551,31 @@ function Projects({
         </main>
 
         <div className="projects__badge-section">
-          <div
-            className="projects__circular-wrapper"
-            style={{
-              opacity: circularTextOpacity,
-              transform: `scale(${1 + portalProgress * 0.25})`,
-            }}
+        <div
+          ref={circTextWrapRef}
+          className="projects__circular-wrapper"
+        >
+          <CircularText
+            text="✦ CADA PROJETO UMA HISTÓRIA ✦ DESIGN & DESENVOLVIMENTO ✦ EXPERIÊNCIAS DIGITAIS ✦ "
+            spinDuration={24}
+            onHover="speedUp"
           >
-            <CircularText
-              text="✦ CADA PROJETO UMA HISTÓRIA ✦ DESIGN & DESENVOLVIMENTO ✦ EXPERIÊNCIAS DIGITAIS ✦ "
-              spinDuration={24}
-              onHover="speedUp"
+            <div
+              ref={portalStarRef}
+              className="projects__portal-logo-wrapper"
             >
-              <div
-                className="projects__portal-logo-wrapper"
-                style={{
-                  transform: `scale(${starScale})`,
-                  filter: `drop-shadow(0 0 ${20 * starScale}px rgba(101, 163, 13, ${starGlow}))`,
-                }}
-              >
-                <Image
-                  src="/images/LOGO.webp"
-                  alt="Símbolo do portfólio de David Cardoso"
-                  width={96}
-                  height={96}
-                  className="projects__portal-logo-img"
-                  unoptimized
-                  priority
-                />
-              </div>
-            </CircularText>
-          </div>
+              <Image
+                src="/images/LOGO.webp"
+                alt="Símbolo do portfólio de David Cardoso"
+                width={96}
+                height={96}
+                className="projects__portal-logo-img"
+                unoptimized
+                priority
+              />
+            </div>
+          </CircularText>
+        </div>
         </div>
       </div>
     </div>

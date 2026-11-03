@@ -1,8 +1,6 @@
 "use client";
 
-import React, { memo, useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import GradientASCII from "../GradientASCII";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import MaskedHeading from "../MaskedHeading";
 import FolderFloat from "../FolderFloat";
 import ProcessSection from "../ProcessSection";
@@ -15,10 +13,11 @@ import { useContemplation } from "../../_utils/contemplation";
 import "./IdeaSection.css";
 
 interface IdeaSectionProps {
-  scrollProgress: number; // 0 to 1
+  scrollProgress?: number; // kept for back-compat, no longer driven per frame
   viewportW: number;
   viewportH: number;
   lowPerformance: boolean;
+  effectsActive?: boolean;
   onContainerHeightChange?: (height: number) => void;
   onSectionOffsetsChange?: (offsets: { resume: number; contact: number }) => void;
   contentOpacity?: number;
@@ -40,111 +39,102 @@ const FOLDER_ITEMS = [
 ];
 
 function IdeaSection({
-  scrollProgress,
   viewportW,
   viewportH,
   lowPerformance,
+  effectsActive = false,
   onContainerHeightChange,
   onSectionOffsetsChange,
   contentOpacity = 1
 }: IdeaSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const resumeExperienceRef = useRef<HTMLDivElement>(null);
-  const resumeTransitionRef = useRef<HTMLDivElement>(null);
   const footerTransitionRef = useRef<HTMLDivElement>(null);
+  // Refs for direct DOM writes (skip React re-renders on scroll)
+  const containerHRef = useRef(1700);
+  const footerTransitionOffsetRef = useRef(0);
+  const footerTransitionProgressRef = useRef(0);
   const [containerH, setContainerH] = useState(1700);
-  const [resumeTransitionOffset, setResumeTransitionOffset] = useState(0);
-  const [footerTransitionOffset, setFooterTransitionOffset] = useState(0);
-  const [isResumeBackgroundVisible, setIsResumeBackgroundVisible] = useState(false);
   const isContemplating = useContemplation();
 
-  useEffect(() => {
-    const section = resumeExperienceRef.current;
-    if (!section) return;
-    if (!("IntersectionObserver" in window)) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsResumeBackgroundVisible(entry.isIntersecting),
-      { rootMargin: "500px 0px" }
-    );
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const updateHeight = () => {
-      const container = containerRef.current;
-      if (container) {
-        const h = container.offsetHeight;
-        setContainerH(h);
-        onContainerHeightChange?.(h);
-        const containerTop = container.getBoundingClientRect().top;
-        if (resumeTransitionRef.current) {
-          setResumeTransitionOffset(
-            resumeTransitionRef.current.getBoundingClientRect().top - containerTop
-          );
-        }
-        if (footerTransitionRef.current) {
-          setFooterTransitionOffset(
-            footerTransitionRef.current.getBoundingClientRect().top - containerTop
-          );
-        }
-
-        const resume = container.querySelector<HTMLElement>("#curriculo");
-        const contact = container.querySelector<HTMLElement>("#contato");
-        if (resume && contact) {
-          onSectionOffsetsChange?.({
-            resume: resume.getBoundingClientRect().top - containerTop,
-            contact: contact.getBoundingClientRect().top - containerTop,
-          });
-        }
+  const updateLayout = useCallback(() => {
+    const container = containerRef.current;
+    if (container) {
+      const h = container.offsetHeight;
+      containerHRef.current = h;
+      setContainerH(h);
+      onContainerHeightChange?.(h);
+      const containerTop = container.getBoundingClientRect().top;
+      if (footerTransitionRef.current) {
+        footerTransitionOffsetRef.current =
+          footerTransitionRef.current.getBoundingClientRect().top - containerTop;
       }
-    };
+      const resume = container.querySelector<HTMLElement>("#curriculo");
+      const contact = container.querySelector<HTMLElement>("#contato");
+      if (resume && contact) {
+        onSectionOffsetsChange?.({
+          resume: resume.getBoundingClientRect().top - containerTop,
+          contact: contact.getBoundingClientRect().top - containerTop,
+        });
+      }
+    }
+  }, [onContainerHeightChange, onSectionOffsetsChange]);
 
-    updateHeight();
-    const timer = setTimeout(updateHeight, 300);
-    window.addEventListener("resize", updateHeight);
+  useEffect(() => {
+    updateLayout();
+    const timer = setTimeout(updateLayout, 300);
+    window.addEventListener("resize", updateLayout);
 
     let ro: ResizeObserver | null = null;
     if (containerRef.current && typeof ResizeObserver !== "undefined") {
-      ro = new ResizeObserver(() => {
-        updateHeight();
-      });
+      ro = new ResizeObserver(updateLayout);
       ro.observe(containerRef.current);
     }
 
     return () => {
       clearTimeout(timer);
-      window.removeEventListener("resize", updateHeight);
+      window.removeEventListener("resize", updateLayout);
       ro?.disconnect();
     };
-  }, [onContainerHeightChange, onSectionOffsetsChange]);
+  }, [updateLayout]);
 
-  // Content scroll translation: exactly containerH - viewportH so footer aligns flush at the bottom
-  const maxContentScroll = Math.max(0, containerH - viewportH);
-  const contentTranslateY = scrollProgress * maxContentScroll;
-  const resumeTransitionHeight = Math.max(viewportH * 0.22, 1);
-  const resumeTransitionProgress = Math.min(
-    Math.max(
-      (contentTranslateY - (resumeTransitionOffset - viewportH)) /
-        Math.max(viewportH + resumeTransitionHeight, 1),
-      0
-    ),
-    1
-  );
-  const resumeLogoProgress = Math.min(resumeTransitionProgress / 0.86, 1);
-  const resumeLogoScale = 0.38 + resumeLogoProgress * 1.9;
-  const resumeLogoOpacity =
-    resumeLogoProgress < 0.48
-      ? 0.9
-      : Math.max(0, 0.9 * (1 - (resumeLogoProgress - 0.48) / 0.52));
-  const footerTransitionProgress = Math.min(
-    Math.max(
-      (contentTranslateY - (footerTransitionOffset - viewportH)) / Math.max(viewportH, 1),
-      0
-    ),
-    1
-  );
+  // Event-driven rAF: reads scrollProgress on scroll, writes transforms directly
+  useEffect(() => {
+    let rafId: number | null = null;
+    const tick = () => {
+      rafId = null;
+      const layer = containerRef.current?.closest<HTMLElement>("[data-scroll-progress]");
+      const sp = layer ? parseFloat(layer.dataset.scrollProgress ?? "0") : 0;
+      const maxContentScroll = Math.max(0, containerHRef.current - viewportH);
+      const contentTranslateY = sp * maxContentScroll;
+
+      if (containerRef.current) {
+        containerRef.current.style.transform = `translate3d(0, -${contentTranslateY}px, 0)`;
+      }
+
+      // Footer transition progress (low-frequency React state update with threshold)
+      const ftp = Math.min(
+        Math.max(
+          (contentTranslateY - (footerTransitionOffsetRef.current - viewportH)) / Math.max(viewportH, 1),
+          0
+        ),
+        1
+      );
+      footerTransitionProgressRef.current = ftp;
+    };
+
+    const onScroll = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(tick);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, [viewportH]);
 
   // Adaptive folder dimensions
   const isMobile = viewportW < 768;
@@ -178,6 +168,7 @@ function IdeaSection({
           pulsating={true}
           saturation={1.2}
           followMouse={true}
+          paused={!effectsActive}
         />}
       </div>
 
@@ -190,7 +181,6 @@ function IdeaSection({
         className="idea__container"
         style={{
           opacity: isContemplating ? 0 : contentOpacity,
-          transform: `translate3d(0, -${contentTranslateY}px, 0)`,
           transition: "opacity 0.5s ease",
           pointerEvents: isContemplating ? "none" : undefined,
         }}
@@ -307,60 +297,7 @@ function IdeaSection({
            ==================================================== */}
         <ProcessSection />
 
-        <div ref={resumeExperienceRef} className="resume-visual-scene">
-          <div className="resume-visual-scene__background" aria-hidden="true">
-            {isResumeBackgroundVisible && !lowPerformance && (
-              <GradientASCII
-                colors={["#142a45", "#1e3fd8", "#68b9ec", "#a5d8ff"]}
-                shape="horizon"
-                characters=" =+xX0S8#@"
-                cellSize={18}
-                density={0.8}
-                glyphOpacity={0.68}
-                glow={0.12}
-                depthOfField={0}
-                flicker={0.2}
-                softness={0.5}
-                scale={1}
-                flow={0.5}
-                speed={1}
-                gradientOpacity={0.72}
-                grain={0.05}
-                variation={0}
-                mouseInteraction
-                scrambleRadius={0.1}
-                clickEffect="wave"
-                intro
-                lightMode={false}
-              />
-            )}
-          </div>
-
-          <div
-            ref={resumeTransitionRef}
-            className="idea-resume-transition idea-resume-transition--resume"
-            aria-label="Transição para o currículo"
-          >
-            <div className="resume-transition__curtain" aria-hidden="true">
-              <div
-                className="resume-transition__logo"
-                style={{
-                  opacity: resumeLogoOpacity,
-                  transform: `translate(-50%, -50%) scale(${resumeLogoScale})`,
-                }}
-              >
-                <Image
-                  src="/images/LOGO.webp"
-                  alt=""
-                  width={500}
-                  height={500}
-                  aria-hidden="true"
-                  unoptimized
-                />
-              </div>
-            </div>
-          </div>
-
+        <div className="resume-visual-scene">
           <ResumeSection />
         </div>
 
@@ -379,7 +316,7 @@ function IdeaSection({
             mediaZoom={1.35}
             smoothing={0.1}
             overlayScrim={0.55}
-            progress={footerTransitionProgress}
+            progressRef={footerTransitionProgressRef}
           >
             <Footer />
           </ScrollExpand>

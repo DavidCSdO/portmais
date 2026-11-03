@@ -1,16 +1,37 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { playClickSound } from '../../_utils/sound';
 import './Hero.css';
 
 interface HeroProps {
   onExplore?: () => void;
+  // kept for backward-compat but no longer driven from the parent on each scroll frame
   parallaxOffset?: number;
 }
 
-export default function Hero({ onExplore, parallaxOffset = 0 }: HeroProps) {
+export default function Hero({ onExplore }: HeroProps) {
+  const backdropRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let rafId: number | null = null;
+    const onScroll = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        if (backdropRef.current) {
+          const offset = Math.min(window.scrollY * 0.16, window.innerHeight * 0.18);
+          backdropRef.current.style.transform = `translate3d(0, -${offset}px, 0)`;
+        }
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, []);
   const handleLetterHover = () => {
     playClickSound('tick');
   };
@@ -18,9 +39,9 @@ export default function Hero({ onExplore, parallaxOffset = 0 }: HeroProps) {
   return (
     <section className="hero" id="hero">
       <div
+        ref={backdropRef}
         className="hero__backdrop"
         aria-hidden="true"
-        style={{ transform: `translate3d(0, -${parallaxOffset}px, 0)` }}
       >
         <Image
           src="/images/hero_editorial_sky_2x.webp"
@@ -28,8 +49,7 @@ export default function Hero({ onExplore, parallaxOffset = 0 }: HeroProps) {
           fill
           sizes="108vw"
           className="hero__backdrop-image"
-          quality={90}
-          priority
+          preload
         />
       </div>
       <div className="hero__sky" aria-hidden="true" />
