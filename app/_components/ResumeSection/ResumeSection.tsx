@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./ResumeSection.css";
 
 const STACK_ROTATION = [
@@ -138,29 +138,55 @@ const RESUME_FACTS = [
 ];
 
 export default function ResumeSection() {
+  const sectionRef = useRef<HTMLElement>(null);
   const [stackIndices, setStackIndices] = useState([0, 0, 0]);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let currentNode = 0;
-    const interval = window.setInterval(() => {
-      const nodeToUpdate = currentNode;
-      currentNode = (currentNode + 1) % STACK_ROTATION.length;
-      setStackIndices((indices) =>
-        indices.map((index, nodeIndex) =>
-          nodeIndex === nodeToUpdate
-            ? (index + 1) % STACK_ROTATION[nodeIndex].length
-            : index,
-        ),
-      );
-    }, 3800);
+    let interval: number | null = null;
+    const startRotation = () => {
+      if (interval !== null) return;
+      interval = window.setInterval(() => {
+        const nodeToUpdate = currentNode;
+        currentNode = (currentNode + 1) % STACK_ROTATION.length;
+        setStackIndices((indices) =>
+          indices.map((index, nodeIndex) =>
+            nodeIndex === nodeToUpdate
+              ? (index + 1) % STACK_ROTATION[nodeIndex].length
+              : index,
+          ),
+        );
+      }, 3800);
+    };
+    const stopRotation = () => {
+      if (interval === null) return;
+      window.clearInterval(interval);
+      interval = null;
+    };
 
-    return () => window.clearInterval(interval);
+    const section = sectionRef.current;
+    if (!section || typeof IntersectionObserver === "undefined") {
+      startRotation();
+      return stopRotation;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) startRotation();
+      else stopRotation();
+    }, { rootMargin: "100px" });
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+      stopRotation();
+    };
   }, []);
 
   return (
     <section
+      ref={sectionRef}
       className="resume-stage"
       id="curriculo"
       aria-labelledby="resume-title"

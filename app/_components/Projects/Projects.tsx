@@ -1,12 +1,14 @@
 "use client";
 
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef } from "react";
 import Image from "next/image";
 import CircularText from "../CircularText";
 import DriftingMist from "../DriftingMist";
-import { Threads } from "../Backgrounds";
+import dynamic from "next/dynamic";
 import { useContemplation } from "../../_utils/contemplation";
 import "./Projects.css";
+
+const Threads = dynamic(() => import("../Backgrounds/Threads/Threads"), { ssr: false });
 
 const ATOM_SERVICES = [
   "Sites institucionais e landing pages",
@@ -146,22 +148,23 @@ interface ProjectsProps {
   viewportH: number;
   lowPerformance: boolean;
   effectsActive?: boolean;
+  mountEffects: boolean;
+  portalTransitionActive?: boolean;
   onContainerHeightChange?: (height: number) => void;
-  nextPortalProgress?: number;
 }
 
 function Projects({
   viewportH,
   lowPerformance,
   effectsActive = false,
+  mountEffects,
+  portalTransitionActive = false,
   onContainerHeightChange,
-  nextPortalProgress,
 }: ProjectsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const portalStarRef = useRef<HTMLDivElement | null>(null);
   const circTextWrapRef = useRef<HTMLDivElement | null>(null);
   const containerHRef = useRef(2400);
-  const [containerH, setContainerH] = useState(2400);
   const isContemplating = useContemplation();
 
   useEffect(() => {
@@ -169,7 +172,6 @@ function Projects({
       if (!containerRef.current) return;
       const height = containerRef.current.offsetHeight;
       containerHRef.current = height;
-      setContainerH(height);
       onContainerHeightChange?.(height);
     };
 
@@ -191,12 +193,15 @@ function Projects({
 
   // Event-driven rAF: read scrollProgress on scroll and apply transforms directly
   useEffect(() => {
+    if (!effectsActive && !portalTransitionActive) return;
+
     let rafId: number | null = null;
 
     const tick = () => {
       rafId = null;
       const layer = containerRef.current?.closest<HTMLElement>("[data-scroll-progress]");
       const sp = layer ? parseFloat(layer.dataset.scrollProgress ?? "0") : 0;
+      const portalProgress = layer ? parseFloat(layer.dataset.portalProgress ?? "0") : 0;
       const maxContentScroll = Math.max(0, containerHRef.current - viewportH + 120);
       const contentTranslateY = sp * maxContentScroll;
 
@@ -204,19 +209,15 @@ function Projects({
         containerRef.current.style.transform = `translate3d(0, -${contentTranslateY}px, 0)`;
       }
 
-      // Portal star animation driven by nextPortalProgress (passed as prop, stays stable)
-      const pp = typeof nextPortalProgress === "number" ? nextPortalProgress : 0;
-      const starScale = 1 + Math.sin(pp * (Math.PI / 2)) * 3.6;
-      const starGlow = 0.5 + pp * 0.45;
-      const circularTextOpacity = Math.max(0, 1 - pp * 2.2);
+      const starScale = 1 + Math.sin(portalProgress * (Math.PI / 2)) * 3.6;
+      const circularTextOpacity = Math.max(0, 1 - portalProgress * 2.2);
 
       if (circTextWrapRef.current) {
         circTextWrapRef.current.style.opacity = String(circularTextOpacity);
-        circTextWrapRef.current.style.transform = `scale(${1 + pp * 0.25})`;
+        circTextWrapRef.current.style.transform = `scale(${1 + portalProgress * 0.25})`;
       }
       if (portalStarRef.current) {
         portalStarRef.current.style.transform = `scale(${starScale})`;
-        portalStarRef.current.style.filter = `drop-shadow(0 0 ${20 * starScale}px rgba(101, 163, 13, ${starGlow}))`;
       }
     };
 
@@ -232,16 +233,14 @@ function Projects({
       window.removeEventListener("scroll", onScroll);
       if (rafId !== null) cancelAnimationFrame(rafId);
     };
-  }, [viewportH, nextPortalProgress]);
-
-  const portalProgress = typeof nextPortalProgress === "number" ? nextPortalProgress : 0;
+  }, [viewportH, effectsActive, portalTransitionActive]);
 
   return (
     <div className="projects-scene">
       <div className="projects__light-bg" aria-hidden="true" />
 
       <div className="projects__threads" aria-hidden="true">
-        {!lowPerformance && (
+        {mountEffects && !lowPerformance && (
           <Threads
             color={[0.3, 0.42, 0.2]}
             accentColor={[0.55, 0.72, 0.34]}
@@ -336,14 +335,15 @@ function Projects({
               rel="noopener noreferrer"
               aria-label="Visitar o site da ATOM"
             >
-              <Image
-                src="/images/ATOM.png"
-                alt="Interface da plataforma digital ATOM"
-                fill
-                sizes="(max-width: 800px) 100vw, 48vw"
-                className="projects__atom-image"
-                priority
-              />
+              {effectsActive && (
+                <Image
+                  src="/images/ATOM.png"
+                  alt="Interface da plataforma digital ATOM"
+                  fill
+                  sizes="(max-width: 800px) 100vw, 48vw"
+                  className="projects__atom-image"
+                />
+              )}
               <span className="projects__visual-shade" aria-hidden="true" />
               <span className="projects__visual-topline">
                 <span>ATOM / STUDIO</span>
@@ -559,6 +559,7 @@ function Projects({
             text="✦ CADA PROJETO UMA HISTÓRIA ✦ DESIGN & DESENVOLVIMENTO ✦ EXPERIÊNCIAS DIGITAIS ✦ "
             spinDuration={24}
             onHover="speedUp"
+            paused={!effectsActive}
           >
             <div
               ref={portalStarRef}
@@ -571,7 +572,6 @@ function Projects({
                 height={96}
                 className="projects__portal-logo-img"
                 unoptimized
-                priority
               />
             </div>
           </CircularText>

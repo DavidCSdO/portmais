@@ -1,10 +1,12 @@
 "use client";
 
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { LineWaves } from "../Backgrounds";
+import dynamic from "next/dynamic";
 import { playClickSound } from "../../_utils/sound";
 import { useContemplation } from "../../_utils/contemplation";
 import "./Showcase.css";
+
+const LineWaves = dynamic(() => import("../Backgrounds/LineWaves"), { ssr: false });
 
 interface ShowcaseProps {
   scrollProgress?: number; // kept for back-compat, no longer driven per frame
@@ -12,6 +14,7 @@ interface ShowcaseProps {
   viewportW: number;
   lowPerformance: boolean;
   effectsActive: boolean;
+  mountEffects: boolean;
   onContainerHeightChange?: (height: number) => void;
   contentOpacity?: number;
 }
@@ -87,6 +90,7 @@ function Showcase({
   viewportW,
   lowPerformance,
   effectsActive,
+  mountEffects,
   onContainerHeightChange,
   contentOpacity = 1,
 }: ShowcaseProps) {
@@ -123,6 +127,8 @@ function Showcase({
 
   // Event-driven rAF: reads scrollProgress on scroll, writes transform directly
   useEffect(() => {
+    if (!effectsActive) return;
+
     let rafId: number | null = null;
     const tick = () => {
       rafId = null;
@@ -147,7 +153,7 @@ function Showcase({
       window.removeEventListener("scroll", onScroll);
       if (rafId !== null) cancelAnimationFrame(rafId);
     };
-  }, [viewportH]);
+  }, [viewportH, effectsActive]);
 
   const handleToggleRow = (index: number) => {
     playClickSound("tick");
@@ -160,7 +166,7 @@ function Showcase({
       <div className="showcase__light-bg" aria-hidden="true" />
 
       <div className="showcase__line-waves" aria-hidden="true">
-        {!lowPerformance && <LineWaves
+        {mountEffects && !lowPerformance && <LineWaves
           color1="#0284C7"
           color2="#059669"
           color3="#BCFF7E"

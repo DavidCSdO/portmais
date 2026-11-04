@@ -1,37 +1,17 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import type { RefObject } from 'react';
+import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import { playClickSound } from '../../_utils/sound';
 import './Hero.css';
 
 interface HeroProps {
   onExplore?: () => void;
-  // kept for backward-compat but no longer driven from the parent on each scroll frame
-  parallaxOffset?: number;
+  backdropRef: RefObject<HTMLDivElement | null>;
 }
 
-export default function Hero({ onExplore }: HeroProps) {
-  const backdropRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let rafId: number | null = null;
-    const onScroll = () => {
-      if (rafId !== null) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = null;
-        if (backdropRef.current) {
-          const offset = Math.min(window.scrollY * 0.16, window.innerHeight * 0.18);
-          backdropRef.current.style.transform = `translate3d(0, -${offset}px, 0)`;
-        }
-      });
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      if (rafId !== null) cancelAnimationFrame(rafId);
-    };
-  }, []);
+export default function Hero({ onExplore, backdropRef }: HeroProps) {
   const handleLetterHover = () => {
     playClickSound('tick');
   };
@@ -60,7 +40,7 @@ export default function Hero({ onExplore }: HeroProps) {
             <span
               key={index}
               className="hero__char"
-              style={{ '--char-index': index } as React.CSSProperties}
+              style={{ '--char-index': index } as CSSProperties}
               onMouseEnter={handleLetterHover}
             >
               <span className="hero__char-stroke" aria-hidden="true">

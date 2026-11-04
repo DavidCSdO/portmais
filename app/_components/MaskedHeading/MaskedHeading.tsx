@@ -134,6 +134,7 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
     let clock = 0;
 
     const frame = (now: number) => {
+      raf = 0;
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       clock += dt;
@@ -148,7 +149,21 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
       off.y += (off.ty + dy - off.y) * ease;
 
       place();
-      raf = requestAnimationFrame(frame);
+
+      if (
+        s.drift !== 0 ||
+        Math.abs(off.tx - off.x) > 0.05 ||
+        Math.abs(off.ty - off.y) > 0.05
+      ) {
+        raf = requestAnimationFrame(frame);
+      }
+    };
+
+    const scheduleFrame = () => {
+      if (raf === 0) {
+        last = performance.now();
+        raf = requestAnimationFrame(frame);
+      }
     };
 
     const onMove = (e: PointerEvent) => {
@@ -159,16 +174,18 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
       const ny = ((e.clientY - r.top) / (r.height || 1)) * 2 - 1;
       offsetRef.current.tx = clamp(nx, -1, 1) * -s.parallax;
       offsetRef.current.ty = clamp(ny, -1, 1) * -s.parallax;
+      scheduleFrame();
     };
 
     const onLeave = () => {
       offsetRef.current.tx = 0;
       offsetRef.current.ty = 0;
+      scheduleFrame();
     };
 
     root.addEventListener('pointermove', onMove);
     root.addEventListener('pointerleave', onLeave);
-    raf = requestAnimationFrame(frame);
+    if (settingsRef.current.drift !== 0) scheduleFrame();
 
     return () => {
       cancelAnimationFrame(raf);
@@ -176,7 +193,7 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
       root.removeEventListener('pointermove', onMove);
       root.removeEventListener('pointerleave', onLeave);
     };
-  }, [place, sync]);
+  }, [drift, place, sync]);
 
   useEffect(() => {
     sync();
@@ -335,8 +352,18 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
         <span className="masked-heading__clip" style={{ clipPath: `url(#${clipId})` }}>
           <span ref={mediaRef} className="masked-heading__media">
             {mediaType === 'video' ? (
-              <video className="masked-heading__source" src={src} poster={poster} autoPlay muted loop playsInline />
-            ) : (
+              src ? (
+                <video
+                  className="masked-heading__source"
+                  src={src}
+                  poster={poster}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              ) : null
+            ) : src ? (
               <Image
                 className="masked-heading__source"
                 src={src}
@@ -345,7 +372,7 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
                 sizes="100vw"
                 draggable={false}
               />
-            )}
+            ) : null}
           </span>
         </span>
       </span>

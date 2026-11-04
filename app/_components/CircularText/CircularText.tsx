@@ -30,6 +30,7 @@ export interface CircularTextProps {
   className?: string;
   children?: React.ReactNode;
   size?: number | string;
+  paused?: boolean;
 }
 
 const CircularText: React.FC<CircularTextProps> = ({
@@ -38,22 +39,30 @@ const CircularText: React.FC<CircularTextProps> = ({
   onHover = "speedUp",
   className = "",
   children,
-  size
+  size,
+  paused = false
 }) => {
   const letters = Array.from(text);
   const controls = useAnimation();
   const rotation = useMotionValue(0);
 
   useEffect(() => {
+    if (paused) {
+      controls.stop();
+      return;
+    }
+
     const start = rotation.get();
     controls.start({
       rotate: start + 360,
       scale: 1,
       transition: getTransition(spinDuration, start)
     });
-  }, [spinDuration, text, onHover, controls, rotation]);
+  }, [spinDuration, text, onHover, controls, rotation, paused]);
 
   const handleHoverStart = () => {
+    if (paused) return;
+
     const start = rotation.get();
     if (!onHover) return;
 
@@ -90,6 +99,8 @@ const CircularText: React.FC<CircularTextProps> = ({
   };
 
   const handleHoverEnd = () => {
+    if (paused) return;
+
     const start = rotation.get();
     controls.start({
       rotate: start + 360,

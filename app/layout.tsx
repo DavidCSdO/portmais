@@ -95,9 +95,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {`if (performance.getEntriesByType("navigation")[0]?.type === "reload") {
   history.scrollRestoration = "manual";
   window.addEventListener("pageshow", () => {
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
     window.scrollTo(0, 0);
     requestAnimationFrame(() => {
-      history.scrollRestoration = "auto";
+      root.style.scrollBehavior = previousScrollBehavior;
     });
   }, { once: true });
 }`}

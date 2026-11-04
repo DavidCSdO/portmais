@@ -827,6 +827,7 @@
   height: clamp(75px, 8.5vw, 96px);
   cursor: pointer;
   transform-origin: center;
+  filter: drop-shadow(0 0 20px rgba(101, 163, 13, 0.5));
   transition: transform 0.25s ease, filter 0.3s ease;
 }
 

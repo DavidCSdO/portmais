@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef } from "react";
 import MaskedHeading from "../MaskedHeading";
 import FolderFloat from "../FolderFloat";
 import ProcessSection from "../ProcessSection";
@@ -8,9 +8,11 @@ import ScrollExpand from "../ScrollExpand";
 import Footer from "../Footer";
 import ResumeSection from "../ResumeSection/ResumeSection";
 import DriftingMist from "../DriftingMist";
-import { LightRays } from "../Backgrounds";
+import dynamic from "next/dynamic";
 import { useContemplation } from "../../_utils/contemplation";
 import "./IdeaSection.css";
+
+const LightRays = dynamic(() => import("../Backgrounds/LightRays/LightRays"), { ssr: false });
 
 interface IdeaSectionProps {
   scrollProgress?: number; // kept for back-compat, no longer driven per frame
@@ -18,6 +20,7 @@ interface IdeaSectionProps {
   viewportH: number;
   lowPerformance: boolean;
   effectsActive?: boolean;
+  mountEffects: boolean;
   onContainerHeightChange?: (height: number) => void;
   onSectionOffsetsChange?: (offsets: { resume: number; contact: number }) => void;
   contentOpacity?: number;
@@ -43,6 +46,7 @@ function IdeaSection({
   viewportH,
   lowPerformance,
   effectsActive = false,
+  mountEffects,
   onContainerHeightChange,
   onSectionOffsetsChange,
   contentOpacity = 1
@@ -53,7 +57,6 @@ function IdeaSection({
   const containerHRef = useRef(1700);
   const footerTransitionOffsetRef = useRef(0);
   const footerTransitionProgressRef = useRef(0);
-  const [containerH, setContainerH] = useState(1700);
   const isContemplating = useContemplation();
 
   const updateLayout = useCallback(() => {
@@ -61,7 +64,6 @@ function IdeaSection({
     if (container) {
       const h = container.offsetHeight;
       containerHRef.current = h;
-      setContainerH(h);
       onContainerHeightChange?.(h);
       const containerTop = container.getBoundingClientRect().top;
       if (footerTransitionRef.current) {
@@ -99,6 +101,8 @@ function IdeaSection({
 
   // Event-driven rAF: reads scrollProgress on scroll, writes transforms directly
   useEffect(() => {
+    if (!effectsActive) return;
+
     let rafId: number | null = null;
     const tick = () => {
       rafId = null;
@@ -134,7 +138,7 @@ function IdeaSection({
       window.removeEventListener("scroll", onScroll);
       if (rafId !== null) cancelAnimationFrame(rafId);
     };
-  }, [viewportH]);
+  }, [viewportH, effectsActive]);
 
   // Adaptive folder dimensions
   const isMobile = viewportW < 768;
@@ -158,7 +162,7 @@ function IdeaSection({
           zIndex: 1,
         }}
       >
-        {!lowPerformance && <LightRays
+        {mountEffects && !lowPerformance && <LightRays
           raysOrigin="top-center"
           raysColor="#65a30d"
           lightMode={true}
@@ -210,12 +214,12 @@ function IdeaSection({
             <MaskedHeading
               text="DO ESCOPO À ENTREGA"
               mediaType="image"
-              src="/images/texture_gold.webp"
+              src={effectsActive ? "/images/texture_gold.webp" : ""}
               fillScale={1.25}
               parallax={26}
               reveal="rise"
               trigger="view"
-              drift={18}
+              drift={0}
               brightness={1.12}
               saturation={1.1}
               grayscale={false}
@@ -295,7 +299,7 @@ function IdeaSection({
         {/* ====================================================
            4. PROCESS & METHODOLOGY (3 Steps PixelSwap & Quick Booking)
            ==================================================== */}
-        <ProcessSection />
+        <ProcessSection mediaEnabled={effectsActive} />
 
         <div className="resume-visual-scene">
           <ResumeSection />
@@ -307,7 +311,7 @@ function IdeaSection({
           aria-label="Transição para o rodapé"
         >
           <ScrollExpand
-            src="/images/scale_hero.webp"
+            src={effectsActive ? "/images/scale_hero.webp" : ""}
             alt="Céu noturno sobre uma paisagem"
             startWidth={isMobile ? 78 : 54}
             startHeight={isMobile ? 62 : 58}

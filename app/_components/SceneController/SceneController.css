@@ -53,6 +53,13 @@
   pointer-events: none;
 }
 
+.scene-layer--about:not([data-effects-active="true"]) *,
+.scene-layer--projects:not([data-effects-active="true"]) *,
+.scene-layer--showcase:not([data-effects-active="true"]) *,
+.scene-layer--idea:not([data-effects-active="true"]) * {
+  animation-play-state: paused !important;
+}
+
 /* Modern Mesh Atmosphere Background */
 .about__light-bg {
   position: absolute;

@@ -65,7 +65,7 @@ const PROCESS_STEPS: ProcessStep[] = [
   }
 ];
 
-export default function ProcessSection() {
+export default function ProcessSection({ mediaEnabled }: { mediaEnabled: boolean }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
 
@@ -166,14 +166,16 @@ export default function ProcessSection() {
                 firstContent={
                   /* Front: the purpose of each project stage */
                   <div className="process-card-front">
-                    <Image
-                      src="/images/BACK4.jpg"
-                      alt=""
-                      fill
-                      sizes="(max-width: 900px) 100vw, 33vw"
-                      quality={75}
-                      className="process-card-front__image"
-                    />
+                    {mediaEnabled && (
+                      <Image
+                        src="/images/BACK4.jpg"
+                        alt=""
+                        fill
+                        sizes="(max-width: 900px) 100vw, 33vw"
+                        quality={75}
+                        className="process-card-front__image"
+                      />
+                    )}
                     <div className="process-card-front__overlay" />
 
                     <div className="process-card-front__body">

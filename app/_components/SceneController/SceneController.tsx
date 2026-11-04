@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import AboutIntro from "../AboutIntro";
 import Projects from "../Projects";
 import Showcase from "../Showcase";
@@ -10,10 +11,11 @@ import DockNav from "../DockNav";
 import { ContemplationExitPill } from "../NatureSpotlight";
 import { useContemplation } from "../../_utils/contemplation";
 import DriftingMist from "../DriftingMist";
-import { Scanner } from "../Backgrounds";
 import Hero from "../Hero";
 import "../Hero/Hero.css";
 import "./SceneController.css";
+
+const Scanner = dynamic(() => import("../Backgrounds/Scanner"), { ssr: false });
 
 function detectLowPerformanceDevice() {
   if (typeof window === "undefined") return false;
@@ -78,12 +80,29 @@ export default function SceneController() {
   const [isProjectsEffectsActive, setIsProjectsEffectsActive] = useState(false);
   const [isShowcaseEffectsActive, setIsShowcaseEffectsActive] = useState(false);
   const [isIdeaEffectsActive, setIsIdeaEffectsActive] = useState(false);
-  const [nextPortalProgress, setNextPortalProgress] = useState(0);
+  const [isProjectPortalActive, setIsProjectPortalActive] = useState(false);
+  const [hasMountedAboutEffects, setHasMountedAboutEffects] = useState(false);
+  const [hasMountedProjectsEffects, setHasMountedProjectsEffects] = useState(false);
+  const [hasMountedShowcaseEffects, setHasMountedShowcaseEffects] = useState(false);
+  const [hasMountedIdeaEffects, setHasMountedIdeaEffects] = useState(false);
+  const sceneUiStateRef = useRef({
+    activeSceneId: "hero",
+    aboutEffects: false,
+    projectsEffects: false,
+    showcaseEffects: false,
+    ideaEffects: false,
+    projectPortal: false,
+    aboutEffectsMounted: false,
+    projectsEffectsMounted: false,
+    showcaseEffectsMounted: false,
+    ideaEffectsMounted: false,
+  });
 
   const isAboutContemplating = useContemplation();
 
   // DOM layer refs — for direct style manipulation
   const heroLayerRef = useRef<HTMLDivElement>(null);
+  const heroBackdropRef = useRef<HTMLDivElement>(null);
   const aboutLayerRef = useRef<HTMLDivElement>(null);
   const aboutContainerRef = useRef<HTMLDivElement>(null);
   const projectsLayerRef = useRef<HTMLDivElement>(null);
@@ -169,16 +188,7 @@ export default function SceneController() {
   // ----------------------------------------------------------------
   // rAF loop — writes styles directly, no React re-renders
   // ----------------------------------------------------------------
-  const scheduleRaf = useCallback(() => {
-    const s = stateRef.current;
-    if (s.rafId !== null) return;
-    s.rafId = requestAnimationFrame(() => {
-      s.rafId = null;
-      applyFrame();
-    });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  function applyFrame() {
+  const applyFrame = useCallback(() => {
     const s = stateRef.current;
     const geo = computeGeometry();
     const sy = s.scrollY;
@@ -285,6 +295,11 @@ export default function SceneController() {
     const starScrollY = aboutScrollProgress * (maxContentScroll * 0.75);
 
     // --- Apply styles directly ---
+    if (heroBackdropRef.current) {
+      const parallaxOffset = Math.min(sy * 0.16, viewportH * 0.18);
+      heroBackdropRef.current.style.transform = `translate3d(0, -${parallaxOffset}px, 0)`;
+    }
+
     if (heroLayerRef.current) {
       heroLayerRef.current.style.opacity = String(heroOpacity);
       heroLayerRef.current.style.pointerEvents = transitionProgress > 0.4 ? "none" : "auto";
@@ -349,6 +364,7 @@ export default function SceneController() {
     // Expose as data attrs so child components can read via ref
     if (projectsLayerRef.current) {
       projectsLayerRef.current.dataset.scrollProgress = String(projectsScrollProgress);
+      projectsLayerRef.current.dataset.portalProgress = String(showcaseTransitionProgress);
     }
     if (showcaseLayerRef.current) {
       showcaseLayerRef.current.dataset.scrollProgress = String(showcaseScrollProgress);
@@ -367,27 +383,77 @@ export default function SceneController() {
       : sy >= transitionDistance - 80 ? "about"
       : "hero";
 
-    setActiveSceneId((prev) => (prev !== newActiveScene ? newActiveScene : prev));
+    if (sceneUiStateRef.current.activeSceneId !== newActiveScene) {
+      sceneUiStateRef.current.activeSceneId = newActiveScene;
+      setActiveSceneId(newActiveScene);
+    }
 
     const newAboutEffects = sy >= transitionDistance * 0.35 && sy < projectsTransOffset;
-    setIsAboutEffectsActive((prev) => (prev !== newAboutEffects ? newAboutEffects : prev));
+    if (sceneUiStateRef.current.aboutEffects !== newAboutEffects) {
+      sceneUiStateRef.current.aboutEffects = newAboutEffects;
+      setIsAboutEffectsActive(newAboutEffects);
+    }
+    if (!sceneUiStateRef.current.aboutEffectsMounted && sy >= transitionDistance * 0.05) {
+      sceneUiStateRef.current.aboutEffectsMounted = true;
+      setHasMountedAboutEffects(true);
+    }
 
     const newProjectsEffects = sy >= projectsTransOffset * 0.85 && sy < showcaseTransOffset;
-    setIsProjectsEffectsActive((prev) => (prev !== newProjectsEffects ? newProjectsEffects : prev));
+    if (sceneUiStateRef.current.projectsEffects !== newProjectsEffects) {
+      sceneUiStateRef.current.projectsEffects = newProjectsEffects;
+      setIsProjectsEffectsActive(newProjectsEffects);
+    }
+    if (
+      !sceneUiStateRef.current.projectsEffectsMounted &&
+      sy >= projectsTransOffset + projectsTransitionDistance * 0.05
+    ) {
+      sceneUiStateRef.current.projectsEffectsMounted = true;
+      setHasMountedProjectsEffects(true);
+    }
 
     const newShowcaseEffects = sy >= showcaseTransOffset * 0.85 && sy < ideaTransOffset;
-    setIsShowcaseEffectsActive((prev) => (prev !== newShowcaseEffects ? newShowcaseEffects : prev));
+    if (sceneUiStateRef.current.showcaseEffects !== newShowcaseEffects) {
+      sceneUiStateRef.current.showcaseEffects = newShowcaseEffects;
+      setIsShowcaseEffectsActive(newShowcaseEffects);
+    }
+    if (
+      !sceneUiStateRef.current.showcaseEffectsMounted &&
+      sy >= showcaseTransOffset + showcaseTransitionDistance * 0.05
+    ) {
+      sceneUiStateRef.current.showcaseEffectsMounted = true;
+      setHasMountedShowcaseEffects(true);
+    }
 
     const newIdeaEffects = sy >= ideaTransOffset * 0.85;
-    setIsIdeaEffectsActive((prev) => (prev !== newIdeaEffects ? newIdeaEffects : prev));
-
-    // Portal star progress (threshold-gated to avoid per-frame React renders during non-transition)
-    if (showcaseTransitionProgress > 0 || showcaseTransitionProgress === 0) {
-      setNextPortalProgress((prev) =>
-        Math.abs(prev - showcaseTransitionProgress) > 0.004 ? showcaseTransitionProgress : prev
-      );
+    if (sceneUiStateRef.current.ideaEffects !== newIdeaEffects) {
+      sceneUiStateRef.current.ideaEffects = newIdeaEffects;
+      setIsIdeaEffectsActive(newIdeaEffects);
     }
-  }
+    if (
+      !sceneUiStateRef.current.ideaEffectsMounted &&
+      sy >= ideaTransOffset + ideaTransitionDistance * 0.05
+    ) {
+      sceneUiStateRef.current.ideaEffectsMounted = true;
+      setHasMountedIdeaEffects(true);
+    }
+
+    const newProjectPortalActive =
+      showcaseTransitionProgress > 0 && showcaseTransitionProgress < 1;
+    if (sceneUiStateRef.current.projectPortal !== newProjectPortalActive) {
+      sceneUiStateRef.current.projectPortal = newProjectPortalActive;
+      setIsProjectPortalActive(newProjectPortalActive);
+    }
+
+  }, [computeGeometry, isAboutContemplating]);
+
+  const scheduleRaf = useCallback(() => {
+    const s = stateRef.current;
+    if (s.rafId !== null) return;
+    s.rafId = requestAnimationFrame(() => {
+      s.rafId = null;
+      applyFrame();
+    });
+  }, [applyFrame]);
 
   // ----------------------------------------------------------------
   // Geometry recompute (on height changes) → update totalSceneHeight
@@ -450,9 +516,12 @@ export default function SceneController() {
   // ----------------------------------------------------------------
   useEffect(() => {
     const reduced = detectLowPerformanceDevice();
-    setLowPerformance(reduced);
+    const rafId = reduced
+      ? requestAnimationFrame(() => setLowPerformance(true))
+      : null;
     if (reduced) document.documentElement.dataset.performance = "reduced";
     return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
       if (reduced && document.documentElement.dataset.performance === "reduced") {
         delete document.documentElement.dataset.performance;
       }
@@ -516,8 +585,6 @@ export default function SceneController() {
     window.scrollTo({ top: geo.transitionDistance + 60, behavior: "smooth" });
   }, [computeGeometry]);
 
-  const isMobile = viewportW <= 600;
-
   return (
     <div
       className="scene-wrapper"
@@ -539,7 +606,7 @@ export default function SceneController() {
         <div ref={heroLayerRef} className="scene-layer scene-layer--hero">
           <Hero
             onExplore={handleExplore}
-            parallaxOffset={lowPerformance ? 0 : undefined}
+            backdropRef={heroBackdropRef}
           />
         </div>
 
@@ -554,7 +621,7 @@ export default function SceneController() {
           <div className="about__light-bg" aria-hidden="true" />
 
           <div className="about__scanner-layer" aria-hidden="true">
-            {!lowPerformance && (
+            {hasMountedAboutEffects && !lowPerformance && (
               <Scanner
                 color1="#5227FF"
                 color2="#FF9FFC"
@@ -653,14 +720,16 @@ export default function SceneController() {
         <div
           ref={projectsLayerRef}
           className="scene-layer scene-layer--projects"
+          data-effects-active={isProjectsEffectsActive}
           style={{ opacity: 0, transform: "translate3d(0, 14vh, 0)", pointerEvents: "none" }}
         >
           <Projects
             viewportH={viewportH}
             lowPerformance={lowPerformance}
             effectsActive={isProjectsEffectsActive}
+            mountEffects={hasMountedProjectsEffects}
+            portalTransitionActive={isProjectPortalActive}
             onContainerHeightChange={handleProjectsHeightChange}
-            nextPortalProgress={nextPortalProgress}
           />
         </div>
 
@@ -668,6 +737,7 @@ export default function SceneController() {
         <div
           ref={showcaseLayerRef}
           className="scene-layer scene-layer--showcase"
+          data-effects-active={isShowcaseEffectsActive}
           style={{ opacity: 0, transform: "translate3d(0, 14vh, 0)", pointerEvents: "none" }}
         >
           <Showcase
@@ -676,6 +746,7 @@ export default function SceneController() {
             viewportW={viewportW}
             lowPerformance={lowPerformance}
             effectsActive={isShowcaseEffectsActive}
+            mountEffects={hasMountedShowcaseEffects}
             onContainerHeightChange={handleShowcaseHeightChange}
           />
         </div>
@@ -684,6 +755,7 @@ export default function SceneController() {
         <div
           ref={ideaLayerRef}
           className="scene-layer scene-layer--idea"
+          data-effects-active={isIdeaEffectsActive}
           style={{ opacity: 0, transform: "translate3d(0, 14vh, 0)", pointerEvents: "none" }}
         >
           <IdeaSection
@@ -692,6 +764,7 @@ export default function SceneController() {
             viewportH={viewportH}
             lowPerformance={lowPerformance}
             effectsActive={isIdeaEffectsActive}
+            mountEffects={hasMountedIdeaEffects}
             onContainerHeightChange={handleIdeaHeightChange}
             onSectionOffsetsChange={handleIdeaSectionOffsetsChange}
           />

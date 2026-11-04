@@ -337,17 +337,19 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
 
   const media =
     mediaType === 'video' ? (
-      <video
-        ref={mediaRef as React.RefObject<HTMLVideoElement>}
-        className="scroll-expand__media"
-        src={src}
-        poster={poster}
-        autoPlay
-        muted
-        loop
-        playsInline
-      />
-    ) : (
+      src ? (
+        <video
+          ref={mediaRef as React.RefObject<HTMLVideoElement>}
+          className="scroll-expand__media"
+          src={src}
+          poster={poster}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+      ) : null
+    ) : src ? (
       <Image
         ref={mediaRef as React.RefObject<HTMLImageElement>}
         className="scroll-expand__media"
@@ -357,7 +359,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
         sizes="100vw"
         draggable={false}
       />
-    );
+    ) : null;
 
   return (
     <div
