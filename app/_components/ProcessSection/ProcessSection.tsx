@@ -196,10 +196,10 @@ export default function ProcessSection({ mediaEnabled }: { mediaEnabled: boolean
                       <Image
                         src="/images/LOGO.webp"
                         alt="David Cardoso Logo"
-                        width={54}
-                        height={54}
+                        width={800}
+                        height={533}
+                        sizes="54px"
                         className="process-card-back__logo"
-                        unoptimized
                       />
                     </div>
 
@@ -250,9 +250,10 @@ export default function ProcessSection({ mediaEnabled }: { mediaEnabled: boolean
                   <Image
                     src="/images/LOGO.webp"
                     alt="Logo David Cardoso"
-                    width={26}
-                    height={26}
-                    unoptimized
+                    width={800}
+                    height={533}
+                    sizes="26px"
+                    className="process-modal-logo__image"
                   />
                 </div>
                 <div className="process-modal-meta">

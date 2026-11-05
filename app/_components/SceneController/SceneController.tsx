@@ -785,11 +785,11 @@ export default function SceneController() {
           <Image
             src="/images/LOGO.webp"
             alt="Logo estrela de quatro pontas"
-            width={500}
-            height={500}
+            width={800}
+            height={533}
+            sizes="(max-width: 750px) 180px, (max-width: 1500px) 24vw, 360px"
             className="scene-star-img"
-            unoptimized
-            priority
+            loading="eager"
           />
         </div>
       </div>

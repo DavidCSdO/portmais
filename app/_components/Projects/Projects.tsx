@@ -568,10 +568,10 @@ function Projects({
               <Image
                 src="/images/LOGO.webp"
                 alt="Símbolo do portfólio de David Cardoso"
-                width={96}
-                height={96}
+                width={800}
+                height={533}
+                sizes="96px"
                 className="projects__portal-logo-img"
-                unoptimized
               />
             </div>
           </CircularText>

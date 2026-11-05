@@ -59,8 +59,9 @@ export default function RotatingBadge({
         <Image
           src="/images/LOGO.webp"
           alt="Símbolo de David Cardoso"
-          width={32}
-          height={32}
+          width={800}
+          height={533}
+          sizes="24px"
           className="rotating-badge__star-icon"
         />
       </div>

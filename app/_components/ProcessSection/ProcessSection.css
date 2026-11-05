@@ -257,6 +257,8 @@
 }
 
 .process-card-back__logo {
+  width: 54px;
+  height: 54px;
   object-fit: contain;
 }
 
@@ -408,6 +410,12 @@
   align-items: center;
   justify-content: center;
   filter: drop-shadow(0 0 10px rgba(188, 255, 126, 0.6));
+}
+
+.process-modal-logo__image {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
 }
 
 .process-modal-meta {
