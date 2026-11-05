@@ -113,9 +113,38 @@ export default function LightRays({
   const meshRef = useRef<Mesh | null>(null);
   const loopRef = useRef<((t: number) => void) | null>(null);
   const pausedRef = useRef(paused);
+  const pageVisibleRef = useRef(true);
   const cleanupFunctionRef = useRef<(() => void) | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    const updateVisibility = () => {
+      pageVisibleRef.current = !document.hidden;
+      if (!pageVisibleRef.current) {
+        if (animationIdRef.current !== null) {
+          cancelAnimationFrame(animationIdRef.current);
+          animationIdRef.current = null;
+        }
+        return;
+      }
+
+      if (
+        !pausedRef.current &&
+        !animationIdRef.current &&
+        loopRef.current &&
+        rendererRef.current &&
+        uniformsRef.current &&
+        meshRef.current
+      ) {
+        animationIdRef.current = requestAnimationFrame(loopRef.current);
+      }
+    };
+
+    updateVisibility();
+    document.addEventListener('visibilitychange', updateVisibility);
+    return () => document.removeEventListener('visibilitychange', updateVisibility);
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -151,7 +180,7 @@ export default function LightRays({
 
       await new Promise(resolve => setTimeout(resolve, 10));
 
-      if (!containerRef.current) return;
+      if (!isVisible || !containerRef.current) return;
 
       const renderer = new Renderer({
         dpr: Math.min(window.devicePixelRatio, 2),
@@ -331,7 +360,7 @@ void main() {
 
       const loop = (t: number) => {
         animationIdRef.current = null;
-        if (pausedRef.current || !rendererRef.current || !uniformsRef.current || !meshRef.current) {
+        if (pausedRef.current || !pageVisibleRef.current || !rendererRef.current || !uniformsRef.current || !meshRef.current) {
           return;
         }
 
@@ -348,7 +377,7 @@ void main() {
 
         try {
           renderer.render({ scene: mesh });
-          if (!pausedRef.current) {
+          if (!pausedRef.current && pageVisibleRef.current) {
             animationIdRef.current = requestAnimationFrame(loop);
           }
         } catch {
@@ -359,7 +388,7 @@ void main() {
       loopRef.current = loop;
       window.addEventListener('resize', updatePlacement);
       updatePlacement();
-      if (!pausedRef.current) {
+      if (!pausedRef.current && pageVisibleRef.current) {
         animationIdRef.current = requestAnimationFrame(loop);
       }
 
@@ -458,7 +487,7 @@ void main() {
 
   useEffect(() => {
     pausedRef.current = paused;
-    if (!paused && !animationIdRef.current && loopRef.current && rendererRef.current && uniformsRef.current && meshRef.current) {
+    if (!paused && pageVisibleRef.current && !animationIdRef.current && loopRef.current && rendererRef.current && uniformsRef.current && meshRef.current) {
       animationIdRef.current = requestAnimationFrame(loopRef.current);
     }
   }, [paused]);

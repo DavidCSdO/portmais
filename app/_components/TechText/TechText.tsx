@@ -192,7 +192,8 @@ const TechText: React.FC<TechTextProps> = ({
     let dpr = 1;
     let raf = 0;
     let last = performance.now();
-    let visible = true;
+    let visible = false;
+    let pageVisible = !document.hidden;
     let alive = true;
     let layoutKey = '';
     let requestedFont = '';
@@ -625,6 +626,7 @@ const TechText: React.FC<TechTextProps> = ({
 
     const tick = (now: number) => {
       raf = 0;
+      if (!visible || !pageVisible || !alive) return;
       const s = settingsRef.current;
       if (!s) return;
       const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
@@ -732,13 +734,18 @@ const TechText: React.FC<TechTextProps> = ({
         moving ||
         Math.abs(presence - (s.reveal === 'area' && active && dragging < 0 ? 1 : 0)) > 0.002 ||
         (frame.alpha > 0.01 && frame.alpha < 0.99);
-      if ((active || settling) && visible && alive) raf = requestAnimationFrame(tick);
+      if ((active || settling) && visible && pageVisible && alive) raf = requestAnimationFrame(tick);
     };
 
     const wake = () => {
-      if (raf || !visible || !alive) return;
+      if (raf || !visible || !pageVisible || !alive) return;
       last = performance.now();
       raf = requestAnimationFrame(tick);
+    };
+    const stop = () => {
+      if (!raf) return;
+      cancelAnimationFrame(raf);
+      raf = 0;
     };
     wakeRef.current = wake;
 
@@ -806,19 +813,27 @@ const TechText: React.FC<TechTextProps> = ({
     resizeObserver.observe(container);
     const intersectionObserver = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
-      wake();
+      if (visible) wake();
+      else stop();
     });
     intersectionObserver.observe(container);
+    const onVisibilityChange = () => {
+      pageVisible = !document.hidden;
+      if (pageVisible) wake();
+      else stop();
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
     if (document.fonts) document.fonts.ready.then(refreshFonts, refreshFonts);
 
     resize();
 
     return () => {
       alive = false;
-      cancelAnimationFrame(raf);
+      stop();
       wakeRef.current = () => {};
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       container.removeEventListener('pointermove', onMove);
       container.removeEventListener('pointerenter', onMove);
       container.removeEventListener('pointerdown', onDown);

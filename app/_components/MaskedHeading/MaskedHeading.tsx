@@ -159,11 +159,20 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
     if (document.fonts?.ready) document.fonts.ready.then(sync).catch(() => {});
 
     let raf = 0;
+    let visible = false;
+    let pageVisible = !document.hidden;
     let last = performance.now();
     let clock = 0;
 
+    const stopFrame = () => {
+      if (!raf) return;
+      cancelAnimationFrame(raf);
+      raf = 0;
+    };
+
     const frame = (now: number) => {
       raf = 0;
+      if (!visible || !pageVisible) return;
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       clock += dt;
@@ -189,11 +198,26 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
     };
 
     const scheduleFrame = () => {
+      if (!visible || !pageVisible) return;
       if (raf === 0) {
         last = performance.now();
         raf = requestAnimationFrame(frame);
       }
     };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) scheduleFrame();
+      else stopFrame();
+    });
+    observer.observe(root);
+
+    const onVisibilityChange = () => {
+      pageVisible = !document.hidden;
+      if (pageVisible) scheduleFrame();
+      else stopFrame();
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
 
     const onMove = (e: PointerEvent) => {
       const s = settingsRef.current;
@@ -218,7 +242,9 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
 
     return () => {
       if (layoutRafRef.current) cancelAnimationFrame(layoutRafRef.current);
-      cancelAnimationFrame(raf);
+      stopFrame();
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       ro.disconnect();
       root.removeEventListener('pointermove', onMove);
       root.removeEventListener('pointerleave', onLeave);

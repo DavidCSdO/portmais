@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { LazyMotion, domAnimation, m, useAnimation, useMotionValue } from "motion/react";
 
 import "./CircularText.css";
@@ -42,12 +42,32 @@ const CircularText: React.FC<CircularTextProps> = ({
   size,
   paused = false
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  const [pageVisible, setPageVisible] = useState(true);
   const letters = Array.from(text);
   const controls = useAnimation();
   const rotation = useMotionValue(0);
+  const shouldPause = paused || !inView || !pageVisible;
 
   useEffect(() => {
-    if (paused) {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting));
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const updateVisibility = () => setPageVisible(!document.hidden);
+    updateVisibility();
+    document.addEventListener('visibilitychange', updateVisibility);
+    return () => document.removeEventListener('visibilitychange', updateVisibility);
+  }, []);
+
+  useEffect(() => {
+    if (shouldPause) {
       controls.stop();
       return;
     }
@@ -58,10 +78,10 @@ const CircularText: React.FC<CircularTextProps> = ({
       scale: 1,
       transition: getTransition(spinDuration, start)
     });
-  }, [spinDuration, text, onHover, controls, rotation, paused]);
+  }, [spinDuration, text, onHover, controls, rotation, shouldPause]);
 
   const handleHoverStart = () => {
-    if (paused) return;
+    if (shouldPause) return;
 
     const start = rotation.get();
     if (!onHover) return;
@@ -99,7 +119,7 @@ const CircularText: React.FC<CircularTextProps> = ({
   };
 
   const handleHoverEnd = () => {
-    if (paused) return;
+    if (shouldPause) return;
 
     const start = rotation.get();
     controls.start({
@@ -119,7 +139,7 @@ const CircularText: React.FC<CircularTextProps> = ({
 
   return (
     <LazyMotion features={domAnimation}>
-      <div className="circular-text-container">
+      <div ref={containerRef} className="circular-text-container">
         <m.div
           className={`circular-text ${className}`.trim()}
           style={styleObj}

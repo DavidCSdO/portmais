@@ -127,8 +127,11 @@ export default function FolderFloat({
   const [popped, setPopped] = useState(-1);
   const [live, setLive] = useState(false);
   const [sizes, setSizes] = useState<({ w: number; h: number } | null)[]>([]);
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const pillRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const inViewportRef = useRef(false);
+  const wakePhysicsRef = useRef<() => void>(() => {});
 
   interface WorldState {
     engine: Matter.Engine | null;
@@ -137,6 +140,7 @@ export default function FolderFloat({
     raf: number;
     last: number;
     t0: number;
+    pausedAt: number;
     drag: {
       i: number;
       id: number;
@@ -157,6 +161,7 @@ export default function FolderFloat({
     raf: 0,
     last: 0,
     t0: 0,
+    pausedAt: 0,
     drag: null,
     zone: null,
     live: false
@@ -211,6 +216,7 @@ export default function FolderFloat({
     clearTimeout(liveTimer.current);
     cancelAnimationFrame(w.raf);
     w.raf = 0;
+    wakePhysicsRef.current = () => {};
     if (w.engine) {
       w.bodies.forEach((b, i) => {
         const el = pillRefs.current[i];
@@ -225,6 +231,40 @@ export default function FolderFloat({
     w.bodies = [];
     w.drag = null;
     w.live = false;
+    w.last = 0;
+    w.t0 = 0;
+    w.pausedAt = 0;
+  }, []);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    const syncAnimation = () => {
+      const state = world.current;
+      if (!inViewportRef.current || document.hidden) {
+        cancelAnimationFrame(state.raf);
+        state.raf = 0;
+        state.last = 0;
+        if (state.t0 && !state.pausedAt) state.pausedAt = performance.now();
+        return;
+      }
+      wakePhysicsRef.current();
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      inViewportRef.current = entry.isIntersecting;
+      syncAnimation();
+    });
+    observer.observe(root);
+    document.addEventListener('visibilitychange', syncAnimation);
+
+    return () => {
+      inViewportRef.current = false;
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', syncAnimation);
+      syncAnimation();
+    };
   }, []);
 
   const stopPhysics = useCallback(() => {
@@ -287,7 +327,13 @@ export default function FolderFloat({
 
     const tick = (now: number) => {
       const s = world.current;
+      s.raf = 0;
       if (!s.engine) return;
+      if (!inViewportRef.current || document.hidden) {
+        s.last = 0;
+        if (s.t0 && !s.pausedAt) s.pausedAt = now;
+        return;
+      }
       if (!s.t0) s.t0 = now;
       const dt = s.last ? Math.min(32, now - s.last) : 16;
       s.last = now;
@@ -313,7 +359,16 @@ export default function FolderFloat({
       s.raf = requestAnimationFrame(tick);
     };
 
-    w.raf = requestAnimationFrame(tick);
+    wakePhysicsRef.current = () => {
+      if (!w.engine || !w.live || !inViewportRef.current || document.hidden || w.raf) return;
+      if (w.pausedAt) {
+        w.t0 += performance.now() - w.pausedAt;
+        w.pausedAt = 0;
+      }
+      w.last = 0;
+      w.raf = requestAnimationFrame(tick);
+    };
+    wakePhysicsRef.current();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [n, spread, lift, positionKey]);
 
@@ -427,6 +482,7 @@ export default function FolderFloat({
 
   return (
     <div
+      ref={rootRef}
       className={`folder-float${className ? ` ${className}` : ''}`}
       data-open={open ? '' : undefined}
       data-live={live && open && physics ? '' : undefined}
