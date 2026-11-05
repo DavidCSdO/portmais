@@ -168,6 +168,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     let raf = 0;
+    let layoutRaf = 0;
     let current = 0;
     let target = 0;
     let stageH = 0;
@@ -175,8 +176,12 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
 
     const measure = () => {
       const c = propsRef.current;
-      stageH = c.useWindowScroll ? window.innerHeight : (root.clientHeight || 520);
+      const rootWidth = root.clientWidth;
+      const rootHeight = root.clientHeight;
+      stageH = c.useWindowScroll ? window.innerHeight : (rootHeight || 520);
       if (stageH <= 0) stageH = 520;
+      const w = rootWidth || stageH;
+
       stage.style.height = `${stageH}px`;
       frame.style.width = `${c.startWidth}%`;
       frame.style.height = `${c.startHeight}%`;
@@ -186,11 +191,10 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
           ? `${stageH * (1 + Math.max(0, c.scrollDistance) + Math.max(0, c.holdDistance))}px`
           : `${stageH}px`;
 
-      const w = root.clientWidth || stageH;
       stage.style.setProperty('--se-title-size', `${clamp(w * 0.065, 24, 64)}px`);
     };
 
-    const readProgress = () => {
+    const readProgress = (scrollTop?: number) => {
       const c = propsRef.current;
       if (!c.enabled) return 1;
       if (c.progressRef) return clamp(c.progressRef.current, 0, 1);
@@ -201,7 +205,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
         const top = track.getBoundingClientRect().top;
         internal = clamp(-top / span, 0, 1);
       } else {
-        internal = span > 0 ? clamp(root.scrollTop / span, 0, 1) : 0;
+        internal = span > 0 ? clamp((scrollTop ?? root.scrollTop) / span, 0, 1) : 0;
       }
       return internal;
     };
@@ -254,9 +258,15 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
 
     const onResize = () => {
       measure();
-      target = readProgress();
-      current = target;
-      applyProgress(current);
+      if (layoutRaf) cancelAnimationFrame(layoutRaf);
+      layoutRaf = requestAnimationFrame(() => {
+        layoutRaf = requestAnimationFrame(() => {
+          layoutRaf = 0;
+          target = readProgress();
+          current = target;
+          applyProgress(current);
+        });
+      });
     };
 
     // Direct wheel scroll handler on the frame
@@ -266,12 +276,13 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       const maxScroll = track.scrollHeight - stageH;
       if (maxScroll <= 0) return;
 
-      const next = root.scrollTop + e.deltaY;
-      if ((e.deltaY > 0 && root.scrollTop < maxScroll) || (e.deltaY < 0 && root.scrollTop > 0)) {
+      const currentScroll = root.scrollTop;
+      const next = clamp(currentScroll + e.deltaY, 0, maxScroll);
+      if (next !== currentScroll) {
         e.preventDefault();
         e.stopPropagation();
-        root.scrollTop = clamp(next, 0, maxScroll);
-        target = readProgress();
+        root.scrollTop = next;
+        target = readProgress(next);
         kick();
       }
     };
@@ -287,18 +298,17 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       const deltaY = touchStartY - e.touches[0].clientY;
       const maxScroll = track.scrollHeight - stageH;
       if (maxScroll <= 0) return;
-      if ((deltaY > 0 && root.scrollTop < maxScroll) || (deltaY < 0 && root.scrollTop > 0)) {
-        root.scrollTop += deltaY * 0.8;
+      const currentScroll = root.scrollTop;
+      if ((deltaY > 0 && currentScroll < maxScroll) || (deltaY < 0 && currentScroll > 0)) {
+        const next = clamp(currentScroll + deltaY * 0.8, 0, maxScroll);
+        root.scrollTop = next;
         touchStartY = e.touches[0].clientY;
-        target = readProgress();
+        target = readProgress(next);
         kick();
       }
     };
 
-    measure();
-    target = readProgress();
-    current = target;
-    applyProgress(current);
+    onResize();
 
     const isControlled =
       propsRef.current.useWindowScroll ||
@@ -317,6 +327,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
 
     return () => {
       if (raf) cancelAnimationFrame(raf);
+      if (layoutRaf) cancelAnimationFrame(layoutRaf);
       scroller.removeEventListener('scroll', onScroll);
       if (!isControlled) {
         root.removeEventListener('wheel', onWheel);

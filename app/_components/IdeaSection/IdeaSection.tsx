@@ -86,21 +86,28 @@ function IdeaSection({
     const container = containerRef.current;
     if (container) {
       const h = container.offsetHeight;
-      containerHRef.current = h;
-      onContainerHeightChange?.(h);
       const containerTop = container.getBoundingClientRect().top;
+      let footerTransitionOffset: number | undefined;
       if (footerTransitionRef.current) {
-        footerTransitionOffsetRef.current =
+        footerTransitionOffset =
           footerTransitionRef.current.getBoundingClientRect().top - containerTop;
       }
       const resume = container.querySelector<HTMLElement>("#curriculo");
       const contact = container.querySelector<HTMLElement>("#contato");
-      if (resume && contact) {
-        onSectionOffsetsChange?.({
-          resume: resume.getBoundingClientRect().top - containerTop,
-          contact: contact.getBoundingClientRect().top - containerTop,
-        });
+      const sectionOffsets =
+        resume && contact
+          ? {
+              resume: resume.getBoundingClientRect().top - containerTop,
+              contact: contact.getBoundingClientRect().top - containerTop,
+            }
+          : undefined;
+
+      containerHRef.current = h;
+      onContainerHeightChange?.(h);
+      if (footerTransitionOffset !== undefined) {
+        footerTransitionOffsetRef.current = footerTransitionOffset;
       }
+      if (sectionOffsets) onSectionOffsetsChange?.(sectionOffsets);
     }
   }, [onContainerHeightChange, onSectionOffsetsChange]);
 

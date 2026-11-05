@@ -61,6 +61,8 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
   const measureRef = useRef<HTMLSpanElement | null>(null);
   const revealRef = useRef<HTMLSpanElement | null>(null);
   const mediaRef = useRef<HTMLSpanElement | null>(null);
+  const layoutSizeRef = useRef({ width: 0, height: 0 });
+  const layoutRafRef = useRef(0);
   const wordRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const baseRefs = useRef<(HTMLElement | null)[]>([]);
   const glyphRefs = useRef<(SVGTextElement | null)[]>([]);
@@ -76,13 +78,13 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
     settingsRef.current = { fillScale, parallax, drift, brightness, saturation, grayscale, textScale };
   }, [fillScale, parallax, drift, brightness, saturation, grayscale, textScale]);
 
-  const place = useCallback(() => {
+  const place = useCallback((width?: number, height?: number) => {
     const root = rootRef.current;
     const media = mediaRef.current;
     if (!root || !media) return;
     const s = settingsRef.current;
-    const W = root.clientWidth;
-    const H = root.clientHeight;
+    const W = width ?? (layoutSizeRef.current.width || root.clientWidth);
+    const H = height ?? (layoutSizeRef.current.height || root.clientHeight);
     const off = offsetRef.current;
 
     const maxX = Math.max(0, ((s.fillScale - 1) / 2) * W);
@@ -96,28 +98,55 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
     const root = rootRef.current;
     const measure = measureRef.current;
     if (!root || !measure) return;
-    const s = settingsRef.current;
 
-    root.style.fontSize = `${clamp(root.clientWidth * s.textScale, 20, 200).toFixed(1)}px`;
+    const fontSize = `${clamp(
+      root.clientWidth * settingsRef.current.textScale,
+      20,
+      200
+    ).toFixed(1)}px`;
+    if (root.style.fontSize !== fontSize) root.style.fontSize = fontSize;
 
-    const rootRect = root.getBoundingClientRect();
-    const cs = window.getComputedStyle(measure);
-    for (let i = 0; i < wordRefs.current.length; i += 1) {
-      const box = wordRefs.current[i];
-      const base = baseRefs.current[i];
-      const glyph = glyphRefs.current[i];
-      if (!box || !base || !glyph) continue;
-      const boxRect = box.getBoundingClientRect();
-      const baseRect = base.getBoundingClientRect();
-      glyph.setAttribute('x', `${(boxRect.left - rootRect.left).toFixed(2)}`);
-      glyph.setAttribute('y', `${(baseRect.top - rootRect.top).toFixed(2)}`);
-      glyph.style.fontFamily = cs.fontFamily;
-      glyph.style.fontSize = cs.fontSize;
-      glyph.style.fontWeight = cs.fontWeight;
-      glyph.style.fontStyle = cs.fontStyle;
-      glyph.style.letterSpacing = cs.letterSpacing;
-    }
-    place();
+    if (layoutRafRef.current) cancelAnimationFrame(layoutRafRef.current);
+    layoutRafRef.current = requestAnimationFrame(() => {
+      layoutRafRef.current = requestAnimationFrame(() => {
+        layoutRafRef.current = 0;
+        const currentRoot = rootRef.current;
+        const currentMeasure = measureRef.current;
+        if (!currentRoot || !currentMeasure) return;
+
+        const width = currentRoot.clientWidth;
+        const height = currentRoot.clientHeight;
+        const rootRect = currentRoot.getBoundingClientRect();
+        const cs = window.getComputedStyle(currentMeasure);
+        const positions: { glyph: SVGTextElement; x: number; y: number }[] = [];
+
+        for (let i = 0; i < wordRefs.current.length; i += 1) {
+          const box = wordRefs.current[i];
+          const base = baseRefs.current[i];
+          const glyph = glyphRefs.current[i];
+          if (!box || !base || !glyph) continue;
+          const boxRect = box.getBoundingClientRect();
+          const baseRect = base.getBoundingClientRect();
+          positions.push({
+            glyph,
+            x: boxRect.left - rootRect.left,
+            y: baseRect.top - rootRect.top,
+          });
+        }
+
+        layoutSizeRef.current = { width, height };
+        place(width, height);
+        positions.forEach(({ glyph, x, y }) => {
+          glyph.setAttribute('x', x.toFixed(2));
+          glyph.setAttribute('y', y.toFixed(2));
+          glyph.style.fontFamily = cs.fontFamily;
+          glyph.style.fontSize = cs.fontSize;
+          glyph.style.fontWeight = cs.fontWeight;
+          glyph.style.fontStyle = cs.fontStyle;
+          glyph.style.letterSpacing = cs.letterSpacing;
+        });
+      });
+    });
   }, [place]);
 
   useEffect(() => {
@@ -188,6 +217,7 @@ const MaskedHeading: React.FC<MaskedHeadingProps> = ({
     if (settingsRef.current.drift !== 0) scheduleFrame();
 
     return () => {
+      if (layoutRafRef.current) cancelAnimationFrame(layoutRafRef.current);
       cancelAnimationFrame(raf);
       ro.disconnect();
       root.removeEventListener('pointermove', onMove);
