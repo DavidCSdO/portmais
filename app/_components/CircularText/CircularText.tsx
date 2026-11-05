@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { motion, useAnimation, useMotionValue } from "motion/react";
+import { LazyMotion, domAnimation, m, useAnimation, useMotionValue } from "motion/react";
 
 import "./CircularText.css";
 
@@ -118,31 +118,33 @@ const CircularText: React.FC<CircularTextProps> = ({
   }
 
   return (
-    <div className="circular-text-container">
-      <motion.div
-        className={`circular-text ${className}`.trim()}
-        style={styleObj}
-        initial={{ rotate: 0 }}
-        animate={controls}
-        onMouseEnter={handleHoverStart}
-        onMouseLeave={handleHoverEnd}
-      >
-        {letters.map((letter, i) => {
-          const rotationDeg = (360 / letters.length) * i;
-          const factor = Math.PI / letters.length;
-          const x = factor * i;
-          const y = factor * i;
-          const transform = `rotateZ(${rotationDeg}deg) translate3d(${x}px, ${y}px, 0)`;
+    <LazyMotion features={domAnimation}>
+      <div className="circular-text-container">
+        <m.div
+          className={`circular-text ${className}`.trim()}
+          style={styleObj}
+          initial={{ rotate: 0 }}
+          animate={controls}
+          onMouseEnter={handleHoverStart}
+          onMouseLeave={handleHoverEnd}
+        >
+          {letters.map((letter, i) => {
+            const rotationDeg = (360 / letters.length) * i;
+            const factor = Math.PI / letters.length;
+            const x = factor * i;
+            const y = factor * i;
+            const transform = `rotateZ(${rotationDeg}deg) translate3d(${x}px, ${y}px, 0)`;
 
-          return (
-            <span key={i} style={{ transform, WebkitTransform: transform }}>
-              {letter}
-            </span>
-          );
-        })}
-      </motion.div>
-      {children && <div className="circular-text__center-slot">{children}</div>}
-    </div>
+            return (
+              <span key={i} style={{ transform, WebkitTransform: transform }}>
+                {letter}
+              </span>
+            );
+          })}
+        </m.div>
+        {children && <div className="circular-text__center-slot">{children}</div>}
+      </div>
+    </LazyMotion>
   );
 };
 

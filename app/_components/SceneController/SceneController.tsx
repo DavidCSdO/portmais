@@ -4,9 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import AboutIntro from "../AboutIntro";
-import Projects from "../Projects";
-import Showcase from "../Showcase";
-import IdeaSection from "../IdeaSection";
 import DockNav from "../DockNav";
 import { ContemplationExitPill } from "../NatureSpotlight";
 import { useContemplation } from "../../_utils/contemplation";
@@ -16,6 +13,9 @@ import "../Hero/Hero.css";
 import "./SceneController.css";
 
 const Scanner = dynamic(() => import("../Backgrounds/Scanner"), { ssr: false });
+const Projects = dynamic(() => import("../Projects"));
+const Showcase = dynamic(() => import("../Showcase"));
+const IdeaSection = dynamic(() => import("../IdeaSection"));
 
 function detectLowPerformanceDevice() {
   if (typeof window === "undefined") return false;
@@ -405,7 +405,7 @@ export default function SceneController() {
     }
     if (
       !sceneUiStateRef.current.projectsEffectsMounted &&
-      sy >= projectsTransOffset + projectsTransitionDistance * 0.05
+      sy >= projectsTransOffset - viewportH * 0.75
     ) {
       sceneUiStateRef.current.projectsEffectsMounted = true;
       setHasMountedProjectsEffects(true);
@@ -418,7 +418,7 @@ export default function SceneController() {
     }
     if (
       !sceneUiStateRef.current.showcaseEffectsMounted &&
-      sy >= showcaseTransOffset + showcaseTransitionDistance * 0.05
+      sy >= showcaseTransOffset - viewportH * 0.75
     ) {
       sceneUiStateRef.current.showcaseEffectsMounted = true;
       setHasMountedShowcaseEffects(true);
@@ -431,7 +431,7 @@ export default function SceneController() {
     }
     if (
       !sceneUiStateRef.current.ideaEffectsMounted &&
-      sy >= ideaTransOffset + ideaTransitionDistance * 0.05
+      sy >= ideaTransOffset - viewportH * 0.75
     ) {
       sceneUiStateRef.current.ideaEffectsMounted = true;
       setHasMountedIdeaEffects(true);
@@ -723,14 +723,16 @@ export default function SceneController() {
           data-effects-active={isProjectsEffectsActive}
           style={{ opacity: 0, transform: "translate3d(0, 14vh, 0)", pointerEvents: "none" }}
         >
-          <Projects
-            viewportH={viewportH}
-            lowPerformance={lowPerformance}
-            effectsActive={isProjectsEffectsActive}
-            mountEffects={hasMountedProjectsEffects}
-            portalTransitionActive={isProjectPortalActive}
-            onContainerHeightChange={handleProjectsHeightChange}
-          />
+          {hasMountedProjectsEffects && (
+            <Projects
+              viewportH={viewportH}
+              lowPerformance={lowPerformance}
+              effectsActive={isProjectsEffectsActive}
+              mountEffects={hasMountedProjectsEffects}
+              portalTransitionActive={isProjectPortalActive}
+              onContainerHeightChange={handleProjectsHeightChange}
+            />
+          )}
         </div>
 
         {/* Layer 5: Showcase */}
@@ -740,15 +742,17 @@ export default function SceneController() {
           data-effects-active={isShowcaseEffectsActive}
           style={{ opacity: 0, transform: "translate3d(0, 14vh, 0)", pointerEvents: "none" }}
         >
-          <Showcase
-            scrollProgress={0}
-            viewportH={viewportH}
-            viewportW={viewportW}
-            lowPerformance={lowPerformance}
-            effectsActive={isShowcaseEffectsActive}
-            mountEffects={hasMountedShowcaseEffects}
-            onContainerHeightChange={handleShowcaseHeightChange}
-          />
+          {hasMountedShowcaseEffects && (
+            <Showcase
+              scrollProgress={0}
+              viewportH={viewportH}
+              viewportW={viewportW}
+              lowPerformance={lowPerformance}
+              effectsActive={isShowcaseEffectsActive}
+              mountEffects={hasMountedShowcaseEffects}
+              onContainerHeightChange={handleShowcaseHeightChange}
+            />
+          )}
         </div>
 
         {/* Layer 6: Idea Section */}
@@ -758,16 +762,18 @@ export default function SceneController() {
           data-effects-active={isIdeaEffectsActive}
           style={{ opacity: 0, transform: "translate3d(0, 14vh, 0)", pointerEvents: "none" }}
         >
-          <IdeaSection
-            scrollProgress={0}
-            viewportW={viewportW}
-            viewportH={viewportH}
-            lowPerformance={lowPerformance}
-            effectsActive={isIdeaEffectsActive}
-            mountEffects={hasMountedIdeaEffects}
-            onContainerHeightChange={handleIdeaHeightChange}
-            onSectionOffsetsChange={handleIdeaSectionOffsetsChange}
-          />
+          {hasMountedIdeaEffects && (
+            <IdeaSection
+              scrollProgress={0}
+              viewportW={viewportW}
+              viewportH={viewportH}
+              lowPerformance={lowPerformance}
+              effectsActive={isIdeaEffectsActive}
+              mountEffects={hasMountedIdeaEffects}
+              onContainerHeightChange={handleIdeaHeightChange}
+              onSectionOffsetsChange={handleIdeaSectionOffsetsChange}
+            />
+          )}
         </div>
 
         {/* Star Portal */}

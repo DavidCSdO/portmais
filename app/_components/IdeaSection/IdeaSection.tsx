@@ -1,8 +1,7 @@
 "use client";
 
-import React, { memo, useCallback, useEffect, useRef } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import MaskedHeading from "../MaskedHeading";
-import FolderFloat from "../FolderFloat";
 import ProcessSection from "../ProcessSection";
 import ScrollExpand from "../ScrollExpand";
 import Footer from "../Footer";
@@ -13,6 +12,7 @@ import { useContemplation } from "../../_utils/contemplation";
 import "./IdeaSection.css";
 
 const LightRays = dynamic(() => import("../Backgrounds/LightRays/LightRays"), { ssr: false });
+const FolderFloat = dynamic(() => import("../FolderFloat"), { ssr: false });
 
 interface IdeaSectionProps {
   scrollProgress?: number; // kept for back-compat, no longer driven per frame
@@ -53,11 +53,34 @@ function IdeaSection({
 }: IdeaSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const footerTransitionRef = useRef<HTMLDivElement>(null);
+  const folderWrapRef = useRef<HTMLDivElement>(null);
+  const [shouldLoadFolder, setShouldLoadFolder] = useState(false);
   // Refs for direct DOM writes (skip React re-renders on scroll)
   const containerHRef = useRef(1700);
   const footerTransitionOffsetRef = useRef(0);
   const footerTransitionProgressRef = useRef(0);
   const isContemplating = useContemplation();
+
+  useEffect(() => {
+    const target = folderWrapRef.current;
+    if (!target) return;
+
+    if (!("IntersectionObserver" in window)) {
+      setShouldLoadFolder(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setShouldLoadFolder(true);
+        observer.disconnect();
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
 
   const updateLayout = useCallback(() => {
     const container = containerRef.current;
@@ -264,8 +287,8 @@ function IdeaSection({
 
             {/* Interactive Matter.js folder */}
             <div className="idea-folder-editorial__right">
-              <div className="idea-folder-float-wrap">
-                <FolderFloat
+              <div ref={folderWrapRef} className="idea-folder-float-wrap">
+                {shouldLoadFolder && <FolderFloat
                   items={FOLDER_ITEMS}
                   label="Notas de Criação"
                   sublabel="6 diretrizes"
@@ -290,7 +313,7 @@ function IdeaSection({
                   openDuration={520}
                   stagger={45}
                   bounce={0.35}
-                />
+                />}
               </div>
             </div>
           </div>
