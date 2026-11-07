@@ -37,6 +37,10 @@ function detectLowPerformanceDevice() {
 // Helper: clamp(v, 0, 1)
 // ------------------------------------------------------------------
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+const smoothstep = (start: number, end: number, value: number) => {
+  const progress = clamp01((value - start) / (end - start));
+  return progress * progress * (3 - 2 * progress);
+};
 
 export default function SceneController() {
   // ----------------------------------------------------------------
@@ -102,7 +106,6 @@ export default function SceneController() {
 
   // DOM layer refs — for direct style manipulation
   const heroLayerRef = useRef<HTMLDivElement>(null);
-  const heroBackdropRef = useRef<HTMLDivElement>(null);
   const aboutLayerRef = useRef<HTMLDivElement>(null);
   const aboutContainerRef = useRef<HTMLDivElement>(null);
   const projectsLayerRef = useRef<HTMLDivElement>(null);
@@ -230,8 +233,9 @@ export default function SceneController() {
     // --- Star portal ---
     const isMobile = viewportW <= 600;
     const baseStarTop = isMobile ? 66 : 76;
-    let starScale = 1, starTopVh = baseStarTop;
+    let starTopVh = baseStarTop;
     let heroOpacity = 1, aboutOpacity = 0, aboutContentOpacity = 0, starOpacity = 1;
+    const heroExitProgress = smoothstep(0, 0.68, transitionProgress);
 
     const isInLaterStages =
       projectsScrollProgress > 0 ||
@@ -247,23 +251,15 @@ export default function SceneController() {
       aboutOpacity = Math.max(0, 1 - Math.pow(projectsTransitionProgress, 1.2) * 1.5);
       aboutContentOpacity = Math.max(0, 1 - Math.pow(projectsTransitionProgress, 1.1) * 1.5);
       starOpacity = 0;
-    } else if (transitionProgress <= 0.5) {
-      const p1 = transitionProgress / 0.5;
-      heroOpacity = Math.max(0, 1 - Math.pow(p1, 1.3));
-      aboutOpacity = Math.min(1, Math.pow(p1, 1.8));
-      starScale = 1 + Math.sin(p1 * (Math.PI / 2)) * 3.2;
-      starTopVh = baseStarTop - p1 * (baseStarTop - 28);
-      aboutContentOpacity = 0;
-      starOpacity = 1;
     } else {
-      const p2 = (transitionProgress - 0.5) / 0.5;
-      heroOpacity = 0; aboutOpacity = 1;
-      starScale = 4.2 - Math.sin(p2 * (Math.PI / 2)) * 3.74;
-      starTopVh = 28 - p2 * 20;
-      aboutContentOpacity = clamp01((p2 - 0.2) / 0.8);
-      starOpacity = s.hasScrolled && aboutScrollProgress > 0
-        ? Math.max(0, 1 - aboutScrollProgress * 2.2)
-        : 1;
+      heroOpacity = 1 - heroExitProgress;
+      aboutOpacity = smoothstep(0.24, 0.9, transitionProgress);
+      aboutContentOpacity = smoothstep(0.7, 1, transitionProgress);
+      starTopVh = baseStarTop + (8 - baseStarTop) * smoothstep(0.18, 0.82, transitionProgress);
+      starOpacity = Math.max(
+        1 - smoothstep(0.06, 0.28, transitionProgress),
+        smoothstep(0.72, 0.94, transitionProgress)
+      );
     }
 
     // About translate (no blur — replaced with opacity to avoid expensive GPU pass)
@@ -295,19 +291,20 @@ export default function SceneController() {
     const starScrollY = aboutScrollProgress * (maxContentScroll * 0.75);
 
     // --- Apply styles directly ---
-    if (heroBackdropRef.current) {
-      const parallaxOffset = Math.min(sy * 0.16, viewportH * 0.18);
-      heroBackdropRef.current.style.transform = `translate3d(0, -${parallaxOffset}px, 0)`;
-    }
-
     if (heroLayerRef.current) {
       heroLayerRef.current.style.opacity = String(heroOpacity);
-      heroLayerRef.current.style.pointerEvents = transitionProgress > 0.4 ? "none" : "auto";
+      heroLayerRef.current.style.transform =
+        `translate3d(0, -${heroExitProgress * 2}vh, 0)`;
+      heroLayerRef.current.style.willChange =
+        transitionProgress > 0 && transitionProgress < 0.68 ? "opacity, transform" : "";
+      heroLayerRef.current.style.pointerEvents = transitionProgress > 0.28 ? "none" : "auto";
     }
 
     if (aboutLayerRef.current) {
       aboutLayerRef.current.style.opacity = String(aboutOpacity);
-      aboutLayerRef.current.style.transform = `translate3d(0, -${aboutTranslateY}vh, 0)`;
+      const aboutEntranceOffset = (1 - smoothstep(0.24, 0.9, transitionProgress)) * 2.5;
+      aboutLayerRef.current.style.transform =
+        `translate3d(0, ${aboutEntranceOffset - aboutTranslateY}vh, 0)`;
       aboutLayerRef.current.style.pointerEvents =
         transitionProgress > 0.5 && projectsTransitionProgress < 0.4 ? "auto" : "none";
     }
@@ -340,7 +337,8 @@ export default function SceneController() {
     if (starPortalRef.current) {
       if (s.hasScrolled) {
         const starTopOffset = starTopVh - baseStarTop;
-        starPortalRef.current.style.transform = `translate3d(-50%, calc(-50% + ${starTopOffset}vh - ${starScrollY}px), 0) scale(${starScale})`;
+        starPortalRef.current.style.transform =
+          `translate3d(-50%, calc(-50% + ${starTopOffset}vh - ${starScrollY}px), 0)`;
         starPortalRef.current.style.opacity = isAboutContemplating ? "0" : String(starOpacity);
       } else {
         // Intro animation: keep inline styles cleared so CSS @keyframes heroLogoOpening runs unhindered
@@ -604,10 +602,7 @@ export default function SceneController() {
       <div className="scene-stage">
         {/* Layer 1: Hero */}
         <div ref={heroLayerRef} className="scene-layer scene-layer--hero">
-          <Hero
-            onExplore={handleExplore}
-            backdropRef={heroBackdropRef}
-          />
+          <Hero onExplore={handleExplore} />
         </div>
 
         {/* Layer 2: About */}

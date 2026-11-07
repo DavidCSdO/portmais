@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import Script from "next/script";
 import CustomCursor from "./_components/CustomCursor";
 import AmbientSpotlight from "./_components/AmbientSpotlight";
+import LoadingScreen from "./_components/LoadingScreen/LoadingScreen";
 import "./_styles/globals.css";
 
 const siteUrl = "https://portmais.vercel.app";
@@ -109,6 +110,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <CustomCursor />
         <AmbientSpotlight />
         {children}
+        <LoadingScreen />
       </body>
     </html>
   );

@@ -31,7 +31,6 @@
   align-items: center;
   justify-content: flex-start;
   overflow: hidden;
-  will-change: opacity;
 }
 
 /* Layer 2: About */
@@ -213,8 +212,9 @@
 
 .scene-star-portal--intro {
   top: 76vh;
+  --intro-center-offset: -26vh;
   transform: translate(-50%, -50%);
-  animation: heroLogoOpening 2.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  animation: heroLogoOpening 2.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   opacity: 0;
 }
 
@@ -228,30 +228,26 @@
 /* Star logo: appears on black screen at center, holds, then glides down to final position */
 @keyframes heroLogoOpening {
   0% {
-    top: 50%;
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.5);
-    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translate3d(-50%, calc(-50% + var(--intro-center-offset)), 0) scale(0.72);
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  28% {
-    top: 50%;
+  24% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.12);
-    animation-timing-function: ease-in-out;
+    transform: translate3d(-50%, calc(-50% + var(--intro-center-offset)), 0) scale(1.06);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  38% {
-    top: 50%;
+  34% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.08);
-    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
+    transform: translate3d(-50%, calc(-50% + var(--intro-center-offset)), 0) scale(1);
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   100% {
-    top: 76vh;
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate3d(-50%, -50%, 0) scale(1);
   }
 }
 
@@ -290,7 +286,7 @@
 
   .scene-star-portal--intro {
     top: 66vh;
-    animation: heroLogoOpeningMobile 2.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+    --intro-center-offset: -16vh;
   }
 
   .about__star-spacer {
@@ -329,32 +325,9 @@ html[data-performance="reduced"] .about__light-bg::after {
   animation: none;
 }
 
-@keyframes heroLogoOpeningMobile {
-  0% {
-    top: 50%;
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.5);
-    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  28% {
-    top: 50%;
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.12);
-    animation-timing-function: ease-in-out;
-  }
-
-  38% {
-    top: 50%;
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.08);
-    animation-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
-  }
-
-  100% {
-    top: 66vh;
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+@media (prefers-reduced-motion: reduce) {
+  .scene-star-portal--intro {
+    animation-duration: 1ms;
   }
 }
 

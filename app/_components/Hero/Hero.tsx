@@ -1,6 +1,5 @@
 'use client';
 
-import type { RefObject } from 'react';
 import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import { playClickSound } from '../../_utils/sound';
@@ -8,21 +7,16 @@ import './Hero.css';
 
 interface HeroProps {
   onExplore?: () => void;
-  backdropRef: RefObject<HTMLDivElement | null>;
 }
 
-export default function Hero({ onExplore, backdropRef }: HeroProps) {
+export default function Hero({ onExplore }: HeroProps) {
   const handleLetterHover = () => {
     playClickSound('tick');
   };
 
   return (
     <section className="hero" id="hero">
-      <div
-        ref={backdropRef}
-        className="hero__backdrop"
-        aria-hidden="true"
-      >
+      <div className="hero__backdrop" aria-hidden="true">
         <Image
           src="/images/hero_editorial_sky_2x.webp"
           alt=""
