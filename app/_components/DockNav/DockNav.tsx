@@ -8,6 +8,8 @@ import './DockNav.css';
 interface DockNavProps {
   activeSceneId?: string;
   chapterOffsets?: Record<string, number>;
+  navigationReady: boolean;
+  onOpenNavigation: () => void;
   /** Hides the dock (e.g. while Contemplation Mode is active) */
   hidden?: boolean;
 }
@@ -23,44 +25,65 @@ export interface ChapterItem {
 const CHAPTERS: ChapterItem[] = [
   {
     id: 'hero',
-    num: '01',
+    num: '00',
     title: 'Início',
-    subtitle: 'Alvorada & Identidade Autoral',
+    subtitle: 'Marca e apresentação',
     image: '/images/BACK1.webp',
   },
   {
     id: 'about',
-    num: '02',
+    num: '01',
     title: 'Sobre',
-    subtitle: 'Filosofia, Rigor & Construção',
+    subtitle: 'Perfil e abordagem',
     image: '/images/landscape_about.webp',
   },
   {
     id: 'projects',
-    num: '03',
+    num: '02',
     title: 'Projetos',
-    subtitle: 'Sistemas Interativos & WebGL',
+    subtitle: 'Projetos e estudos de caso',
     image: '/images/landscape_projects.webp',
   },
   {
     id: 'showcase',
-    num: '04',
+    num: '03',
     title: 'Capacidades',
-    subtitle: 'Arquitetura Full-Stack & Métricas',
+    subtitle: 'Serviços e tecnologias',
     image: '/images/landscape_showcase.webp',
   },
   {
-    id: 'resume',
+    id: 'idea',
+    num: '04',
+    title: 'Abordagem',
+    subtitle: 'Escopo e planejamento',
+    image: '/images/landscape_idea.webp',
+  },
+  {
+    id: 'experiment',
     num: '05',
+    title: 'Experimento',
+    subtitle: 'Interação demonstrativa',
+    image: '/images/landscape_idea.webp',
+  },
+  {
+    id: 'methodology',
+    num: '06',
+    title: 'Metodologia',
+    subtitle: 'Etapas e entrega',
+    image: '/images/BACK4.jpg',
+  },
+  {
+    id: 'resume',
+    num: '07',
     title: 'Currículo',
-    subtitle: 'Experiência, formação & projetos',
+    subtitle: 'Experiência e formação',
     image: '/images/landscape_projects.webp',
   },
   {
-    id: 'idea',
-    num: '06',
+    id: 'contact',
+    num: '08',
     title: 'Contato',
-    subtitle: 'Conceito, Criação & Parcerias',
+    subtitle: 'Canais de contato',
     image: '/images/landscape_idea.webp',
   },
 ];
@@ -68,6 +91,8 @@ const CHAPTERS: ChapterItem[] = [
 export default function DockNav({
   activeSceneId = 'hero',
   chapterOffsets = {},
+  navigationReady,
+  onOpenNavigation,
   hidden = false,
 }: DockNavProps) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -75,8 +100,7 @@ export default function DockNav({
 
   // Current active chapter index
   const activeChapterIndex = useMemo(() => {
-    const chapterId = activeSceneId === 'contact' ? 'idea' : activeSceneId;
-    const idx = CHAPTERS.findIndex((chapter) => chapter.id === chapterId);
+    const idx = CHAPTERS.findIndex((chapter) => chapter.id === activeSceneId);
     return idx >= 0 ? idx : 0;
   }, [activeSceneId]);
 
@@ -110,6 +134,7 @@ export default function DockNav({
     try {
       playClickSound('tick');
     } catch {}
+    if (!isExpanded) onOpenNavigation();
     setHoveredPreviewIndex(null);
     setIsExpanded((prev) => !prev);
   };
@@ -124,10 +149,16 @@ export default function DockNav({
         return chapterOffsets.projects ?? 2200;
       case 'showcase':
         return chapterOffsets.showcase ?? 3600;
-      case 'resume':
-        return chapterOffsets.resume ?? 4700;
       case 'idea':
         return chapterOffsets.idea ?? 5000;
+      case 'experiment':
+        return chapterOffsets.experiment ?? 5400;
+      case 'methodology':
+        return chapterOffsets.methodology ?? 5800;
+      case 'resume':
+        return chapterOffsets.resume ?? 4700;
+      case 'contact':
+        return chapterOffsets.contact ?? 6200;
       default:
         return 0;
     }
@@ -231,6 +262,7 @@ export default function DockNav({
                     <li key={item.id}>
                       <button
                         type="button"
+                        disabled={!navigationReady}
                         className={`dock-nav-list__btn ${
                           isCurrent ? 'dock-nav-list__btn--current' : ''
                         } ${isHovered ? 'dock-nav-list__btn--hovered' : ''}`}
@@ -245,6 +277,11 @@ export default function DockNav({
                   );
                 })}
               </ul>
+              {!navigationReady && (
+                <p className="dock-nav-loading" role="status">
+                  Preparando destinos…
+                </p>
+              )}
 
               {/* Conexões */}
               <div className="dock-nav-section-title dock-nav-section-title--socials">
@@ -293,9 +330,12 @@ export default function DockNav({
             <div className="dock-nav-stage__preview">
               <div
                 className="dock-nav-preview-box"
-                onClick={() => handleNavigate(activePreview.id)}
+                onClick={() => {
+                  if (navigationReady) handleNavigate(activePreview.id);
+                }}
                 role="button"
-                tabIndex={0}
+                tabIndex={navigationReady ? 0 : -1}
+                aria-disabled={!navigationReady}
                 aria-label={`Ir para ${activePreview.title}`}
                 title={`Clique para ir direto a ${activePreview.title}`}
               >

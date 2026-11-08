@@ -196,7 +196,7 @@ export default function ResumeSection() {
           <div className="resume-header__topline">
             <span className="resume-label">
               <span aria-hidden="true" />
-              Currículo · 2026
+              07 · Currículo · 2026
             </span>
             <a
               className="resume-download"

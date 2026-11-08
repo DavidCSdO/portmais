@@ -49,7 +49,7 @@ export default function Footer({ onScrollToTop }: FooterProps) {
            ==================================================== */}
         <div className="footer-top">
           <div className="footer-top__intro">
-            <span className="footer-label">Diálogo & Conexão</span>
+            <span className="footer-label">08 · Diálogo & Conexão</span>
             <div className="footer-split-flap-wrapper">
               <SplitFlapText
                 words={["TEM UMA IDEIA?", "VAMOS CONVERSAR"]}

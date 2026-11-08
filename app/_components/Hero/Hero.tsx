@@ -24,6 +24,7 @@ export default function Hero({ onExplore }: HeroProps) {
           sizes="108vw"
           className="hero__backdrop-image"
           quality={60}
+          loading="eager"
         />
       </div>
       <div className="hero__sky" aria-hidden="true" />
@@ -64,7 +65,14 @@ export default function Hero({ onExplore }: HeroProps) {
 
       <header className="hero__header">
         <div className="hero__brand-stamp">
-          <span className="hero__brand-star" aria-hidden="true">✦</span>
+          <Image
+            src="/images/LOGO.webp"
+            alt=""
+            width={40}
+            height={27}
+            sizes="40px"
+            className="hero__brand-mark"
+          />
           <div className="hero__brand-meta">
             <span className="hero__brand-title">DAVID CARDOSO</span>
             <span className="hero__brand-sub">SITES E SISTEMAS WEB</span>
@@ -81,7 +89,7 @@ export default function Hero({ onExplore }: HeroProps) {
             aria-label="Rolar para explorar a jornada"
           >
             <span className="hero__scroll-cue-line" aria-hidden="true" />
-            <span className="hero__scroll-cue-text">CONHECER SERVIÇOS</span>
+            <span className="hero__scroll-cue-text">EXPLORAR PORTFÓLIO</span>
           </button>
         )}
       </footer>

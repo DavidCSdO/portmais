@@ -22,7 +22,12 @@ interface IdeaSectionProps {
   effectsActive?: boolean;
   mountEffects: boolean;
   onContainerHeightChange?: (height: number) => void;
-  onSectionOffsetsChange?: (offsets: { resume: number; contact: number }) => void;
+  onSectionOffsetsChange?: (offsets: {
+    experiment: number;
+    methodology: number;
+    resume: number;
+    contact: number;
+  }) => void;
   contentOpacity?: number;
 }
 
@@ -92,11 +97,15 @@ function IdeaSection({
         footerTransitionOffset =
           footerTransitionRef.current.getBoundingClientRect().top - containerTop;
       }
+      const experiment = container.querySelector<HTMLElement>("#experimento");
+      const methodology = container.querySelector<HTMLElement>("#metodologia");
       const resume = container.querySelector<HTMLElement>("#curriculo");
       const contact = container.querySelector<HTMLElement>("#contato");
       const sectionOffsets =
-        resume && contact
+        experiment && methodology && resume && contact
           ? {
+              experiment: experiment.getBoundingClientRect().top - containerTop,
+              methodology: methodology.getBoundingClientRect().top - containerTop,
               resume: resume.getBoundingClientRect().top - containerTop,
               contact: contact.getBoundingClientRect().top - containerTop,
             }
@@ -222,7 +231,7 @@ function IdeaSection({
         {/* ====================================================
            1. TOP ZONE: project approach
            ==================================================== */}
-        <section className="idea-block idea-block--concept">
+        <section className="idea-block idea-block--concept" id="abordagem">
           <div className="idea-block__index">
             <span className="idea-block__index-num">04</span>
             <span className="idea-block__index-line" aria-hidden="true" />
@@ -267,7 +276,7 @@ function IdeaSection({
         {/* ====================================================
            3. BOTTOM ZONE: interactive physics experiment
            ==================================================== */}
-        <section className="idea-block idea-block--folder">
+        <section className="idea-block idea-block--folder" id="experimento">
           <div className="idea-folder-editorial">
             <div className="idea-folder-editorial__left">
               <div className="idea-block__index">

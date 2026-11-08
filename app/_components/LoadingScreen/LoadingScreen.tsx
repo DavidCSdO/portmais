@@ -99,7 +99,7 @@ export default function LoadingScreen() {
 
       <div className="loading-screen__footer" aria-hidden="true">
         <div className="loading-screen__caption">
-          <span>UMA EXPERIÊNCIA EM CONSTRUÇÃO</span>
+          <span>PREPARANDO PORTFÓLIO</span>
           <span>SITES &amp; SISTEMAS WEB</span>
         </div>
         <div className="loading-screen__progress">

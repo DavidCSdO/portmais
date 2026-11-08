@@ -123,6 +123,9 @@
 
 .dock-nav-card {
   width: min(680px, 92vw);
+  max-height: min(82vh, 720px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background:
     radial-gradient(ellipse at 0% 0%, rgba(188, 255, 126, 0.1), transparent 44%),
     rgba(248, 251, 246, 0.97);
@@ -258,6 +261,11 @@
   color: #365314;
 }
 
+.dock-nav-list__btn:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
 .dock-nav-list__btn--current {
   color: #f7fbed;
   font-weight: 600;
@@ -286,6 +294,13 @@
 
 .dock-nav-list__label {
   flex: 1;
+}
+
+.dock-nav-loading {
+  margin: 8px 12px 0;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.72rem;
+  color: var(--dock-muted);
 }
 
 .dock-nav-list__indicator {
@@ -458,11 +473,8 @@
 
   .dock-nav-card {
     width: calc(100vw - 24px);
-    max-height: min(82vh, 720px);
-    overflow-y: auto;
     padding: 16px;
     border-radius: 18px;
-    overscroll-behavior: contain;
   }
 
   @media (prefers-reduced-motion: reduce) {

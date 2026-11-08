@@ -225,7 +225,7 @@
   filter: drop-shadow(0 0 38px rgba(188, 255, 126, 0.42));
 }
 
-/* Star logo: appears on black screen at center, holds, then glides down to final position */
+/* Brand mark opens at the center, then scales through the hero exit. */
 @keyframes heroLogoOpening {
   0% {
     opacity: 0;

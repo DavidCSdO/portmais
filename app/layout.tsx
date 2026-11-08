@@ -70,9 +70,9 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/images/hero.jpg",
-        width: 1200,
-        height: 630,
-        alt: "David Cardoso — desenvolvimento web",
+        width: 1376,
+        height: 768,
+        alt: "Paisagem de montanhas ao amanhecer",
       },
     ],
   },

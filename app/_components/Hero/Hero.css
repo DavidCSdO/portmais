@@ -109,10 +109,10 @@
   user-select: none;
 }
 
-.hero__brand-star {
-  font-size: 1.25rem;
-  color: #bcff7e;
-  text-shadow: 0 0 16px rgba(188, 255, 126, 0.45);
+.hero__brand-mark {
+  width: 1.65rem;
+  height: auto;
+  filter: drop-shadow(0 0 10px rgba(188, 255, 126, 0.45));
   animation: heroBrandStarGlow 2.8s ease-in-out infinite alternate;
 }
 
@@ -375,8 +375,8 @@
     letter-spacing: 0.12em;
   }
 
-  .hero__brand-star {
-    font-size: 1.1rem;
+  .hero__brand-mark {
+    width: 1.45rem;
   }
 
   .hero__title-wrapper {

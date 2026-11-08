@@ -54,8 +54,9 @@ export default function SceneController() {
     projectsContainerH: 2400,
     showcaseContainerH: 1100,
     ideaContainerH: 4200,
-    ideaSectionOffsets: { resume: 0, contact: 0 },
+    ideaSectionOffsets: { experiment: 0, methodology: 0, resume: 0, contact: 0 },
     hasScrolled: false,
+    prefersReducedMotion: false,
     rafId: null as number | null,
   });
 
@@ -74,9 +75,10 @@ export default function SceneController() {
     projects: 2200,
     showcase: 3600,
     idea: 5000,
-    experiment: 4200,
-    methodology: 4400,
-    resume: 4700,
+    experiment: 5400,
+    methodology: 5800,
+    resume: 6200,
+    contact: 6600,
   });
 
   const [activeSceneId, setActiveSceneId] = useState("hero");
@@ -89,6 +91,13 @@ export default function SceneController() {
   const [hasMountedProjectsEffects, setHasMountedProjectsEffects] = useState(false);
   const [hasMountedShowcaseEffects, setHasMountedShowcaseEffects] = useState(false);
   const [hasMountedIdeaEffects, setHasMountedIdeaEffects] = useState(false);
+  const [isNavigationPreparing, setIsNavigationPreparing] = useState(false);
+  const [isNavigationReady, setIsNavigationReady] = useState(false);
+  const navigationSectionsMeasuredRef = useRef({
+    projects: false,
+    showcase: false,
+    idea: false,
+  });
   const sceneUiStateRef = useRef({
     activeSceneId: "hero",
     aboutEffects: false,
@@ -163,6 +172,12 @@ export default function SceneController() {
     const contactScrollOffset = contentOffsetToScroll(
       s.ideaSectionOffsets.contact || s.ideaContainerH * 0.88
     );
+    const experimentScrollOffset = contentOffsetToScroll(
+      s.ideaSectionOffsets.experiment || s.ideaContainerH * 0.4
+    );
+    const methodologyScrollOffset = contentOffsetToScroll(
+      s.ideaSectionOffsets.methodology || s.ideaContainerH * 0.62
+    );
 
     return {
       transitionDistance,
@@ -181,6 +196,8 @@ export default function SceneController() {
       showcaseScrollOffset,
       ideaTransOffset,
       ideaScrollOffset,
+      experimentScrollOffset,
+      methodologyScrollOffset,
       resumeScrollOffset,
       contactScrollOffset,
       viewportW,
@@ -203,6 +220,7 @@ export default function SceneController() {
       projectsTransOffset, projectsScrollOffset,
       showcaseTransOffset, showcaseScrollOffset,
       ideaTransOffset, ideaScrollOffset,
+      experimentScrollOffset, methodologyScrollOffset,
       resumeScrollOffset, contactScrollOffset,
       viewportH, viewportW,
     } = geo;
@@ -256,10 +274,7 @@ export default function SceneController() {
       aboutOpacity = smoothstep(0.24, 0.9, transitionProgress);
       aboutContentOpacity = smoothstep(0.7, 1, transitionProgress);
       starTopVh = baseStarTop + (8 - baseStarTop) * smoothstep(0.18, 0.82, transitionProgress);
-      starOpacity = Math.max(
-        1 - smoothstep(0.06, 0.28, transitionProgress),
-        smoothstep(0.72, 0.94, transitionProgress)
-      );
+      starOpacity = 1 - smoothstep(0.68, 0.94, transitionProgress);
     }
 
     // About translate (no blur — replaced with opacity to avoid expensive GPU pass)
@@ -337,8 +352,9 @@ export default function SceneController() {
     if (starPortalRef.current) {
       if (s.hasScrolled) {
         const starTopOffset = starTopVh - baseStarTop;
+        const logoScale = s.prefersReducedMotion ? 1 : 1 + heroExitProgress * 2.4;
         starPortalRef.current.style.transform =
-          `translate3d(-50%, calc(-50% + ${starTopOffset}vh - ${starScrollY}px), 0)`;
+          `translate3d(-50%, calc(-50% + ${starTopOffset}vh - ${starScrollY}px), 0) scale(${logoScale})`;
         starPortalRef.current.style.opacity = isAboutContemplating ? "0" : String(starOpacity);
       } else {
         // Intro animation: keep inline styles cleared so CSS @keyframes heroLogoOpening runs unhindered
@@ -375,6 +391,8 @@ export default function SceneController() {
     const newActiveScene =
       sy >= contactScrollOffset - viewportH * 0.15 ? "contact"
       : sy >= resumeScrollOffset - viewportH * 0.15 ? "resume"
+      : sy >= methodologyScrollOffset - viewportH * 0.15 ? "methodology"
+      : sy >= experimentScrollOffset - viewportH * 0.15 ? "experiment"
       : sy >= ideaTransOffset + ideaTransitionDistance * 0.4 ? "idea"
       : sy >= showcaseTransOffset + showcaseTransitionDistance * 0.4 ? "showcase"
       : sy >= projectsTransOffset + projectsTransitionDistance * 0.4 ? "projects"
@@ -463,33 +481,53 @@ export default function SceneController() {
       about: geo.transitionDistance + 60,
       projects: geo.projectsScrollOffset + 60,
       showcase: geo.showcaseScrollOffset + 60,
-      idea: geo.contactScrollOffset,
-      experiment: geo.ideaScrollOffset + geo.ideaScrollDistance * 0.4,
-      methodology: geo.ideaScrollOffset + geo.ideaScrollDistance * 0.62,
+      idea: geo.ideaScrollOffset,
+      experiment: geo.experimentScrollOffset,
+      methodology: geo.methodologyScrollOffset,
       resume: geo.resumeScrollOffset,
+      contact: geo.contactScrollOffset,
     });
     scheduleRaf();
   }, [computeGeometry, scheduleRaf]);
+
+  const markNavigationSectionMeasured = useCallback(
+    (section: "projects" | "showcase" | "idea") => {
+      const measurements = navigationSectionsMeasuredRef.current;
+      if (measurements[section]) return;
+
+      measurements[section] = true;
+      if (Object.values(measurements).every(Boolean)) {
+        setIsNavigationReady(true);
+      }
+    },
+    []
+  );
+
+  const handleOpenNavigation = useCallback(() => {
+    if (!isNavigationReady) setIsNavigationPreparing(true);
+  }, [isNavigationReady]);
 
   // ----------------------------------------------------------------
   // Stable callbacks for children (no re-renders on every height change)
   // ----------------------------------------------------------------
   const handleProjectsHeightChange = useCallback(
     (h: number) => {
+      markNavigationSectionMeasured("projects");
       if (Math.abs(stateRef.current.projectsContainerH - h) < 2) return;
       stateRef.current.projectsContainerH = h;
       recomputeTotalHeight();
     },
-    [recomputeTotalHeight]
+    [markNavigationSectionMeasured, recomputeTotalHeight]
   );
 
   const handleShowcaseHeightChange = useCallback(
     (h: number) => {
+      markNavigationSectionMeasured("showcase");
       if (Math.abs(stateRef.current.showcaseContainerH - h) < 2) return;
       stateRef.current.showcaseContainerH = h;
       recomputeTotalHeight();
     },
-    [recomputeTotalHeight]
+    [markNavigationSectionMeasured, recomputeTotalHeight]
   );
 
   const handleIdeaHeightChange = useCallback(
@@ -502,17 +540,26 @@ export default function SceneController() {
   );
 
   const handleIdeaSectionOffsetsChange = useCallback(
-    (offsets: { resume: number; contact: number }) => {
+    (offsets: {
+      experiment: number;
+      methodology: number;
+      resume: number;
+      contact: number;
+    }) => {
       stateRef.current.ideaSectionOffsets = offsets;
+      markNavigationSectionMeasured("idea");
       recomputeTotalHeight();
     },
-    [recomputeTotalHeight]
+    [markNavigationSectionMeasured, recomputeTotalHeight]
   );
 
   // ----------------------------------------------------------------
   // Effects
   // ----------------------------------------------------------------
   useEffect(() => {
+    stateRef.current.prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
     const reduced = detectLowPerformanceDevice();
     const rafId = reduced
       ? requestAnimationFrame(() => setLowPerformance(true))
@@ -593,6 +640,8 @@ export default function SceneController() {
         activeSceneId={activeSceneId}
         hidden={isAboutContemplating || activeSceneId === "hero"}
         chapterOffsets={chapterOffsets}
+        navigationReady={isNavigationReady}
+        onOpenNavigation={handleOpenNavigation}
       />
 
       {/* Global Contemplation exit pill */}
@@ -718,7 +767,7 @@ export default function SceneController() {
           data-effects-active={isProjectsEffectsActive}
           style={{ opacity: 0, transform: "translate3d(0, 14vh, 0)", pointerEvents: "none" }}
         >
-          {hasMountedProjectsEffects && (
+          {(isNavigationPreparing || hasMountedProjectsEffects) && (
             <Projects
               viewportH={viewportH}
               lowPerformance={lowPerformance}
@@ -737,7 +786,7 @@ export default function SceneController() {
           data-effects-active={isShowcaseEffectsActive}
           style={{ opacity: 0, transform: "translate3d(0, 14vh, 0)", pointerEvents: "none" }}
         >
-          {hasMountedShowcaseEffects && (
+          {(isNavigationPreparing || hasMountedShowcaseEffects) && (
             <Showcase
               scrollProgress={0}
               viewportH={viewportH}
@@ -757,7 +806,7 @@ export default function SceneController() {
           data-effects-active={isIdeaEffectsActive}
           style={{ opacity: 0, transform: "translate3d(0, 14vh, 0)", pointerEvents: "none" }}
         >
-          {hasMountedIdeaEffects && (
+          {(isNavigationPreparing || hasMountedIdeaEffects) && (
             <IdeaSection
               scrollProgress={0}
               viewportW={viewportW}
