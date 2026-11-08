@@ -172,7 +172,7 @@ export default function DockNav({
     const targetOffset = getOffsetForChapter(id);
     window.scrollTo({
       top: targetOffset,
-      behavior: 'smooth',
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
     });
   };
 
@@ -203,6 +203,7 @@ export default function DockNav({
     <div
       className={`dock-nav-root ${hidden ? 'dock-nav-root--hidden' : ''}`.trim()}
       aria-hidden={hidden || undefined}
+      inert={hidden}
     >
       <div className="dock-nav-intro">
       {!isExpanded ? (

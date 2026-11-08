@@ -28,10 +28,10 @@
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(ellipse 65% 62% at 14% 18%, rgba(188, 255, 126, 0.28) 0%, transparent 72%),
-    radial-gradient(ellipse 65% 58% at 92% 80%, rgba(132, 204, 22, 0.22) 0%, transparent 70%),
-    linear-gradient(145deg, #f2f5eb 0%, #f5f6ef 52%, #edf2e5 100%),
-    radial-gradient(circle, rgba(77, 124, 15, 0.18) 1.3px, transparent 1.8px);
+    radial-gradient(ellipse 66% 60% at 12% 16%, rgba(185, 202, 164, 0.2) 0%, transparent 72%),
+    radial-gradient(ellipse 62% 56% at 94% 82%, rgba(204, 216, 190, 0.26) 0%, transparent 70%),
+    linear-gradient(145deg, #f8f8f3 0%, #f4f5ef 52%, #edf1e8 100%),
+    radial-gradient(circle, rgba(77, 124, 15, 0.12) 1.3px, transparent 1.8px);
   background-size: auto, auto, auto, 36px 36px;
   z-index: 0;
   pointer-events: none;
@@ -84,7 +84,7 @@
   z-index: 2;
   width: 100%;
   max-width: 1240px;
-  padding: 0 clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(0.75rem, 2vh, 1.5rem) clamp(1.5rem, 4vw, 3rem) 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -103,7 +103,7 @@
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1.35fr;
-  gap: clamp(2.5rem, 4.5vw, 5rem);
+  gap: clamp(3rem, 5vw, 5.5rem);
   align-items: flex-start;
 }
 

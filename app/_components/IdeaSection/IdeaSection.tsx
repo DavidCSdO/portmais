@@ -71,8 +71,8 @@ function IdeaSection({
     if (!target) return;
 
     if (!("IntersectionObserver" in window)) {
-      setShouldLoadFolder(true);
-      return;
+      const frame = requestAnimationFrame(() => setShouldLoadFolder(true));
+      return () => cancelAnimationFrame(frame);
     }
 
     const observer = new IntersectionObserver(

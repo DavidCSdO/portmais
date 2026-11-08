@@ -21,8 +21,9 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 72% 48% at 88% 8%, rgba(221, 229, 207, 0.3), transparent 72%),
-    linear-gradient(180deg, #f5f4ee 0%, #f1f1e9 54%, #e9ece3 100%);
+    radial-gradient(ellipse 74% 52% at 90% 6%, rgba(199, 205, 176, 0.38), transparent 72%),
+    radial-gradient(ellipse 50% 45% at 4% 92%, rgba(239, 223, 195, 0.28), transparent 74%),
+    linear-gradient(180deg, #f4f1e8 0%, #efeee5 54%, #e8ebe1 100%);
   pointer-events: none;
 }
 
@@ -54,7 +55,7 @@
 
 .projects__intro {
   position: relative;
-  margin: clamp(2rem, 5vh, 4.5rem) auto clamp(2rem, 4vh, 3rem);
+  margin: clamp(2.5rem, 6vh, 5rem) auto clamp(2.5rem, 5vh, 4rem);
 }
 
 .projects__section-index {
@@ -134,7 +135,7 @@
 .projects__content {
   display: flex;
   flex-direction: column;
-  gap: clamp(4.5rem, 9vh, 8rem);
+  gap: clamp(5rem, 10vh, 9rem);
 }
 
 .projects__atom {

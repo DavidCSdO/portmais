@@ -28,10 +28,10 @@
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(ellipse 70% 50% at 50% 15%, rgba(188, 255, 126, 0.2) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 45% at 10% 55%, rgba(226, 232, 220, 0.38) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 40% at 90% 45%, rgba(240, 253, 230, 0.3) 0%, transparent 60%),
-    linear-gradient(180deg, #eef2e8 0%, #f1f3eb 30%, #f3f2eb 60%, #f1f0e9 85%, #edf1e8 100%);
+    radial-gradient(ellipse 68% 48% at 50% 12%, rgba(188, 205, 165, 0.26) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 45% at 8% 58%, rgba(216, 223, 207, 0.42) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 42% at 94% 48%, rgba(234, 224, 201, 0.32) 0%, transparent 62%),
+    linear-gradient(180deg, #e9eee4 0%, #eff1e9 30%, #f3f1e9 62%, #efeee5 86%, #e8ede3 100%);
   z-index: 0;
   pointer-events: none;
 }
@@ -45,11 +45,11 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  padding-top: clamp(3rem, 6vh, 5rem);
+  padding-top: clamp(3.5rem, 7vh, 6rem);
   padding-bottom: 0;
   will-change: transform, opacity;
   box-sizing: border-box;
-  gap: clamp(4rem, 8vh, 7rem);
+  gap: clamp(4.5rem, 9vh, 7.5rem);
 }
 
 /* Base Editorial Blocks (constrained to 1100px) */

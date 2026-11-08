@@ -313,6 +313,7 @@ export default function SceneController() {
       heroLayerRef.current.style.willChange =
         transitionProgress > 0 && transitionProgress < 0.68 ? "opacity, transform" : "";
       heroLayerRef.current.style.pointerEvents = transitionProgress > 0.28 ? "none" : "auto";
+      heroLayerRef.current.inert = heroOpacity < 0.5;
     }
 
     if (aboutLayerRef.current) {
@@ -322,6 +323,7 @@ export default function SceneController() {
         `translate3d(0, ${aboutEntranceOffset - aboutTranslateY}vh, 0)`;
       aboutLayerRef.current.style.pointerEvents =
         transitionProgress > 0.5 && projectsTransitionProgress < 0.4 ? "auto" : "none";
+      aboutLayerRef.current.inert = aboutOpacity < 0.5;
     }
 
     if (aboutContainerRef.current) {
@@ -334,6 +336,7 @@ export default function SceneController() {
       projectsLayerRef.current.style.transform = `translate3d(0, ${projectsLayerTranslateY}vh, 0)`;
       projectsLayerRef.current.style.pointerEvents =
         projectsTransitionProgress >= 0.4 && showcaseTransitionProgress < 0.4 ? "auto" : "none";
+      projectsLayerRef.current.inert = projectsLayerOpacity < 0.5;
     }
 
     if (showcaseLayerRef.current) {
@@ -341,18 +344,20 @@ export default function SceneController() {
       showcaseLayerRef.current.style.transform = `translate3d(0, ${showcaseLayerTranslateY}vh, 0)`;
       showcaseLayerRef.current.style.pointerEvents =
         showcaseTransitionProgress >= 0.4 && ideaTransitionProgress < 0.4 ? "auto" : "none";
+      showcaseLayerRef.current.inert = showcaseLayerOpacity < 0.5;
     }
 
     if (ideaLayerRef.current) {
       ideaLayerRef.current.style.opacity = String(ideaLayerOpacity);
       ideaLayerRef.current.style.transform = `translate3d(0, ${ideaLayerTranslateY}vh, 0)`;
       ideaLayerRef.current.style.pointerEvents = ideaTransitionProgress >= 0.4 ? "auto" : "none";
+      ideaLayerRef.current.inert = ideaLayerOpacity < 0.5;
     }
 
     if (starPortalRef.current) {
       if (s.hasScrolled) {
         const starTopOffset = starTopVh - baseStarTop;
-        const logoScale = s.prefersReducedMotion ? 1 : 1 + heroExitProgress * 2.4;
+        const logoScale = s.prefersReducedMotion ? 1 : 1 + heroExitProgress * 2;
         starPortalRef.current.style.transform =
           `translate3d(-50%, calc(-50% + ${starTopOffset}vh - ${starScrollY}px), 0) scale(${logoScale})`;
         starPortalRef.current.style.opacity = isAboutContemplating ? "0" : String(starOpacity);
@@ -627,7 +632,10 @@ export default function SceneController() {
 
   const handleExplore = useCallback(() => {
     const geo = computeGeometry();
-    window.scrollTo({ top: geo.transitionDistance + 60, behavior: "smooth" });
+    window.scrollTo({
+      top: geo.transitionDistance + 60,
+      behavior: stateRef.current.prefersReducedMotion ? "auto" : "smooth",
+    });
   }, [computeGeometry]);
 
   return (

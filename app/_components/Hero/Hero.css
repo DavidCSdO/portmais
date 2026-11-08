@@ -34,8 +34,9 @@
   background:
     linear-gradient(
       180deg,
-      rgba(26, 49, 44, 0.14) 0%,
-      rgba(86, 105, 77, 0.1) 35%,
+      rgba(10, 26, 30, 0.62) 0%,
+      rgba(10, 26, 30, 0.45) 24%,
+      rgba(86, 105, 77, 0.1) 52%,
       rgba(33, 51, 34, 0.16) 100%
     );
   pointer-events: none;
@@ -230,18 +231,27 @@
   flex-direction: column;
   align-items: center;
   gap: 0.55rem;
-  background: transparent;
-  border: none;
+  background: rgba(10, 26, 30, 0.56);
+  border: 1px solid rgba(244, 248, 237, 0.22);
+  border-radius: 999px;
   cursor: pointer;
   color: #f4f8ed;
-  padding: 0.4rem;
-  transition: all 0.3s ease;
+  padding: 0.7rem 0.9rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  transition: color 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
   user-select: none;
 }
 
 .hero__scroll-cue:hover {
   color: #bcff7e;
   transform: translateY(2px);
+}
+
+.hero__scroll-cue:focus-visible {
+  outline: 3px solid #111827;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px #f7f8f3, 0 12px 30px rgba(0, 0, 0, 0.18);
+  transition: none;
 }
 
 .hero__scroll-cue-line {
@@ -360,10 +370,21 @@
 
 @media (max-width: 600px) {
   .hero__header {
-    top: clamp(1rem, 2.5vh, 1.8rem);
+    top: max(1rem, env(safe-area-inset-top, 0px));
     left: auto;
-    right: 1rem;
+    right: 1.1rem;
     justify-content: flex-end;
+  }
+
+  .hero__brand-stamp {
+    gap: 0.6rem;
+    padding: 0.58rem 0.78rem;
+    border: 1px solid rgba(244, 248, 237, 0.16);
+    border-radius: 999px;
+    background: rgba(10, 26, 30, 0.42);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   .hero__brand-sub {
@@ -371,12 +392,12 @@
   }
 
   .hero__brand-title {
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
+    font-size: 0.82rem;
+    letter-spacing: 0.13em;
   }
 
   .hero__brand-mark {
-    width: 1.45rem;
+    width: 1.6rem;
   }
 
   .hero__title-wrapper {
@@ -392,7 +413,27 @@
   }
 
   .hero__footer {
-    display: none;
+    right: auto;
+    bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .hero__scroll-cue {
+    flex-direction: row;
+    gap: 0.7rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .hero__scroll-cue-line {
+    width: 1px;
+    height: 18px;
+  }
+
+  .hero__scroll-cue-text {
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    white-space: nowrap;
   }
 }
 
@@ -400,6 +441,17 @@
   .hero__curtain {
     display: none;
   }
+
+  .hero__brand-mark,
+  .hero__scroll-cue-line {
+    animation: none;
+  }
+
+  .hero__char,
+  .hero__scroll-cue {
+    transition: none;
+  }
+
   .hero__char-stroke {
     display: none;
   }

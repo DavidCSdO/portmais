@@ -24,7 +24,6 @@ export default function Hero({ onExplore }: HeroProps) {
           sizes="108vw"
           className="hero__backdrop-image"
           quality={60}
-          loading="eager"
         />
       </div>
       <div className="hero__sky" aria-hidden="true" />
@@ -59,7 +58,6 @@ export default function Hero({ onExplore }: HeroProps) {
           className="hero__mountain"
           quality={65}
           fetchPriority="high"
-          preload
         />
       </div>
 
